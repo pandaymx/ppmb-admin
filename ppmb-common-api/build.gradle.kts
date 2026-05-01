@@ -8,6 +8,7 @@ dependencies {
     implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
     implementation("org.springframework:spring-web")
     implementation(libs.findLibrary("spring-boot-starter-validation").get())
+    implementation(libs.findLibrary("spring-boot-starter-data-jpa").get())
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())
 }
