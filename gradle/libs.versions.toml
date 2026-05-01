@@ -14,10 +14,11 @@ spring-cloud-starter-consul-discovery = { group = "org.springframework.cloud", n
 spring-cloud-starter-consul-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-consul-config" }
 spring-cloud-starter-loadbalancer = { group = "org.springframework.cloud", name = "spring-cloud-starter-loadbalancer" }
 spring-cloud-starter-gateway-server-webmvc = { group = "org.springframework.cloud", name = "spring-cloud-starter-gateway-server-webmvc" }
+spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+
 
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 sonar = { id = "org.sonarqube", version.ref = "sonar" }
-
