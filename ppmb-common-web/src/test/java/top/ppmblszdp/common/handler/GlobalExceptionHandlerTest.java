@@ -94,7 +94,9 @@ class GlobalExceptionHandlerTest {
     }
 
     @PostMapping("/test/validation")
-    public void validateBody(@Valid @RequestBody TestRequest request) {}
+    public void validateBody(@Valid @RequestBody TestRequest request) {
+      // Intentionally empty. This endpoint is used solely to trigger validation errors.
+    }
 
     record TestRequest(@NotBlank String name) {}
   }
