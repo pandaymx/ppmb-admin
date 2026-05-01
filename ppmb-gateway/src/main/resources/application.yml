@@ -2,27 +2,28 @@ server:
   port: 9333
 
 spring:
+  profiles:
+    active: dev # 默认激活开发环境
   application:
     name: ppmb-gateway
   config:
     import: "optional:consul:"
   cloud:
     consul:
-      host: localhost
-      port: 8500
       discovery:
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${server.port}
         prefer-ip-address: true
     gateway:
-      mvc:
-        routes:
-          - id: admin-service-route
-            uri: lb://ppmb-admin
-            predicates:
-              - Path=/api/admin/**
-            filters:
-              - StripPrefix=2
+      server:
+        webmvc:
+          routes:
+            - id: admin-service-route
+              uri: lb://ppmb-admin
+              predicates:
+                - Path=/api/admin/**
+              filters:
+                - StripPrefix=2
 
 management:
   endpoints:
@@ -32,4 +33,3 @@ management:
   endpoint:
     health:
       show-details: always
-

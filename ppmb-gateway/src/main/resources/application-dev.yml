@@ -1,0 +1,12 @@
+server:
+  port: 9333
+
+spring:
+  cloud:
+    consul:
+      host: localhost # WSL2 访问 Windows Docker 的 Consul
+      port: 8500
+      discovery:
+        # 核心：告诉 Consul 通过这个地址找回 WSL2 里的应用
+        ip-address: host.docker.internal
+        health-check-path: /actuator/health
