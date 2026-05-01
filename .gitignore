@@ -45,7 +45,6 @@ yarn-error.log*
 .pnpm-debug.log*
 .next/
 
-# Consul/Microservices specific (if any local data)
 data/
 
 # Bun
