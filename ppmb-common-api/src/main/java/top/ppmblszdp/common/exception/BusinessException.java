@@ -8,6 +8,8 @@ import top.ppmblszdp.common.api.IResultCode;
 /** 业务异常基类. */
 @Getter
 public class BusinessException extends RuntimeException {
+  private static final long serialVersionUID = 1L;
+
   private final HttpStatus status;
   private final IResultCode resultCode;
   private final String detail;
