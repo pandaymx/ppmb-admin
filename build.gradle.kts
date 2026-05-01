@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.spring.boot) apply false
     alias(libs.plugins.spotless)
+    alias(libs.plugins.sonar)
 }
 
 // 提取公共属性，但不使用 subprojects 注入
@@ -31,5 +32,14 @@ spotless {
         trimTrailingWhitespace()
         leadingTabsToSpaces()
         endWithNewline()
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "ppmb-admin")
+        property("sonar.projectName", "ppmb-admin")
+        property("sonar.language", "java")
+        property("sonar.sourceEncoding", "UTF-8")
     }
 }
