@@ -2,7 +2,6 @@ plugins {
     id("buildlogic.java-common-conventions")
 }
 
-
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
@@ -13,6 +12,4 @@ dependencies {
     implementation(libs.findLibrary("spring-cloud-starter-consul-config").get())
     implementation(libs.findLibrary("spring-cloud-starter-loadbalancer").get())
     implementation(libs.findLibrary("spring-boot-starter-actuator").get())
-
 }
-

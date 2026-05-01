@@ -3,7 +3,6 @@ plugins {
     id("com.diffplug.spotless")
 }
 
-
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 checkstyle {
@@ -12,7 +11,6 @@ checkstyle {
     isIgnoreFailures = false
     maxWarnings = 0
 }
-
 
 spotless {
     java {
