@@ -9,7 +9,9 @@ import top.ppmblszdp.common.exception.BusinessException;
 public class JsonUtil {
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-  private JsonUtil() {}
+  private JsonUtil() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+  }
 
   /**
    * Converts an object to JSON string.
