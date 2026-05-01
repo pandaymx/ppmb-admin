@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.http.HttpStatus;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.exception.BusinessException;
@@ -170,7 +171,8 @@ public class CodeUtils {
   // ================== Snowflake Algorithm ==================
 
   /** Customized Snowflake ID Generator instance. Lazy initialized. */
-  private static volatile SnowflakeIdWorker snowflakeIdWorker;
+  private static final AtomicReference<SnowflakeIdWorker> SNOWFLAKE_ID_WORKER =
+      new AtomicReference<>();
 
   /**
    * Get a Snowflake ID.
@@ -178,14 +180,16 @@ public class CodeUtils {
    * @return Snowflake ID
    */
   public static long getSnowflakeId() {
-    if (snowflakeIdWorker == null) {
-      synchronized (CodeUtils.class) {
-        if (snowflakeIdWorker == null) {
-          snowflakeIdWorker = createSnowflakeIdWorker();
-        }
+    SnowflakeIdWorker worker = SNOWFLAKE_ID_WORKER.get();
+    if (worker == null) {
+      SnowflakeIdWorker newWorker = createSnowflakeIdWorker();
+      if (SNOWFLAKE_ID_WORKER.compareAndSet(null, newWorker)) {
+        worker = newWorker;
+      } else {
+        worker = SNOWFLAKE_ID_WORKER.get();
       }
     }
-    return snowflakeIdWorker.nextId();
+    return worker.nextId();
   }
 
   private static SnowflakeIdWorker createSnowflakeIdWorker() {
