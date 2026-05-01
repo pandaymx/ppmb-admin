@@ -27,6 +27,11 @@ testing {
         val test by getting(JvmTestSuite::class) {
             // Use JUnit Jupiter test framework
             useJUnitJupiter("6.0.1")
+            targets.all {
+                testTask.configure {
+                    finalizedBy(tasks.withType<JacocoReport>())
+                }
+            }
         }
     }
 }

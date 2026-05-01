@@ -43,5 +43,8 @@ sonar {
         property("sonar.organization", "pandaymx")
         property("sonar.projectKey", "pandaymx_ppmb-admin")
         property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.language", "java")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
     }
 }
