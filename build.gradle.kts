@@ -40,9 +40,9 @@ spotless {
 
 sonar {
     properties {
-        property("sonar.projectKey", "ppmb-admin")
-        property("sonar.projectName", "ppmb-admin")
-        property("sonar.language", "java")
-        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.organization", "pandaymx")
+        property("sonar.projectKey", "pandaymx_ppmb-admin")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
+
