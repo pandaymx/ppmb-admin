@@ -3,6 +3,8 @@ springBoot = "4.0.6"
 springCloud = "2025.1.1"
 spotless = "8.4.0"
 checkstyle = "13.4.1"
+sonar = "7.2.3.7755"
+
 
 
 [libraries]
@@ -16,3 +18,5 @@ spring-cloud-starter-loadbalancer = { group = "org.springframework.cloud", name 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+sonar = { id = "org.sonarqube", version.ref = "sonar" }
+
