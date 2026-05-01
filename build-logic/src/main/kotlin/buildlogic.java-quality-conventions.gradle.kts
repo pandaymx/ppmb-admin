@@ -3,12 +3,16 @@ plugins {
     id("com.diffplug.spotless")
 }
 
+
+val libs = the<VersionCatalogsExtension>().named("libs")
+
 checkstyle {
-    toolVersion = libs.versions.checkstyle.get()
+    toolVersion = libs.findVersion("checkstyle").get().requiredVersion
     configFile = rootProject.file("gradle/config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
     maxWarnings = 0
 }
+
 
 spotless {
     java {
