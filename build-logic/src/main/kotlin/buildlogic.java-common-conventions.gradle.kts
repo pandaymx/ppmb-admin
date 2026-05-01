@@ -37,3 +37,11 @@ java {
         languageVersion = JavaLanguageVersion.of(25)
     }
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.add("--enable-preview")
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs("--enable-preview")
+}
