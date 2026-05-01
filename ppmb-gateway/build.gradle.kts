@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":ppmb-common-web"))
+
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
+
     developmentOnly(libs.spring.boot.devtools)
 }
