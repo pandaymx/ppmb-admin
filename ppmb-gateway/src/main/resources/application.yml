@@ -1,0 +1,35 @@
+server:
+  port: 9333
+
+spring:
+  application:
+    name: ppmb-gateway
+  config:
+    import: "optional:consul:"
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}:${server.port}
+        prefer-ip-address: true
+    gateway:
+      mvc:
+        routes:
+          - id: admin-service-route
+            uri: lb://ppmb-admin
+            predicates:
+              - Path=/api/admin/**
+            filters:
+              - StripPrefix=2
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
