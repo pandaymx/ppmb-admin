@@ -19,16 +19,19 @@ allprojects {
 spotless {
     java {
         target("**/src/*/java/**/*.java")
+        targetExclude("postgres/data/**", "consul/data/**", "**/build/**")
         googleJavaFormat()
         removeUnusedImports()
         formatAnnotations()
     }
     kotlinGradle {
         target("*.gradle.kts", "build-logic/**/*.gradle.kts")
+        targetExclude("postgres/data/**", "consul/data/**", "**/build/**")
         ktlint()
     }
     format("misc") {
         target("*.md", ".gitignore", "gradle/**/*.toml")
+        targetExclude("postgres/data/**", "consul/data/**", "**/build/**")
         trimTrailingWhitespace()
         leadingTabsToSpaces()
         endWithNewline()
