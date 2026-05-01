@@ -4,6 +4,9 @@ springCloud = "2025.1.1"
 spotless = "8.4.0"
 checkstyle = "13.4.1"
 sonar = "7.2.3.7755"
+lombok = "1.18.46"
+
+
 
 
 
@@ -15,7 +18,14 @@ spring-cloud-starter-consul-config = { group = "org.springframework.cloud", name
 spring-cloud-starter-loadbalancer = { group = "org.springframework.cloud", name = "spring-cloud-starter-loadbalancer" }
 spring-cloud-starter-gateway-server-webmvc = { group = "org.springframework.cloud", name = "spring-cloud-starter-gateway-server-webmvc" }
 spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
 spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot-devtools", version.ref = "springBoot" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
+
+
+
 
 
 
