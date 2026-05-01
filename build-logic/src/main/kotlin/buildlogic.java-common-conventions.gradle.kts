@@ -5,8 +5,8 @@
  */
 
 plugins {
-    // Apply the java Plugin to add support for Java.
     java
+    id("buildlogic.java-quality-conventions")
 }
 
 repositories {
