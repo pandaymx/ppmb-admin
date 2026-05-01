@@ -17,3 +17,5 @@ plugins {
 }
 
 rootProject.name = "ppmb-admin"
+
+include("ppmb-gateway")
