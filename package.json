@@ -13,6 +13,9 @@
   "lint-staged": {
     "*.{ts,js,jsx,tsx,json,md}": [
       "prettier --write"
+    ],
+    "*.java": [
+      "./gradlew spotlessApply"
     ]
   },
   "peerDependencies": {
