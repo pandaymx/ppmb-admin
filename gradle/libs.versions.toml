@@ -7,6 +7,8 @@ spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-
 spring-cloud-dependencies = { group = "org.springframework.cloud", name = "spring-cloud-dependencies", version.ref = "springCloud" }
 spring-cloud-starter-consul-discovery = { group = "org.springframework.cloud", name = "spring-cloud-starter-consul-discovery" }
 spring-cloud-starter-consul-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-consul-config" }
+spring-cloud-starter-loadbalancer = { group = "org.springframework.cloud", name = "spring-cloud-starter-loadbalancer" }
+
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
