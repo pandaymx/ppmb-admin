@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":ppmb-common-api"))
     implementation(libs.findLibrary("spring-boot-starter-web").get())
     testImplementation(libs.findLibrary("spring-boot-starter-test").get())
+    testImplementation(libs.findLibrary("spring-boot-starter-validation").get())
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())
 }
