@@ -28,8 +28,8 @@ class AssertUtilsTest {
   @Test
   @DisplayName("断言对象不为空")
   void testNotNull() {
-    assertDoesNotThrow(
-        () -> AssertUtils.notNull(new Object(), CommonResultCode.SUCCESS), "对象不为空时不应抛出异常");
+    Object obj = new Object();
+    assertDoesNotThrow(() -> AssertUtils.notNull(obj, CommonResultCode.SUCCESS), "对象不为空时不应抛出异常");
     BusinessException ex =
         assertThrows(
             BusinessException.class,
@@ -66,13 +66,14 @@ class AssertUtilsTest {
   @Test
   @DisplayName("断言集合不为空")
   void testNotEmptyCollection() {
-    assertDoesNotThrow(
-        () -> AssertUtils.notEmpty(List.of(1), CommonResultCode.SUCCESS), "集合不为空时不应抛出异常");
+    List<Integer> list = List.of(1);
+    assertDoesNotThrow(() -> AssertUtils.notEmpty(list, CommonResultCode.SUCCESS), "集合不为空时不应抛出异常");
 
+    List<Object> emptyList = Collections.emptyList();
     BusinessException _ =
         assertThrows(
             BusinessException.class,
-            () -> AssertUtils.notEmpty(Collections.emptyList(), CommonResultCode.PARAM_ERROR),
+            () -> AssertUtils.notEmpty(emptyList, CommonResultCode.PARAM_ERROR),
             "空集合应抛出异常");
 
     BusinessException _ =
@@ -85,13 +86,14 @@ class AssertUtilsTest {
   @Test
   @DisplayName("断言 Map 不为空")
   void testNotEmptyMap() {
-    assertDoesNotThrow(
-        () -> AssertUtils.notEmpty(Map.of("k", "v"), CommonResultCode.SUCCESS), "Map 不为空时不应抛出异常");
+    Map<String, String> map = Map.of("k", "v");
+    assertDoesNotThrow(() -> AssertUtils.notEmpty(map, CommonResultCode.SUCCESS), "Map 不为空时不应抛出异常");
 
+    Map<Object, Object> emptyMap = Collections.emptyMap();
     BusinessException _ =
         assertThrows(
             BusinessException.class,
-            () -> AssertUtils.notEmpty(Collections.emptyMap(), CommonResultCode.PARAM_ERROR),
+            () -> AssertUtils.notEmpty(emptyMap, CommonResultCode.PARAM_ERROR),
             "空 Map 应抛出异常");
 
     BusinessException _ =

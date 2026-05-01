@@ -205,7 +205,7 @@ public class CodeUtils {
       // Use Math.floorMod to ensure positive result even if hashCode is negative
       workerId = Math.floorMod(hostAddress.hashCode(), 32);
       datacenterId = Math.floorMod(hostName.hashCode(), 32);
-    } catch (UnknownHostException e) {
+    } catch (UnknownHostException _) {
       // Fallback to random if host info cannot be fetched
       workerId = RANDOM.nextInt(32);
       datacenterId = RANDOM.nextInt(32);
