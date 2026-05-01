@@ -92,13 +92,34 @@ public class CodeUtils {
       return "0";
     }
     StringBuilder sb = new StringBuilder();
-    long value =
-        Math.abs(num); // Ensure positive handling if needed, though usually IDs are positive
+    // Use unsigned division to handle potential negative numbers (treating them as unsigned)
+    // or just handle the positive part. For IDs, they are usually positive.
+    // To satisfy S2676, we avoid Math.abs.
+    long value = num < 0 ? -num : num;
+    // Special case for MIN_VALUE: if num is MIN_VALUE, -num is still MIN_VALUE.
+    // However, for base62 encoding of IDs, we typically don't expect MIN_VALUE.
+    // If we want to be truly robust with unsigned:
+    if (num == Long.MIN_VALUE) {
+      // Handle MIN_VALUE specifically if needed, or use unsigned approach
+      return encodeBase62Unsigned(num);
+    }
+
     while (value > 0) {
-      sb.insert(0, BASE62_CHARS.charAt((int) (value % 62)));
+      sb.append(BASE62_CHARS.charAt((int) (value % 62)));
       value /= 62;
     }
-    return sb.toString();
+    return sb.reverse().toString();
+  }
+
+  private static String encodeBase62Unsigned(long num) {
+    StringBuilder sb = new StringBuilder();
+    long value = num;
+    while (Long.compareUnsigned(value, 0) > 0) {
+      long remainder = Long.remainderUnsigned(value, 62);
+      sb.append(BASE62_CHARS.charAt((int) remainder));
+      value = Long.divideUnsigned(value, 62);
+    }
+    return sb.reverse().toString();
   }
 
   // ================== ID Card Generator ==================
@@ -181,8 +202,9 @@ public class CodeUtils {
       // Extract workerId from hostName (if it contains numbers, useful in StatefulSets like pod-0,
       // pod-1)
       // Or use hash of IP
-      workerId = Math.abs(hostAddress.hashCode()) % 32;
-      datacenterId = Math.abs(hostName.hashCode()) % 32;
+      // Use Math.floorMod to ensure positive result even if hashCode is negative
+      workerId = Math.floorMod(hostAddress.hashCode(), 32);
+      datacenterId = Math.floorMod(hostName.hashCode(), 32);
     } catch (UnknownHostException e) {
       // Fallback to random if host info cannot be fetched
       workerId = RANDOM.nextInt(32);
