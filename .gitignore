@@ -45,7 +45,9 @@ yarn-error.log*
 .pnpm-debug.log*
 .next/
 
-# Consul/Microservices specific (if any local data)
+# Docker Data
+postgres/data
+consul/data
 data/
 
 # Bun
