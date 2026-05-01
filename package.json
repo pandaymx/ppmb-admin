@@ -15,7 +15,7 @@
       "prettier --write"
     ],
     "*.java": [
-      "./gradlew spotlessApply"
+      "bash -c './gradlew spotlessApply'"
     ]
   },
   "peerDependencies": {
