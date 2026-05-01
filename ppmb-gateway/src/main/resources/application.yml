@@ -2,14 +2,14 @@ server:
   port: 9333
 
 spring:
+  profiles:
+    active: dev # 默认激活开发环境
   application:
     name: ppmb-gateway
   config:
     import: "optional:consul:"
   cloud:
     consul:
-      host: localhost
-      port: 8500
       discovery:
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${server.port}
@@ -32,4 +32,3 @@ management:
   endpoint:
     health:
       show-details: always
-
