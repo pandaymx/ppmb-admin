@@ -1,7 +1,9 @@
 package top.ppmblszdp.common.api;
 
+import java.io.Serializable;
+
 /** 响应码接口. */
-public interface IResultCode {
+public interface IResultCode extends Serializable {
   /**
    * 获取响应码.
    *
