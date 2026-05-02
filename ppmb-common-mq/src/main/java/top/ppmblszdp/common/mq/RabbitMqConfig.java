@@ -1,13 +1,13 @@
 package top.ppmblszdp.common.mq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.retry.support.RetryTemplate;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * RabbitMQ AutoConfiguration for ppmb-common-mq. Provides generic JSON serialization and Retry
@@ -18,17 +18,17 @@ import org.springframework.retry.support.RetryTemplate;
 public class RabbitMqConfig {
 
   /**
-   * Configures Jackson2JsonMessageConverter to ensure message payloads are passed as JSON. This
+   * Configures JacksonJsonMessageConverter to ensure message payloads are passed as JSON. This
    * avoids native Java serialization which can cause class compatibility issues across
    * microservices.
    *
-   * @param objectMapper Spring's default ObjectMapper
    * @return the MessageConverter instance
    */
   @Bean
   @ConditionalOnMissingBean(MessageConverter.class)
-  public MessageConverter jsonMessageConverter(ObjectMapper objectMapper) {
-    return new Jackson2JsonMessageConverter(objectMapper, "*");
+  public MessageConverter jsonMessageConverter() {
+    JsonMapper jsonMapper = JsonMapper.builder().build();
+    return new JacksonJsonMessageConverter(jsonMapper, "*");
   }
 
   /**

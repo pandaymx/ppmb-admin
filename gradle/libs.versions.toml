@@ -6,6 +6,7 @@ checkstyle = "13.4.1"
 sonar = "7.2.3.7755"
 lombok = "1.18.46"
 jackson = "2.17.0"
+jackson3 = "3.1.2"
 jjwt = "0.12.6"
 springRetry = "2.0.11"
 
@@ -40,6 +41,9 @@ liquibase-core = { group = "org.liquibase", name = "liquibase-core" }
 jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwt" }
 jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt" }
 jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwt" }
+jackson3-databind = { group = "tools.jackson.core", name = "jackson-databind", version.ref = "jackson3" }
+jackson3-core = { group = "tools.jackson.core", name = "jackson-core", version.ref = "jackson3" }
+jackson3-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
 
 
 

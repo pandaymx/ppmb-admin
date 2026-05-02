@@ -2,11 +2,10 @@ package top.ppmblszdp.common.mq;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -30,7 +29,7 @@ class RabbitMqConfigTest {
               assertThat(context).hasSingleBean(MessageConverter.class);
               assertThat(context)
                   .getBean(MessageConverter.class)
-                  .isInstanceOf(Jackson2JsonMessageConverter.class);
+                  .isInstanceOf(JacksonJsonMessageConverter.class);
               assertThat(context).hasBean("rabbitRetryTemplate");
               assertThat(context).getBean("rabbitRetryTemplate").isInstanceOf(RetryTemplate.class);
             });
@@ -52,10 +51,6 @@ class RabbitMqConfigTest {
 
   @Configuration
   static class TestConfig {
-    @Bean
-    public ObjectMapper objectMapper() {
-      return new ObjectMapper();
-    }
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
@@ -66,7 +61,8 @@ class RabbitMqConfigTest {
   @Configuration
   static class ExistingBeanConfig extends TestConfig {
     static final MessageConverter CUSTOM_CONVERTER =
-        new Jackson2JsonMessageConverter(new ObjectMapper(), "*");
+        new JacksonJsonMessageConverter(
+            tools.jackson.databind.json.JsonMapper.builder().build(), "*");
 
     @Bean
     public MessageConverter messageConverter() {
