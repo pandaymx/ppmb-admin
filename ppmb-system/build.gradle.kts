@@ -8,19 +8,22 @@ plugins {
 dependencies {
     implementation(project(":ppmb-common-web"))
     implementation(project(":ppmb-common-api"))
-
     implementation(libs.spring.boot.starter.web)
-    runtimeOnly(libs.postgresql)
-    runtimeOnly(libs.h2)
+    implementation(libs.mapstruct.core)
+
     compileOnly(libs.lombok)
 
-    implementation(libs.mapstruct.core)
+    runtimeOnly(libs.postgresql)
+    runtimeOnly(libs.h2)
+
+    annotationProcessor(libs.lombok)
     annotationProcessor(libs.lombok.mapstruct.binding)
     annotationProcessor(libs.mapstruct.processor)
-    annotationProcessor(libs.lombok)
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.jacksonDatabind)
+
     testCompileOnly(libs.lombok)
+
     testAnnotationProcessor(libs.lombok)
 }
