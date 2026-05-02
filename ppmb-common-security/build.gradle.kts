@@ -19,4 +19,8 @@ dependencies {
 
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())
+
+    testImplementation(libs.findLibrary("spring-boot-starter-test").get())
+    testCompileOnly(libs.findLibrary("lombok").get())
+    testAnnotationProcessor(libs.findLibrary("lombok").get())
 }
