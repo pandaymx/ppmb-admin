@@ -438,22 +438,14 @@ class DictApplicationServiceImplTest {
   }
 
   @Test
-  @DisplayName("清除缓存-参数为null时不执行")
-  void clearCache_nullParam() {
-    // 先调用一次正常的数据操作来填充缓存
-    when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
-        .thenReturn(Arrays.asList(dictData));
-    dictService.getAvailableDictDataByType("user_status");
+  @DisplayName("清除缓存-测试私有方法处理null参数")
+  void clearCache_nullParam() throws Exception {
+    // 使用反射调用私有方法 clearCache
+    java.lang.reflect.Method method =
+        DictApplicationServiceImpl.class.getDeclaredMethod("clearCache", String.class);
+    method.setAccessible(true);
 
-    // 更新数据时，如果 dictType 为 null，不应该抛出异常
-    UpdateDictDataCommand command = new UpdateDictDataCommand();
-    command.setDictLabel("新标签");
-    command.setDictType(null);
-
-    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-
-    // 应该正常执行，不会抛出 NullPointerException
-    assertDoesNotThrow(() -> dictService.updateDictData(1L, command));
+    assertDoesNotThrow(() -> method.invoke(dictService, (String) null));
   }
 
   @Test
