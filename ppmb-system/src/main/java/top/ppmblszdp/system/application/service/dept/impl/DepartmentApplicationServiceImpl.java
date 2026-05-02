@@ -2,7 +2,6 @@ package top.ppmblszdp.system.application.service.dept.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class DepartmentApplicationServiceImpl implements DepartmentApplicationSe
 
   @Override
   public List<DepartmentDto> getAllDepartments() {
-    return departmentRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    return departmentRepository.findAll().stream().map(this::toDto).toList();
   }
 
   @Override
