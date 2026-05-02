@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260502-003
+      author: jules
+      changes:
+        - createTable:
+            tableName: sys_user_role
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: sys_user_role
+            indexName: idx_sys_user_role_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: sys_user_role
+            indexName: idx_sys_user_role_role_id
+            columns:
+              - column:
+                  name: role_id
