@@ -96,6 +96,17 @@ class PostControllerTest {
   }
 
   @Test
+  @DisplayName("查询所有岗位成功")
+  void getAllPosts_success() throws Exception {
+    when(postService.getAllPosts()).thenReturn(Arrays.asList(post));
+
+    mockMvc
+        .perform(get("/posts"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data[0].postCode").value("P001"));
+  }
+
+  @Test
   @DisplayName("更新岗位成功")
   void updatePost_success() throws Exception {
     when(postService.updatePost(eq(1L), any(PostDto.class))).thenReturn(post);
