@@ -55,8 +55,8 @@ class CommonMessageTest {
     assertNotEquals(m1, m3);
     assertNotEquals(m1.hashCode(), m3.hashCode());
     assertEquals(m1, m1);
-    assertNotEquals(m1, null);
-    assertNotEquals(m1, "string");
+    assertNotEquals(null, m1);
+    assertNotEquals("string", m1);
   }
 
   @Test
