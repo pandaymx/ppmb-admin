@@ -219,11 +219,14 @@ class PostApplicationServiceImplTest {
 
     final jakarta.persistence.criteria.CriteriaQuery<?> criteriaQuery =
         mock(jakarta.persistence.criteria.CriteriaQuery.class);
-    spec.toPredicate(root, criteriaQuery, cb);
+    jakarta.persistence.criteria.Predicate predicate = spec.toPredicate(root, criteriaQuery, cb);
+    assertNotNull(predicate, "生成的 Predicate 不应为空");
 
     // Test with empty query for remaining branches
     PostQuery emptyQuery = new PostQuery(1, 10, null, null, null);
     postService.getPostPage(emptyQuery);
-    specCaptor.getValue().toPredicate(root, criteriaQuery, cb);
+    jakarta.persistence.criteria.Predicate emptyPredicate =
+        specCaptor.getValue().toPredicate(root, criteriaQuery, cb);
+    assertNotNull(emptyPredicate, "生成的空 Predicate 不应为空");
   }
 }
