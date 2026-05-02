@@ -26,7 +26,7 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("部门应用服务测试")
-public class DepartmentApplicationServiceImplTest {
+class DepartmentApplicationServiceImplTest {
 
   @Mock private DepartmentRepository departmentRepository;
 
