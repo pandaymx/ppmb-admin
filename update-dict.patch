@@ -1,0 +1,96 @@
+--- ppmb-system/src/main/java/top/ppmblszdp/system/domain/model/dict/entity/DictType.java
++++ ppmb-system/src/main/java/top/ppmblszdp/system/domain/model/dict/entity/DictType.java
+@@ -4,6 +4,8 @@
+ import jakarta.persistence.Entity;
+ import jakarta.persistence.Table;
+ import lombok.AccessLevel;
+ import lombok.EqualsAndHashCode;
+ import lombok.Getter;
+ import lombok.NoArgsConstructor;
+ import lombok.Setter;
++import org.hibernate.annotations.SQLDelete;
++import org.hibernate.annotations.Where;
+ import top.ppmblszdp.common.api.CommonResultCode;
+ import top.ppmblszdp.common.domain.entity.BaseMainEntity;
+ import top.ppmblszdp.common.util.AssertUtils;
+
+ /** 字典类型领域实体. */
+ @Getter
+ @Setter(AccessLevel.PRIVATE)
+ @EqualsAndHashCode(callSuper = true)
+ @NoArgsConstructor(access = AccessLevel.PROTECTED)
+ @Entity
+ @Table(name = "sys_dict_type")
++@SQLDelete(sql = "UPDATE sys_dict_type SET del_flag = 1 WHERE id = ? and version = ?")
++@Where(clause = "del_flag = 0")
+ public class DictType extends BaseMainEntity {
+
+   @Column(name = "dict_name", nullable = false, length = 100)
+--- ppmb-system/src/main/java/top/ppmblszdp/system/domain/model/dict/repository/DictDataRepository.java
++++ ppmb-system/src/main/java/top/ppmblszdp/system/domain/model/dict/repository/DictDataRepository.java
+@@ -16,4 +16,6 @@
+   long countByParentId(Long parentId);
+
+   Page<DictData> findByDictType(String dictType, Pageable pageable);
++
++  void updateDictType(String oldDictType, String newDictType);
+ }
+--- ppmb-system/src/main/java/top/ppmblszdp/system/infrastructure/persistence/dict/repository/DictDataJpaRepository.java
++++ ppmb-system/src/main/java/top/ppmblszdp/system/infrastructure/persistence/dict/repository/DictDataJpaRepository.java
+@@ -4,6 +4,8 @@
+ import java.util.Optional;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.data.jpa.repository.JpaRepository;
++import org.springframework.data.jpa.repository.Modifying;
++import org.springframework.data.jpa.repository.Query;
+ import top.ppmblszdp.system.domain.model.dict.entity.DictData;
+
+ public interface DictDataJpaRepository extends JpaRepository<DictData, Long> {
+@@ -14,4 +16,8 @@
+   long countByParentId(Long parentId);
+
+   Page<DictData> findByDictType(String dictType, Pageable pageable);
++
++  @Modifying
++  @Query("update DictData set dictType = :newDictType where dictType = :oldDictType")
++  void updateDictType(String oldDictType, String newDictType);
+ }
+--- ppmb-system/src/main/java/top/ppmblszdp/system/infrastructure/persistence/dict/repository/DictDataRepositoryImpl.java
++++ ppmb-system/src/main/java/top/ppmblszdp/system/infrastructure/persistence/dict/repository/DictDataRepositoryImpl.java
+@@ -44,4 +44,9 @@
+   public Page<DictData> findByDictType(String dictType, Pageable pageable) {
+     return jpaRepository.findByDictType(dictType, pageable);
+   }
++
++  @Override
++  public void updateDictType(String oldDictType, String newDictType) {
++    jpaRepository.updateDictType(oldDictType, newDictType);
++  }
+ }
+--- ppmb-system/src/main/java/top/ppmblszdp/system/application/service/dict/impl/DictApplicationServiceImpl.java
++++ ppmb-system/src/main/java/top/ppmblszdp/system/application/service/dict/impl/DictApplicationServiceImpl.java
+@@ -87,6 +87,7 @@
+               });
+       clearCache(dictType.getDictType()); // Clear old cache
+       clearCache(command.getDictType()); // Clear new cache just in case
++      dictDataRepository.updateDictType(dictType.getDictType(), command.getDictType());
+     } else {
+       clearCache(dictType.getDictType());
+     }
+@@ -165,8 +166,13 @@
+             .findById(id)
+             .orElseThrow(() -> new BusinessException(
+                 org.springframework.http.HttpStatus.BAD_REQUEST, CommonResultCode.PARAM_ERROR, "字典数据不存在", null));
+
+-    if (command.getDictValue() != null && !command.getDictValue().equals(data.getDictValue())) {
++    boolean valueChanged = command.getDictValue() != null && !command.getDictValue().equals(data.getDictValue());
++    boolean typeChanged = command.getDictType() != null && !command.getDictType().equals(data.getDictType());
++
++    if (valueChanged || typeChanged) {
+       String checkType = command.getDictType() != null ? command.getDictType() : data.getDictType();
++      String checkValue = command.getDictValue() != null ? command.getDictValue() : data.getDictValue();
+       dictDataRepository
+-          .findByDictTypeAndDictValue(checkType, command.getDictValue())
++          .findByDictTypeAndDictValue(checkType, checkValue)
+           .ifPresent(
