@@ -1,4 +1,9 @@
 databaseChangeLog:
   - include:
-      file: db.changelog-sys-post.xml
-      relativeToChangelogFile: true
+      file: db/changelog/v1.0.0/20260502-001-create-sys-user.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260502-002-create-sys-role.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260502-003-create-sys-user-role.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260502-004-create-sys-post.xml

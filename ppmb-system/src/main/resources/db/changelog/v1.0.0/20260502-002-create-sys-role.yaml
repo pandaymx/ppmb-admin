@@ -1,0 +1,78 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260502-002
+      author: jules
+      changes:
+        - createTable:
+            tableName: sys_role
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by_dept
+                  type: BIGINT
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_code
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_readonly
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: sys_role
+            indexName: idx_sys_role_role_code
+            columns:
+              - column:
+                  name: role_code
