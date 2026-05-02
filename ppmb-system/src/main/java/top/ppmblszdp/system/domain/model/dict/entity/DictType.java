@@ -22,6 +22,7 @@ import top.ppmblszdp.common.util.AssertUtils;
 @Table(name = "sys_dict_type")
 @SQLDelete(sql = "UPDATE sys_dict_type SET del_flag = 1 WHERE id = ? and version = ?")
 @org.hibernate.annotations.SQLRestriction("del_flag = 0")
+@SuppressWarnings("java:S1700")
 public class DictType extends BaseMainEntity {
 
   @Column(name = "dict_name", nullable = false, length = 100)
