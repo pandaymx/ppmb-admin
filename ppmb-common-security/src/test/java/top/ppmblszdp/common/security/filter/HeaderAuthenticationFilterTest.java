@@ -106,4 +106,23 @@ class HeaderAuthenticationFilterTest {
     assertTrue(auth.getAuthorities().isEmpty());
     verify(filterChain).doFilter(request, response);
   }
+
+  @Test
+  @DisplayName("解析带有 ROLE_ 前缀的角色 Header")
+  void authenticateFromHeadersWithPrefixedRoles() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader(properties.getHeader().getUserId())).thenReturn("123");
+    when(request.getHeader(properties.getHeader().getUsername())).thenReturn("testuser");
+    // 一个带前缀，一个不带
+    when(request.getHeader(properties.getHeader().getRoles())).thenReturn("ROLE_ADMIN,USER");
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    filter.doFilterInternal(request, response, filterChain);
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    assertNotNull(auth);
+    assertTrue(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
+    assertTrue(auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+  }
 }
