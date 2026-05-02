@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,6 +51,28 @@ class RoleApplicationServiceImplTest {
   }
 
   @Test
+  @DisplayName("更新角色失败-只读角色")
+  void testUpdateRole_readonly() {
+    UpdateRoleCommand command = new UpdateRoleCommand("New Name", "New Desc");
+    Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
+    org.springframework.test.util.ReflectionTestUtils.setField(role, "isReadonly", true);
+    when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
+
+    assertThrows(BusinessException.class, () -> service.updateRole(1L, command));
+  }
+
+  @Test
+  @DisplayName("删除角色失败-只读角色")
+  void testDeleteRole_readonly() {
+    Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
+    org.springframework.test.util.ReflectionTestUtils.setField(role, "isReadonly", true);
+    when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
+
+    assertThrows(BusinessException.class, () -> service.deleteRole(1L));
+  }
+
+  @Test
+  @DisplayName("删除角色成功")
   void testDeleteRole() {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
@@ -59,6 +82,7 @@ class RoleApplicationServiceImplTest {
   }
 
   @Test
+  @DisplayName("删除角色失败-有关联用户")
   void testDeleteRoleWithUsersAssigned() {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
