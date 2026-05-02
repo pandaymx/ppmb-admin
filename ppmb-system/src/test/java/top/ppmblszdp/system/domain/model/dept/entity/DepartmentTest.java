@@ -50,4 +50,24 @@ class DepartmentTest {
     dept.enable();
     assertEquals(0, dept.getStatus());
   }
+
+  @Test
+  @DisplayName("创建部门-排序号为空时默认值为 0")
+  void createDepartmentWithNullSortNum() {
+    Department dept = Department.create("IT Department", "IT01", 0L, null);
+    assertEquals(0, dept.getSortNum());
+  }
+
+  @Test
+  @DisplayName("测试 Equals 和 HashCode")
+  void testEqualsAndHashCode() {
+    Department d1 = Department.create("IT", "IT01", 0L, 1);
+    Department d2 = Department.create("IT", "IT01", 0L, 1);
+
+    assertEquals(d1, d1);
+    assertEquals(d1, d2);
+    assertEquals(d1.hashCode(), d2.hashCode());
+    assertNotEquals(d1, null);
+    assertNotEquals(d1, "string");
+  }
 }
