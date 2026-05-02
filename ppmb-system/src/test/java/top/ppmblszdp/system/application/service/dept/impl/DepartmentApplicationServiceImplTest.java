@@ -29,6 +29,7 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 class DepartmentApplicationServiceImplTest {
 
   @Mock private DepartmentRepository departmentRepository;
+  @Mock private top.ppmblszdp.system.application.assembler.DepartmentAssembler departmentAssembler;
 
   @InjectMocks private DepartmentApplicationServiceImpl departmentService;
 
@@ -48,6 +49,7 @@ class DepartmentApplicationServiceImplTest {
   @DisplayName("创建部门")
   void createDepartment() {
     when(departmentRepository.save(any(Department.class))).thenReturn(department);
+    when(departmentAssembler.toDto(any(Department.class))).thenReturn(departmentDto);
 
     DepartmentDto result = departmentService.createDepartment(departmentDto);
 
@@ -59,6 +61,7 @@ class DepartmentApplicationServiceImplTest {
   @DisplayName("根据 ID 获取部门")
   void getDepartmentById() {
     when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+    when(departmentAssembler.toDto(any(Department.class))).thenReturn(departmentDto);
 
     Optional<DepartmentDto> result = departmentService.getDepartmentById(1L);
 
@@ -70,6 +73,7 @@ class DepartmentApplicationServiceImplTest {
   @DisplayName("获取所有部门")
   void getAllDepartments() {
     when(departmentRepository.findAll()).thenReturn(Arrays.asList(department));
+    when(departmentAssembler.toDtoList(any())).thenReturn(Arrays.asList(departmentDto));
 
     List<DepartmentDto> result = departmentService.getAllDepartments();
 
@@ -85,6 +89,7 @@ class DepartmentApplicationServiceImplTest {
 
     DepartmentDto updatedDto =
         new DepartmentDto(1L, null, "Updated HR", "HR01", null, null, null, null, 1, 0);
+    when(departmentAssembler.toDto(any(Department.class))).thenReturn(updatedDto);
 
     DepartmentDto result = departmentService.updateDepartment(1L, updatedDto);
 
