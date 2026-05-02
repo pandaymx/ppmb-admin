@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 /**
@@ -29,9 +27,8 @@ public class RabbitMqConfig {
    */
   @Bean
   @ConditionalOnMissingBean(MessageConverter.class)
-  @SuppressWarnings("deprecation")
   public MessageConverter jsonMessageConverter(ObjectMapper objectMapper) {
-    return new Jackson2JsonMessageConverter(objectMapper);
+    return new Jackson2JsonMessageConverter(objectMapper, "*");
   }
 
   /**
@@ -43,20 +40,6 @@ public class RabbitMqConfig {
   @Bean
   @ConditionalOnMissingBean(name = "rabbitRetryTemplate")
   public RetryTemplate rabbitRetryTemplate() {
-    // Exponential backoff strategy: Start with 1s, double up to 10s
-    ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-    backOffPolicy.setInitialInterval(1000L);
-    backOffPolicy.setMultiplier(2.0);
-    backOffPolicy.setMaxInterval(10000L);
-
-    // Max 3 retry attempts
-    SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-    retryPolicy.setMaxAttempts(3);
-
-    RetryTemplate retryTemplate = new RetryTemplate();
-    retryTemplate.setBackOffPolicy(backOffPolicy);
-    retryTemplate.setRetryPolicy(retryPolicy);
-
-    return retryTemplate;
+    return RetryTemplate.builder().maxAttempts(3).exponentialBackoff(1000L, 2.0, 10000L).build();
   }
 }

@@ -66,7 +66,7 @@ class RabbitMqConfigTest {
   @Configuration
   static class ExistingBeanConfig extends TestConfig {
     static final MessageConverter CUSTOM_CONVERTER =
-        new Jackson2JsonMessageConverter(new ObjectMapper());
+        new Jackson2JsonMessageConverter(new ObjectMapper(), "*");
 
     @Bean
     public MessageConverter messageConverter() {
