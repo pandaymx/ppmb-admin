@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: db.changelog-sys-post.xml
+      relativeToChangelogFile: true
