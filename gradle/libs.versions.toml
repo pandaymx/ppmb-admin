@@ -7,6 +7,7 @@ sonar = "7.2.3.7755"
 lombok = "1.18.46"
 jackson = "2.17.0"
 jjwt = "0.12.6"
+springRetry = "2.0.11"
 
 
 
@@ -28,6 +29,8 @@ spring-boot-devtools = { group = "org.springframework.boot", name = "spring-boot
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-boot-starter-test" }
 spring-boot-starter-security = { group = "org.springframework.boot", name = "spring-boot-starter-security" }
+spring-boot-starter-amqp = { group = "org.springframework.boot", name = "spring-boot-starter-amqp" }
+spring-retry = { group = "org.springframework.retry", name = "spring-retry", version.ref = "springRetry" }
 jacksonDatabind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 jacksonCore = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 jacksonAnnotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
