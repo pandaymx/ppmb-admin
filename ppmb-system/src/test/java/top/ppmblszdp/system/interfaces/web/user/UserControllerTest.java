@@ -2,11 +2,11 @@ package top.ppmblszdp.system.interfaces.web.user;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,5 +55,26 @@ class UserControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.username").value("testuser"))
         .andExpect(jsonPath("$.data.nickname").value("Tester"));
+  }
+
+  @Test
+  @DisplayName("根据 ID 获取用户")
+  void getUserById() throws Exception {
+    UserDto userDto = new UserDto(1L, "testuser", "Tester", "test@example.com", "123456", 0);
+    when(userApplicationService.getUserById(1L)).thenReturn(Optional.of(userDto));
+
+    mockMvc
+        .perform(get("/users/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data.username").value("testuser"));
+
+    when(userApplicationService.getUserById(2L)).thenReturn(Optional.empty());
+    mockMvc.perform(get("/users/2")).andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("删除用户")
+  void deleteUser() throws Exception {
+    mockMvc.perform(delete("/users/1")).andExpect(status().isOk());
   }
 }
