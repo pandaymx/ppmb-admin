@@ -25,6 +25,7 @@ import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.api.dto.PostDto;
 import top.ppmblszdp.common.api.query.PostQuery;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.PostAssembler;
 import top.ppmblszdp.system.domain.model.post.entity.Post;
 import top.ppmblszdp.system.domain.model.post.repository.PostRepository;
 
@@ -34,6 +35,8 @@ import top.ppmblszdp.system.domain.model.post.repository.PostRepository;
 class PostApplicationServiceImplTest {
 
   @Mock private PostRepository postRepository;
+
+  @Mock private PostAssembler postAssembler;
 
   @InjectMocks private PostApplicationServiceImpl postService;
 
@@ -52,11 +55,12 @@ class PostApplicationServiceImplTest {
     when(postRepository.existsByPostCode(postDto.postCode())).thenReturn(false);
     when(postRepository.existsByPostName(postDto.postName())).thenReturn(false);
     when(postRepository.save(any(Post.class))).thenReturn(post);
+    when(postAssembler.toDto(any(Post.class))).thenReturn(postDto);
 
-    Post result = postService.createPost(postDto);
+    PostDto result = postService.createPost(postDto);
 
     assertNotNull(result, "创建结果不应为空");
-    assertEquals("P001", result.getPostCode(), "岗位编码应一致");
+    assertEquals("P001", result.postCode(), "岗位编码应一致");
     verify(postRepository).save(any(Post.class));
   }
 
@@ -93,8 +97,9 @@ class PostApplicationServiceImplTest {
   @DisplayName("根据 ID 获取岗位成功")
   void getPostById_success() {
     when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+    when(postAssembler.toDto(any(Post.class))).thenReturn(postDto);
 
-    Post result = postService.getPostById(1L);
+    PostDto result = postService.getPostById(1L);
 
     assertNotNull(result, "获取结果不应为空");
   }
@@ -116,8 +121,9 @@ class PostApplicationServiceImplTest {
 
     Page<Post> page = new PageImpl<>(Arrays.asList(post));
     when(postRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+    when(postAssembler.toDtoList(anyList())).thenReturn(Arrays.asList(postDto));
 
-    PageResult<Post> result = postService.getPostPage(query);
+    PageResult<PostDto> result = postService.getPostPage(query);
 
     assertNotNull(result, "查询结果不应为空");
     assertEquals(1, result.total(), "总数应为 1");
@@ -131,8 +137,9 @@ class PostApplicationServiceImplTest {
     when(postRepository.existsByPostCodeAndIdNot(postDto.postCode(), 1L)).thenReturn(false);
     when(postRepository.existsByPostNameAndIdNot(postDto.postName(), 1L)).thenReturn(false);
     when(postRepository.save(any(Post.class))).thenReturn(post);
+    when(postAssembler.toDto(any(Post.class))).thenReturn(postDto);
 
-    Post result = postService.updatePost(1L, postDto);
+    PostDto result = postService.updatePost(1L, postDto);
 
     assertNotNull(result, "更新结果不应为空");
     verify(postRepository).save(any(Post.class));
@@ -179,8 +186,9 @@ class PostApplicationServiceImplTest {
   @DisplayName("获取所有岗位成功")
   void getAllPosts_success() {
     when(postRepository.findAll()).thenReturn(Arrays.asList(post));
+    when(postAssembler.toDtoList(anyList())).thenReturn(Arrays.asList(postDto));
 
-    List<Post> result = postService.getAllPosts();
+    List<PostDto> result = postService.getAllPosts();
 
     assertNotNull(result, "列表不应为空");
     assertEquals(1, result.size(), "数量应为 1");
