@@ -1,5 +1,6 @@
 plugins {
     id("buildlogic.spring-cloud-conventions")
+    id("buildlogic.native-image-conventions")
     alias(libs.plugins.spring.boot)
 }
 
