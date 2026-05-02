@@ -18,23 +18,24 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 public class DepartmentApplicationServiceImpl implements DepartmentApplicationService {
 
   private final DepartmentRepository departmentRepository;
+  private final top.ppmblszdp.system.application.assembler.DepartmentAssembler departmentAssembler;
 
   @Override
   @Transactional
   public DepartmentDto createDepartment(DepartmentDto dto) {
     Department department =
         Department.create(dto.deptName(), dto.deptCode(), dto.parentId(), dto.sortNum());
-    return toDto(departmentRepository.save(department));
+    return departmentAssembler.toDto(departmentRepository.save(department));
   }
 
   @Override
   public Optional<DepartmentDto> getDepartmentById(Long id) {
-    return departmentRepository.findById(id).map(this::toDto);
+    return departmentRepository.findById(id).map(departmentAssembler::toDto);
   }
 
   @Override
   public List<DepartmentDto> getAllDepartments() {
-    return departmentRepository.findAll().stream().map(this::toDto).toList();
+    return departmentAssembler.toDtoList(departmentRepository.findAll());
   }
 
   @Override
@@ -57,26 +58,12 @@ public class DepartmentApplicationServiceImpl implements DepartmentApplicationSe
         dto.leaderId(),
         dto.sortNum());
 
-    return toDto(departmentRepository.save(department));
+    return departmentAssembler.toDto(departmentRepository.save(department));
   }
 
   @Override
   @Transactional
   public void deleteDepartment(Long id) {
     departmentRepository.deleteById(id);
-  }
-
-  private DepartmentDto toDto(Department entity) {
-    return new DepartmentDto(
-        entity.getId(),
-        entity.getParentId(),
-        entity.getDeptName(),
-        entity.getDeptCode(),
-        entity.getAbbreviation(),
-        entity.getEmail(),
-        entity.getPhone(),
-        entity.getLeaderId(),
-        entity.getSortNum(),
-        entity.getStatus());
   }
 }
