@@ -67,7 +67,7 @@ class DepartmentTest {
     assertEquals(d1, d1);
     assertEquals(d1, d2);
     assertEquals(d1.hashCode(), d2.hashCode());
-    assertNotEquals(d1, null);
-    assertNotEquals(d1, "string");
+    assertNotEquals(null, d1);
+    assertNotEquals("string", d1);
   }
 }
