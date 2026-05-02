@@ -14,4 +14,6 @@ dependencies {
     implementation(libs.findLibrary("spring-boot-starter-data-jpa").get())
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())
+
+    testImplementation(libs.findLibrary("spring-boot-starter-test").get())
 }

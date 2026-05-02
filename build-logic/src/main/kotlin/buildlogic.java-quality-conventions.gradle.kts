@@ -42,10 +42,28 @@ tasks.withType<JacocoReport> {
         xml.required.set(true)
         html.required.set(true)
     }
+    classDirectories.setFrom(
+        files(
+            classDirectories.map {
+                fileTree(it).apply {
+                    exclude("**/*Application.class")
+                }
+            },
+        ),
+    )
 }
 
 tasks.withType<JacocoCoverageVerification> {
     dependsOn(tasks.withType<Test>())
+    classDirectories.setFrom(
+        files(
+            classDirectories.map {
+                fileTree(it).apply {
+                    exclude("**/*Application.class")
+                }
+            },
+        ),
+    )
     violationRules {
         rule {
             limit {
