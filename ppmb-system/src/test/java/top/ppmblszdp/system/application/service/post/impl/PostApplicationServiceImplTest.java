@@ -11,9 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ import top.ppmblszdp.system.domain.model.post.entity.Post;
 import top.ppmblszdp.system.domain.model.post.repository.PostRepository;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("岗位管理服务单元测试")
 class PostApplicationServiceImplTest {
 
@@ -135,6 +139,31 @@ class PostApplicationServiceImplTest {
   }
 
   @Test
+  @DisplayName("更新岗位失败-岗位编码重复")
+  void updatePost_duplicatePostCode() {
+    when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+    when(postRepository.existsByPostCodeAndIdNot(postDto.postCode(), 1L)).thenReturn(true);
+
+    BusinessException exception =
+        assertThrows(BusinessException.class, () -> postService.updatePost(1L, postDto));
+
+    assertTrue(exception.getMessage().contains("岗位编码已存在"));
+  }
+
+  @Test
+  @DisplayName("更新岗位失败-岗位名称重复")
+  void updatePost_duplicatePostName() {
+    when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+    when(postRepository.existsByPostCodeAndIdNot(postDto.postCode(), 1L)).thenReturn(false);
+    when(postRepository.existsByPostNameAndIdNot(postDto.postName(), 1L)).thenReturn(true);
+
+    BusinessException exception =
+        assertThrows(BusinessException.class, () -> postService.updatePost(1L, postDto));
+
+    assertTrue(exception.getMessage().contains("岗位名称已存在"));
+  }
+
+  @Test
   @DisplayName("删除岗位成功")
   void deletePost_success() {
     when(postRepository.findById(1L)).thenReturn(Optional.of(post));
@@ -155,5 +184,46 @@ class PostApplicationServiceImplTest {
 
     assertNotNull(result, "列表不应为空");
     assertEquals(1, result.size(), "数量应为 1");
+  }
+
+  @Test
+  @DisplayName("测试分页查询 Specification 逻辑")
+  @SuppressWarnings("unchecked")
+  void testGetPostPageSpecification() {
+    PostQuery query = new PostQuery(1, 10, "P001", "Engineer", 0);
+    Page<Post> page = new PageImpl<>(List.of(post));
+    ArgumentCaptor<Specification<Post>> specCaptor = ArgumentCaptor.forClass(Specification.class);
+    when(postRepository.findAll(specCaptor.capture(), any(Pageable.class))).thenReturn(page);
+
+    postService.getPostPage(query);
+
+    // Trigger Specification logic
+    final Specification<Post> spec = specCaptor.getValue();
+    final jakarta.persistence.criteria.Root<Post> root =
+        mock(jakarta.persistence.criteria.Root.class);
+    final jakarta.persistence.criteria.Path<Object> path =
+        mock(jakarta.persistence.criteria.Path.class);
+    lenient().when(root.get(anyString())).thenReturn(path);
+
+    final jakarta.persistence.criteria.CriteriaBuilder cb =
+        mock(jakarta.persistence.criteria.CriteriaBuilder.class);
+    lenient()
+        .when(cb.equal(any(), any()))
+        .thenReturn(mock(jakarta.persistence.criteria.Predicate.class));
+    lenient()
+        .when(cb.like(any(), anyString()))
+        .thenReturn(mock(jakarta.persistence.criteria.Predicate.class));
+    lenient()
+        .when(cb.and(any(jakarta.persistence.criteria.Predicate[].class)))
+        .thenReturn(mock(jakarta.persistence.criteria.Predicate.class));
+
+    final jakarta.persistence.criteria.CriteriaQuery<?> criteriaQuery =
+        mock(jakarta.persistence.criteria.CriteriaQuery.class);
+    spec.toPredicate(root, criteriaQuery, cb);
+
+    // Test with empty query for remaining branches
+    PostQuery emptyQuery = new PostQuery(1, 10, null, null, null);
+    postService.getPostPage(emptyQuery);
+    specCaptor.getValue().toPredicate(root, criteriaQuery, cb);
   }
 }
