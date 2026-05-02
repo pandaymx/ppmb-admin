@@ -29,6 +29,7 @@ spring-boot-starter-test = { group = "org.springframework.boot", name = "spring-
 jacksonDatabind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 jacksonCore = { group = "com.fasterxml.jackson.core", name = "jackson-core", version.ref = "jackson" }
 jacksonAnnotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
+liquibase-core = { group = "org.liquibase", name = "liquibase-core" }
 
 
 
