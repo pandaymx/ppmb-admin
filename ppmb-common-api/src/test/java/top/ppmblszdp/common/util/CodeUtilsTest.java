@@ -300,4 +300,48 @@ class CodeUtilsTest {
     long id = CodeUtils.getSnowflakeId();
     assertTrue(id > 0);
   }
+
+  @Test
+  @DisplayName("getSnowflakeId 并发初始化逻辑覆盖")
+  void testGetSnowflakeIdConcurrentInitialization() throws Exception {
+    // 1. 重置 SNOWFLAKE_ID_WORKER 为 null
+    java.lang.reflect.Field field = CodeUtils.class.getDeclaredField("SNOWFLAKE_ID_WORKER");
+    field.setAccessible(true);
+    java.util.concurrent.atomic.AtomicReference<Object> ref =
+        (java.util.concurrent.atomic.AtomicReference<Object>) field.get(null);
+    ref.set(null);
+
+    // 2. 模拟一个线程已经抢先初始化了 worker
+    java.lang.reflect.Method createMethod =
+        CodeUtils.class.getDeclaredMethod("createSnowflakeIdWorker");
+    createMethod.setAccessible(true);
+    Object existingWorker = createMethod.invoke(null);
+
+    // 3. 使用 Mockito 模拟 InetAddress.getLocalHost() 的行为来干扰初始化过程
+    try (var mockedInetAddress = org.mockito.Mockito.mockStatic(java.net.InetAddress.class)) {
+      java.net.InetAddress mockAddress = org.mockito.Mockito.mock(java.net.InetAddress.class);
+      org.mockito.Mockito.when(mockAddress.getHostAddress()).thenReturn("127.0.0.1");
+      org.mockito.Mockito.when(mockAddress.getHostName()).thenReturn("localhost");
+
+      mockedInetAddress
+          .when(java.net.InetAddress::getLocalHost)
+          .thenAnswer(
+              invocation -> {
+                // 在 createSnowflakeIdWorker 运行过程中，我们偷偷把 ref 设为已存在的值
+                // 这样 compareAndSet(null, newWorker) 就会失败
+                ref.compareAndSet(null, existingWorker);
+                return mockAddress;
+              });
+
+      // 4. 调用 getSnowflakeId()
+      // 此时 worker == null 为 true，进入 if 块。
+      // 调用 createSnowflakeIdWorker()，触发 mock 的 answer，ref 被设为 existingWorker。
+      // compareAndSet(null, newWorker) 失败，进入 else 块执行 ref.get()。
+      long id = CodeUtils.getSnowflakeId();
+      assertTrue(id > 0);
+
+      // 验证最终使用的确实是抢先设置的那个 worker
+      assertEquals(existingWorker, ref.get());
+    }
+  }
 }
