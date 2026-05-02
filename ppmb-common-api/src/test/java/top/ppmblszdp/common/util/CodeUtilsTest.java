@@ -230,4 +230,25 @@ class CodeUtilsTest {
 
     assertNotEquals(id1, id2);
   }
+
+  @Test
+  @DisplayName("createSnowflakeIdWorker 无法获取主机信息时的回退处理")
+  void testCreateSnowflakeIdWorkerUnknownHostException() throws Exception {
+    // Reset lazy initialized worker using reflection
+    java.lang.reflect.Field workerRefField =
+        CodeUtils.class.getDeclaredField("SNOWFLAKE_ID_WORKER");
+    workerRefField.setAccessible(true);
+    java.util.concurrent.atomic.AtomicReference<?> workerRef =
+        (java.util.concurrent.atomic.AtomicReference<?>) workerRefField.get(null);
+    workerRef.set(null);
+
+    try (var mockedInetAddress = org.mockito.Mockito.mockStatic(java.net.InetAddress.class)) {
+      mockedInetAddress
+          .when(java.net.InetAddress::getLocalHost)
+          .thenThrow(new java.net.UnknownHostException());
+
+      long id = CodeUtils.getSnowflakeId();
+      assertTrue(id > 0);
+    }
+  }
 }

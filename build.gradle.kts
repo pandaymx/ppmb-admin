@@ -46,5 +46,6 @@ sonar {
         property("sonar.language", "java")
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.exclusions", "**/GatewayApplication.java, **/*Application.java")
     }
 }
