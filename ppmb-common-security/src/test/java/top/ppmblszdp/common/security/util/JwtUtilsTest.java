@@ -38,6 +38,21 @@ class JwtUtilsTest {
 
     assertFalse(jwtUtils.extractToken("Invalid token").isPresent());
     assertFalse(jwtUtils.extractToken(null).isPresent());
+    assertFalse(jwtUtils.extractToken("Bearer").isPresent());
+  }
+
+  @Test
+  @DisplayName("构造方法处理空 Secret")
+  void constructorWithEmptySecret() {
+    PpmbSecurityProperties props1 = new PpmbSecurityProperties();
+    props1.getJwt().setSecret("");
+    JwtUtils utils1 = new JwtUtils(props1);
+    assertThrows(IllegalStateException.class, () -> utils1.parseToken("token"));
+
+    PpmbSecurityProperties props2 = new PpmbSecurityProperties();
+    props2.getJwt().setSecret(null);
+    JwtUtils utils2 = new JwtUtils(props2);
+    assertThrows(IllegalStateException.class, () -> utils2.parseToken("token"));
   }
 
   @Test
@@ -72,6 +87,8 @@ class JwtUtilsTest {
             .compact();
 
     assertFalse(jwtUtils.validateToken(token));
+    assertFalse(jwtUtils.validateToken("invalid-token-string"));
+    assertFalse(jwtUtils.validateToken(null));
   }
 
   @Test
