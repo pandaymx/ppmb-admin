@@ -19,6 +19,7 @@ plugins {
 rootProject.name = "ppmb-admin"
 
 include("ppmb-common-api")
+include("ppmb-common-security")
 include("ppmb-common-web")
 include("ppmb-gateway")
 include("ppmb-system")
