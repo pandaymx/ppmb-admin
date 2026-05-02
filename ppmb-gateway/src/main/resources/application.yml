@@ -24,6 +24,12 @@ spring:
                 - Path=/api/system/**
               filters:
                 - StripPrefix=2
+            - id: user-service-route
+              uri: lb://ppmb-system
+              predicates:
+                - Path=/api/user/**
+              filters:
+                - StripPrefix=2
 
 management:
   endpoints:
