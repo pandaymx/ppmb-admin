@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.util.Date;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +60,7 @@ public class JwtUtils {
    */
   public boolean validateToken(String token) {
     try {
-      Claims claims = parseToken(token);
-      if (claims.getExpiration().before(new Date())) {
-        log.warn("JWT is expired");
-        return false;
-      }
+      parseToken(token);
       return true;
     } catch (Exception e) {
       log.warn("Invalid JWT token: {}", e.getMessage());
