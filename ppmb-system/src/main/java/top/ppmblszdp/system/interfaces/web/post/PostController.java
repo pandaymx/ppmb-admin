@@ -16,7 +16,6 @@ import top.ppmblszdp.common.api.Result;
 import top.ppmblszdp.common.api.dto.PostDto;
 import top.ppmblszdp.common.api.query.PostQuery;
 import top.ppmblszdp.system.application.service.post.PostApplicationService;
-import top.ppmblszdp.system.domain.model.post.entity.Post;
 
 /** 岗位管理控制器. */
 @RestController
@@ -28,49 +27,33 @@ public class PostController {
 
   @PostMapping
   public Result<PostDto> createPost(@Validated @RequestBody PostDto postDto) {
-    return Result.success(convertToDto(postService.createPost(postDto)));
+    return Result.success(postService.createPost(postDto));
   }
 
   @GetMapping("/{id}")
   public Result<PostDto> getPostById(@PathVariable Long id) {
-    return Result.success(convertToDto(postService.getPostById(id)));
+    return Result.success(postService.getPostById(id));
   }
 
   @GetMapping("/page")
   public Result<PageResult<PostDto>> getPostPage(PostQuery query) {
-    PageResult<Post> page = postService.getPostPage(query);
-    return Result.success(
-        PageResult.of(
-            page.total(),
-            page.list().stream().map(this::convertToDto).toList(),
-            page.pageNum(),
-            page.pageSize()));
+    return Result.success(postService.getPostPage(query));
   }
 
   @GetMapping
   public Result<List<PostDto>> getAllPosts() {
-    return Result.success(postService.getAllPosts().stream().map(this::convertToDto).toList());
+    return Result.success(postService.getAllPosts());
   }
 
   @PutMapping("/{id}")
   public Result<PostDto> updatePost(
       @PathVariable Long id, @Validated @RequestBody PostDto postDto) {
-    return Result.success(convertToDto(postService.updatePost(id, postDto)));
+    return Result.success(postService.updatePost(id, postDto));
   }
 
   @DeleteMapping("/{id}")
   public Result<Void> deletePost(@PathVariable Long id) {
     postService.deletePost(id);
     return Result.success();
-  }
-
-  private PostDto convertToDto(Post post) {
-    return new PostDto(
-        post.getId(),
-        post.getPostCode(),
-        post.getPostName(),
-        post.getSortNum(),
-        post.getStatus(),
-        post.getRemark());
   }
 }

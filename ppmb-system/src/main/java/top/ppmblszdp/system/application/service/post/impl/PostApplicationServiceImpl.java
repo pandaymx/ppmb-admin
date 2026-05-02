@@ -17,6 +17,7 @@ import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.api.dto.PostDto;
 import top.ppmblszdp.common.api.query.PostQuery;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.PostAssembler;
 import top.ppmblszdp.system.application.service.post.PostApplicationService;
 import top.ppmblszdp.system.domain.model.post.entity.Post;
 import top.ppmblszdp.system.domain.model.post.repository.PostRepository;
@@ -27,10 +28,11 @@ import top.ppmblszdp.system.domain.model.post.repository.PostRepository;
 public class PostApplicationServiceImpl implements PostApplicationService {
 
   private final PostRepository postRepository;
+  private final PostAssembler postAssembler;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Post createPost(PostDto postDto) {
+  public PostDto createPost(PostDto postDto) {
     checkUnique(postDto, null);
     Post post =
         Post.create(
@@ -39,11 +41,10 @@ public class PostApplicationServiceImpl implements PostApplicationService {
             postDto.sortNum(),
             postDto.status(),
             postDto.remark());
-    return postRepository.save(post);
+    return postAssembler.toDto(postRepository.save(post));
   }
 
-  @Override
-  public Post getPostById(Long id) {
+  private Post getEntityById(Long id) {
     return postRepository
         .findById(id)
         .orElseThrow(
@@ -53,7 +54,12 @@ public class PostApplicationServiceImpl implements PostApplicationService {
   }
 
   @Override
-  public PageResult<Post> getPostPage(PostQuery query) {
+  public PostDto getPostById(Long id) {
+    return postAssembler.toDto(getEntityById(id));
+  }
+
+  @Override
+  public PageResult<PostDto> getPostPage(PostQuery query) {
     Pageable pageable = PageRequest.of(query.pageNum() - 1, query.pageSize());
 
     Specification<Post> spec =
@@ -78,13 +84,16 @@ public class PostApplicationServiceImpl implements PostApplicationService {
 
     Page<Post> page = postRepository.findAll(spec, pageable);
     return PageResult.of(
-        page.getTotalElements(), page.getContent(), query.pageNum(), query.pageSize());
+        page.getTotalElements(),
+        postAssembler.toDtoList(page.getContent()),
+        query.pageNum(),
+        query.pageSize());
   }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public Post updatePost(Long id, PostDto postDto) {
-    Post post = getPostById(id);
+  public PostDto updatePost(Long id, PostDto postDto) {
+    Post post = getEntityById(id);
     checkUnique(postDto, id);
 
     post.update(
@@ -94,20 +103,20 @@ public class PostApplicationServiceImpl implements PostApplicationService {
         postDto.status(),
         postDto.remark());
 
-    return postRepository.save(post);
+    return postAssembler.toDto(postRepository.save(post));
   }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void deletePost(Long id) {
-    Post post = getPostById(id);
+    Post post = getEntityById(id);
     post.delete();
     postRepository.save(post);
   }
 
   @Override
-  public List<Post> getAllPosts() {
-    return postRepository.findAll();
+  public List<PostDto> getAllPosts() {
+    return postAssembler.toDtoList(postRepository.findAll());
   }
 
   private void checkUnique(PostDto postDto, Long id) {
