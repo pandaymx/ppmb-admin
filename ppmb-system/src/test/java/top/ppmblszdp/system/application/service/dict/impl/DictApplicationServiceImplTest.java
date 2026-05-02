@@ -41,6 +41,7 @@ class DictApplicationServiceImplTest {
 
   @Mock private DictTypeRepository dictTypeRepository;
   @Mock private DictDataRepository dictDataRepository;
+  @Mock private top.ppmblszdp.system.application.assembler.DictAssembler dictAssembler;
 
   @InjectMocks private DictApplicationServiceImpl dictService;
 
@@ -79,6 +80,10 @@ class DictApplicationServiceImplTest {
 
     when(dictTypeRepository.findByDictType("user_status")).thenReturn(Optional.empty());
     when(dictTypeRepository.save(any(DictType.class))).thenReturn(dictType);
+    DictTypeDto dummyDto = new DictTypeDto();
+    dummyDto.setDictName("用户状态");
+    dummyDto.setDictType("user_status");
+    when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     DictTypeDto result = dictService.createDictType(command);
 
@@ -233,6 +238,9 @@ class DictApplicationServiceImplTest {
   @DisplayName("根据ID获取字典类型成功")
   void getDictTypeById_success() {
     when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
+    DictTypeDto dummyDto = new DictTypeDto();
+    dummyDto.setDictType("user_status");
+    when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     Optional<DictTypeDto> result = dictService.getDictTypeById(1L);
 
@@ -253,10 +261,13 @@ class DictApplicationServiceImplTest {
   @Test
   @DisplayName("分页查询字典类型成功")
   void pageDictTypes_success() {
-    PageQuery pageQuery = new PageQuery(1, 10);
+    final PageQuery pageQuery = new PageQuery(1, 10);
     Page<DictType> page = new PageImpl<>(Arrays.asList(dictType));
 
     when(dictTypeRepository.findAll(any(Pageable.class))).thenReturn(page);
+    DictTypeDto dummyDto = new DictTypeDto();
+    dummyDto.setDictType("user_status");
+    when(dictAssembler.toTypeDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     PageResult<DictTypeDto> result = dictService.pageDictTypes(pageQuery);
 
@@ -282,6 +293,10 @@ class DictApplicationServiceImplTest {
     when(dictDataRepository.findByDictTypeAndDictValue("user_status", "1"))
         .thenReturn(Optional.empty());
     when(dictDataRepository.save(any(DictData.class))).thenReturn(dictData);
+    DictDataDto dummyDto = new DictDataDto();
+    dummyDto.setDictLabel("启用");
+    dummyDto.setDictValue("1");
+    when(dictAssembler.toDataDto(any(DictData.class))).thenReturn(dummyDto);
 
     DictDataDto result = dictService.createDictData(command);
 
@@ -456,6 +471,9 @@ class DictApplicationServiceImplTest {
   @DisplayName("根据ID获取字典数据成功")
   void getDictDataById_success() {
     when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+    DictDataDto dummyDto = new DictDataDto();
+    dummyDto.setDictLabel("启用");
+    when(dictAssembler.toDataDto(any(DictData.class))).thenReturn(dummyDto);
 
     Optional<DictDataDto> result = dictService.getDictDataById(1L);
 
@@ -476,11 +494,14 @@ class DictApplicationServiceImplTest {
   @Test
   @DisplayName("分页查询字典数据成功")
   void pageDictData_success() {
-    PageQuery pageQuery = new PageQuery(1, 10);
+    final PageQuery pageQuery = new PageQuery(1, 10);
     Page<DictData> page = new PageImpl<>(Arrays.asList(dictData));
 
     when(dictDataRepository.findByDictType(eq("user_status"), any(Pageable.class)))
         .thenReturn(page);
+    DictDataDto dummyDto = new DictDataDto();
+    dummyDto.setDictLabel("启用");
+    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     PageResult<DictDataDto> result = dictService.pageDictData("user_status", pageQuery);
 
@@ -494,6 +515,9 @@ class DictApplicationServiceImplTest {
   void getAvailableDictDataByType_fromDb() {
     when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
         .thenReturn(Arrays.asList(dictData));
+    DictDataDto dummyDto = new DictDataDto();
+    dummyDto.setDictLabel("启用");
+    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     List<DictDataDto> result = dictService.getAvailableDictDataByType("user_status");
 
@@ -507,6 +531,9 @@ class DictApplicationServiceImplTest {
   void getAvailableDictDataByType_fromCache() {
     when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
         .thenReturn(Arrays.asList(dictData));
+    DictDataDto dummyDto = new DictDataDto();
+    dummyDto.setDictLabel("启用");
+    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     List<DictDataDto> result1 = dictService.getAvailableDictDataByType("user_status");
     assertNotNull(result1);
@@ -523,6 +550,7 @@ class DictApplicationServiceImplTest {
   void getAvailableDictDataByType_empty() {
     when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("empty_type", 0))
         .thenReturn(Collections.emptyList());
+    when(dictAssembler.toDataDtoList(any())).thenReturn(Collections.emptyList());
 
     List<DictDataDto> result = dictService.getAvailableDictDataByType("empty_type");
 

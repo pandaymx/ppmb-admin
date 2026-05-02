@@ -31,6 +31,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
 
   private final DictTypeRepository dictTypeRepository;
   private final DictDataRepository dictDataRepository;
+  private final top.ppmblszdp.system.application.assembler.DictAssembler dictAssembler;
 
   // Simple local cache for dict data
   private final Map<String, List<DictDataDto>> dictCache = new ConcurrentHashMap<>();
@@ -65,7 +66,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
             command.getStatus(),
             command.getRemark());
     DictType saved = dictTypeRepository.save(dictType);
-    return convertToDto(saved);
+    return dictAssembler.toTypeDto(saved);
   }
 
   @Override
@@ -142,14 +143,14 @@ public class DictApplicationServiceImpl implements DictApplicationService {
 
   @Override
   public Optional<DictTypeDto> getDictTypeById(Long id) {
-    return dictTypeRepository.findById(id).map(this::convertToDto);
+    return dictTypeRepository.findById(id).map(dictAssembler::toTypeDto);
   }
 
   @Override
   public PageResult<DictTypeDto> pageDictTypes(PageQuery pageQuery) {
     PageRequest request = PageRequest.of(pageQuery.pageNum() - 1, pageQuery.pageSize());
     Page<DictType> page = dictTypeRepository.findAll(request);
-    List<DictTypeDto> dtos = page.getContent().stream().map(this::convertToDto).toList();
+    List<DictTypeDto> dtos = dictAssembler.toTypeDtoList(page.getContent());
     return PageResult.of(page.getTotalElements(), dtos, pageQuery.pageNum(), pageQuery.pageSize());
   }
 
@@ -183,7 +184,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
 
     DictData saved = dictDataRepository.save(data);
     clearCache(command.getDictType());
-    return convertToDto(saved);
+    return dictAssembler.toDataDto(saved);
   }
 
   @Override
@@ -260,14 +261,14 @@ public class DictApplicationServiceImpl implements DictApplicationService {
 
   @Override
   public Optional<DictDataDto> getDictDataById(Long id) {
-    return dictDataRepository.findById(id).map(this::convertToDto);
+    return dictDataRepository.findById(id).map(dictAssembler::toDataDto);
   }
 
   @Override
   public PageResult<DictDataDto> pageDictData(String dictType, PageQuery pageQuery) {
     PageRequest request = PageRequest.of(pageQuery.pageNum() - 1, pageQuery.pageSize());
     Page<DictData> page = dictDataRepository.findByDictType(dictType, request);
-    List<DictDataDto> dtos = page.getContent().stream().map(this::convertToDto).toList();
+    List<DictDataDto> dtos = dictAssembler.toDataDtoList(page.getContent());
     return PageResult.of(page.getTotalElements(), dtos, pageQuery.pageNum(), pageQuery.pageSize());
   }
 
@@ -279,38 +280,10 @@ public class DictApplicationServiceImpl implements DictApplicationService {
           List<DictData> list =
               dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc(
                   k, 0); // 0 normally means normal/enabled
-          return list.stream().map(this::convertToDto).toList();
+          return dictAssembler.toDataDtoList(list);
         });
   }
 
   // --- Converters ---
 
-  private DictTypeDto convertToDto(DictType entity) {
-    DictTypeDto dto = new DictTypeDto();
-    dto.setId(entity.getId());
-    dto.setDictName(entity.getDictName());
-    dto.setDictType(entity.getDictType());
-    dto.setSystemFlag(entity.getSystemFlag());
-    dto.setStatus(entity.getStatus());
-    dto.setRemark(entity.getRemark());
-    dto.setCreateTime(entity.getCreateTime());
-    dto.setUpdateTime(entity.getUpdateTime());
-    return dto;
-  }
-
-  private DictDataDto convertToDto(DictData entity) {
-    DictDataDto dto = new DictDataDto();
-    dto.setId(entity.getId());
-    dto.setParentId(entity.getParentId());
-    dto.setDictSort(entity.getDictSort());
-    dto.setDictLabel(entity.getDictLabel());
-    dto.setDictValue(entity.getDictValue());
-    dto.setDictType(entity.getDictType());
-    dto.setIsDefault(entity.getIsDefault());
-    dto.setListClass(entity.getListClass());
-    dto.setStatus(entity.getStatus());
-    dto.setRemark(entity.getRemark());
-    dto.setCreateTime(entity.getCreateTime());
-    return dto;
-  }
 }
