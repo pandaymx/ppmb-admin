@@ -22,6 +22,7 @@ import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 class UserApplicationServiceImplTest {
 
   @Mock private UserRepository userRepository;
+  @Mock private top.ppmblszdp.system.application.assembler.UserAssembler userAssembler;
 
   @InjectMocks private UserApplicationServiceImpl userService;
 
@@ -39,6 +40,8 @@ class UserApplicationServiceImplTest {
   @DisplayName("创建用户成功")
   void createUser() {
     when(userRepository.save(any(User.class))).thenReturn(user);
+    UserDto dummyDto = new UserDto(1L, "testuser", "Tester", "test@example.com", "123456", 0);
+    when(userAssembler.toDto(any(User.class))).thenReturn(dummyDto);
 
     UserDto result = userService.createUser(command);
 
@@ -51,6 +54,8 @@ class UserApplicationServiceImplTest {
   @DisplayName("根据 ID 获取用户成功")
   void getUserById() {
     when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    UserDto dummyDto = new UserDto(1L, "testuser", "Tester", "test@example.com", "123456", 0);
+    when(userAssembler.toDto(any(User.class))).thenReturn(dummyDto);
 
     Optional<UserDto> result = userService.getUserById(1L);
 

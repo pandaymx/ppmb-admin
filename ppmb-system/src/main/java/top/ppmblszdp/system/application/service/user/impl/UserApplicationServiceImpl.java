@@ -15,33 +15,24 @@ import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 public class UserApplicationServiceImpl implements UserApplicationService {
 
   private final UserRepository userRepository;
+  private final top.ppmblszdp.system.application.assembler.UserAssembler userAssembler;
 
   @Override
   @Transactional
   public UserDto createUser(CreateUserCommand command) {
     User user = User.create(command.username(), command.password(), command.nickname());
     user.updateInfo(command.nickname(), command.email(), command.phone());
-    return toDto(userRepository.save(user));
+    return userAssembler.toDto(userRepository.save(user));
   }
 
   @Override
   public Optional<UserDto> getUserById(Long id) {
-    return userRepository.findById(id).map(this::toDto);
+    return userRepository.findById(id).map(userAssembler::toDto);
   }
 
   @Override
   @Transactional
   public void deleteUser(Long id) {
     userRepository.deleteById(id);
-  }
-
-  private UserDto toDto(User user) {
-    return new UserDto(
-        user.getId(),
-        user.getUsername(),
-        user.getNickname(),
-        user.getEmail(),
-        user.getPhone(),
-        user.getStatus());
   }
 }
