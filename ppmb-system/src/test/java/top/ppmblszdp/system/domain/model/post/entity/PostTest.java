@@ -30,6 +30,16 @@ class PostTest {
   }
 
   @Test
+  @DisplayName("创建岗位成功-空值处理")
+  void createPost_null_handling() {
+    Post post = Post.create("P001", "Name", null, null, null);
+    assertNotNull(post);
+    assertEquals(0, post.getSortNum(), "默认排序应为 0");
+    assertEquals(0, post.getStatus(), "默认状态应为 0");
+    assertNull(post.getRemark());
+  }
+
+  @Test
   @DisplayName("更新岗位成功")
   void updatePost_success() {
     Post post = Post.create("P001", "Software Engineer", 1, 0, "Remark");
@@ -39,6 +49,18 @@ class PostTest {
     assertEquals(2, post.getSortNum());
     assertEquals(1, post.getStatus());
     assertEquals("New Remark", post.getRemark());
+  }
+
+  @Test
+  @DisplayName("更新岗位成功-空值处理")
+  void updatePost_null_handling() {
+    Post post = Post.create("P001", "Name", 1, 0, "Remark");
+    post.update("P002", "New Name", null, null, null);
+    assertEquals("P002", post.getPostCode());
+    assertEquals("New Name", post.getPostName());
+    assertNull(post.getSortNum());
+    assertEquals(0, post.getStatus(), "状态为 null 时应保持原值");
+    assertNull(post.getRemark());
   }
 
   @Test
