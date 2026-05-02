@@ -277,13 +277,8 @@ public class DictApplicationServiceImpl implements DictApplicationService {
     return dictCache.computeIfAbsent(
         dictType,
         k -> {
-          List<DictData> list =
-              dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc(
-                  k, 0); // 0 normally means normal/enabled
+          List<DictData> list = dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc(k, 0);
           return dictAssembler.toDataDtoList(list);
         });
   }
-
-  // --- Converters ---
-
 }
