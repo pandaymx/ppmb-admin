@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonMessage<T> implements Serializable {
+public class CommonMessage<T extends Serializable> implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
