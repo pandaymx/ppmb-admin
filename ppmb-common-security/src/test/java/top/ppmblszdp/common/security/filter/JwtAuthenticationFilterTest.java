@@ -120,4 +120,37 @@ class JwtAuthenticationFilterTest {
     assertNull(SecurityContextHolder.getContext().getAuthentication());
     verify(filterChain).doFilter(request, response);
   }
+
+  @Test
+  @DisplayName("缺失 Authorization 标头时不应设置 Authentication")
+  void testMissingAuthorizationHeader() throws Exception {
+    properties.setGatewayMode(true);
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader("Authorization")).thenReturn(null);
+    when(jwtUtils.extractToken(null)).thenReturn(Optional.empty());
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    filter.doFilterInternal(request, response, filterChain);
+
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+  }
+
+  @Test
+  @DisplayName("Authorization 标头格式错误时不应设置 Authentication")
+  void testMalformedAuthorizationHeader() throws Exception {
+    properties.setGatewayMode(true);
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    String headerValue = "WrongPrefix token";
+    when(request.getHeader("Authorization")).thenReturn(headerValue);
+    when(jwtUtils.extractToken(headerValue)).thenReturn(Optional.empty());
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    filter.doFilterInternal(request, response, filterChain);
+
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+  }
 }
