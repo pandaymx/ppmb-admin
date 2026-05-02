@@ -1,6 +1,7 @@
 package top.ppmblszdp.common.security.filter;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import jakarta.servlet.FilterChain;
@@ -70,6 +71,39 @@ class HeaderAuthenticationFilterTest {
     filter.doFilterInternal(request, response, filterChain);
 
     assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+  }
+
+  @Test
+  @DisplayName("请求头缺失时不应设置 Authentication")
+  void authenticateWithMissingHeaders() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader(anyString())).thenReturn(null);
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    filter.doFilterInternal(request, response, filterChain);
+
+    assertNull(SecurityContextHolder.getContext().getAuthentication());
+    verify(filterChain).doFilter(request, response);
+  }
+
+  @Test
+  @DisplayName("缺失用户名时应使用用户 ID 作为 Principal，且处理空角色头")
+  void authenticateWithMissingUsernameAndEmptyRoles() throws Exception {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader(properties.getHeader().getUserId())).thenReturn("123");
+    when(request.getHeader(properties.getHeader().getUsername())).thenReturn("");
+    when(request.getHeader(properties.getHeader().getRoles())).thenReturn("  ");
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    FilterChain filterChain = mock(FilterChain.class);
+    filter.doFilterInternal(request, response, filterChain);
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    assertNotNull(auth);
+    assertEquals("123", auth.getName());
+    assertTrue(auth.getAuthorities().isEmpty());
     verify(filterChain).doFilter(request, response);
   }
 }
