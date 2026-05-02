@@ -12,7 +12,7 @@ import top.ppmblszdp.common.exception.BusinessException;
 import top.ppmblszdp.system.application.service.dept.DepartmentApplicationService;
 import top.ppmblszdp.system.domain.model.dept.entity.Department;
 import top.ppmblszdp.system.domain.model.dept.repository.DepartmentRepository;
-import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDTO;
+import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 
 @Service
 @RequiredArgsConstructor
@@ -22,25 +22,25 @@ public class DepartmentApplicationServiceImpl implements DepartmentApplicationSe
 
   @Override
   @Transactional
-  public DepartmentDTO createDepartment(DepartmentDTO dto) {
+  public DepartmentDto createDepartment(DepartmentDto dto) {
     Department department =
         Department.create(dto.deptName(), dto.deptCode(), dto.parentId(), dto.sortNum());
-    return toDTO(departmentRepository.save(department));
+    return toDto(departmentRepository.save(department));
   }
 
   @Override
-  public Optional<DepartmentDTO> getDepartmentById(Long id) {
-    return departmentRepository.findById(id).map(this::toDTO);
+  public Optional<DepartmentDto> getDepartmentById(Long id) {
+    return departmentRepository.findById(id).map(this::toDto);
   }
 
   @Override
-  public List<DepartmentDTO> getAllDepartments() {
-    return departmentRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+  public List<DepartmentDto> getAllDepartments() {
+    return departmentRepository.findAll().stream().map(this::toDto).collect(Collectors.toList());
   }
 
   @Override
   @Transactional
-  public DepartmentDTO updateDepartment(Long id, DepartmentDTO dto) {
+  public DepartmentDto updateDepartment(Long id, DepartmentDto dto) {
     Department department =
         departmentRepository
             .findById(id)
@@ -58,7 +58,7 @@ public class DepartmentApplicationServiceImpl implements DepartmentApplicationSe
         dto.leaderId(),
         dto.sortNum());
 
-    return toDTO(departmentRepository.save(department));
+    return toDto(departmentRepository.save(department));
   }
 
   @Override
@@ -67,8 +67,8 @@ public class DepartmentApplicationServiceImpl implements DepartmentApplicationSe
     departmentRepository.deleteById(id);
   }
 
-  private DepartmentDTO toDTO(Department entity) {
-    return new DepartmentDTO(
+  private DepartmentDto toDto(Department entity) {
+    return new DepartmentDto(
         entity.getId(),
         entity.getParentId(),
         entity.getDeptName(),

@@ -25,7 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import top.ppmblszdp.system.application.service.dept.DepartmentApplicationService;
-import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDTO;
+import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("部门管理接口测试")
@@ -39,27 +39,27 @@ public class DepartmentControllerTest {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  private DepartmentDTO departmentDTO;
+  private DepartmentDto departmentDto;
 
   @BeforeEach
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(departmentController).build();
 
-    departmentDTO =
-        new DepartmentDTO(
+    departmentDto =
+        new DepartmentDto(
             1L, null, "IT Department", "IT01", "IT", "it@example.com", "123456", 1L, 1, 0);
   }
 
   @Test
   @DisplayName("创建部门")
   void createDepartment() throws Exception {
-    when(departmentService.createDepartment(any(DepartmentDTO.class))).thenReturn(departmentDTO);
+    when(departmentService.createDepartment(any(DepartmentDto.class))).thenReturn(departmentDto);
 
     mockMvc
         .perform(
             post("/departments")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(departmentDTO)))
+                .content(objectMapper.writeValueAsString(departmentDto)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.id").value(1))
         .andExpect(jsonPath("$.data.deptName").value("IT Department"));
@@ -68,7 +68,7 @@ public class DepartmentControllerTest {
   @Test
   @DisplayName("根据 ID 获取部门")
   void getDepartmentById() throws Exception {
-    when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(departmentDTO));
+    when(departmentService.getDepartmentById(1L)).thenReturn(Optional.of(departmentDto));
 
     mockMvc
         .perform(get("/departments/1"))
@@ -80,7 +80,7 @@ public class DepartmentControllerTest {
   @Test
   @DisplayName("获取所有部门")
   void getAllDepartments() throws Exception {
-    when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(departmentDTO));
+    when(departmentService.getAllDepartments()).thenReturn(Arrays.asList(departmentDto));
 
     mockMvc
         .perform(get("/departments"))
@@ -92,14 +92,14 @@ public class DepartmentControllerTest {
   @Test
   @DisplayName("更新部门")
   void updateDepartment() throws Exception {
-    when(departmentService.updateDepartment(eq(1L), any(DepartmentDTO.class)))
-        .thenReturn(departmentDTO);
+    when(departmentService.updateDepartment(eq(1L), any(DepartmentDto.class)))
+        .thenReturn(departmentDto);
 
     mockMvc
         .perform(
             put("/departments/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(departmentDTO)))
+                .content(objectMapper.writeValueAsString(departmentDto)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.data.id").value(1))
         .andExpect(jsonPath("$.data.deptName").value("IT Department"));

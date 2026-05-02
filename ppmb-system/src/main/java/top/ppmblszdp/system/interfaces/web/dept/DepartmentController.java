@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.ppmblszdp.common.api.Result;
 import top.ppmblszdp.system.application.service.dept.DepartmentApplicationService;
-import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDTO;
+import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 
 /** 部门管理接口. */
 @RestController
@@ -23,12 +23,12 @@ public class DepartmentController {
   private final DepartmentApplicationService departmentApplicationService;
 
   @PostMapping
-  public Result<DepartmentDTO> createDepartment(@RequestBody DepartmentDTO departmentDTO) {
-    return Result.success(departmentApplicationService.createDepartment(departmentDTO));
+  public Result<DepartmentDto> createDepartment(@RequestBody DepartmentDto departmentDto) {
+    return Result.success(departmentApplicationService.createDepartment(departmentDto));
   }
 
   @GetMapping("/{id}")
-  public Result<DepartmentDTO> getDepartmentById(@PathVariable Long id) {
+  public Result<DepartmentDto> getDepartmentById(@PathVariable Long id) {
     return departmentApplicationService
         .getDepartmentById(id)
         .map(Result::success)
@@ -40,14 +40,14 @@ public class DepartmentController {
   }
 
   @GetMapping
-  public Result<List<DepartmentDTO>> getAllDepartments() {
+  public Result<List<DepartmentDto>> getAllDepartments() {
     return Result.success(departmentApplicationService.getAllDepartments());
   }
 
   @PutMapping("/{id}")
-  public Result<DepartmentDTO> updateDepartment(
-      @PathVariable Long id, @RequestBody DepartmentDTO departmentDTO) {
-    return Result.success(departmentApplicationService.updateDepartment(id, departmentDTO));
+  public Result<DepartmentDto> updateDepartment(
+      @PathVariable Long id, @RequestBody DepartmentDto departmentDto) {
+    return Result.success(departmentApplicationService.updateDepartment(id, departmentDto));
   }
 
   @DeleteMapping("/{id}")
