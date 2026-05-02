@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class CodeUtilsTest {
@@ -105,5 +106,128 @@ class CodeUtilsTest {
     for (int i = 0; i < 1000; i++) {
       assertTrue(ids.add(CodeUtils.getSnowflakeId()));
     }
+  }
+
+  @Test
+  @DisplayName("调用私有构造方法应抛出 UnsupportedOperationException")
+  void shouldThrowExceptionWhenInstantiating() throws Exception {
+    java.lang.reflect.Constructor<CodeUtils> constructor = CodeUtils.class.getDeclaredConstructor();
+    constructor.setAccessible(true);
+    java.lang.reflect.InvocationTargetException exception =
+        assertThrows(java.lang.reflect.InvocationTargetException.class, constructor::newInstance);
+    assertTrue(exception.getCause() instanceof UnsupportedOperationException);
+    assertEquals(
+        "This is a utility class and cannot be instantiated", exception.getCause().getMessage());
+  }
+
+  @Test
+  @DisplayName("encodeBase62 负数和最小值")
+  void testEncodeBase62NegativeAndMin() {
+    assertEquals(CodeUtils.encodeBase62(123456789L), CodeUtils.encodeBase62(-123456789L));
+    String minValEncoded = CodeUtils.encodeBase62(Long.MIN_VALUE);
+    assertNotNull(minValEncoded);
+    assertFalse(minValEncoded.isEmpty());
+  }
+
+  @Test
+  @DisplayName("SnowflakeIdWorker 构造参数异常")
+  void testSnowflakeIdWorkerExceptions() throws Exception {
+    Class<?> workerClass = Class.forName("top.ppmblszdp.common.util.CodeUtils$SnowflakeIdWorker");
+    java.lang.reflect.Constructor<?> constructor =
+        workerClass.getDeclaredConstructor(long.class, long.class);
+    constructor.setAccessible(true);
+
+    var ex1 =
+        assertThrows(
+            java.lang.reflect.InvocationTargetException.class,
+            () -> constructor.newInstance(32L, 0L));
+    assertTrue(ex1.getCause() instanceof IllegalArgumentException);
+
+    var ex2 =
+        assertThrows(
+            java.lang.reflect.InvocationTargetException.class,
+            () -> constructor.newInstance(-1L, 0L));
+    assertTrue(ex2.getCause() instanceof IllegalArgumentException);
+
+    var ex3 =
+        assertThrows(
+            java.lang.reflect.InvocationTargetException.class,
+            () -> constructor.newInstance(0L, 32L));
+    assertTrue(ex3.getCause() instanceof IllegalArgumentException);
+
+    var ex4 =
+        assertThrows(
+            java.lang.reflect.InvocationTargetException.class,
+            () -> constructor.newInstance(0L, -1L));
+    assertTrue(ex4.getCause() instanceof IllegalArgumentException);
+  }
+
+  @Test
+  @DisplayName("SnowflakeIdWorker 时钟回拨异常")
+  void testSnowflakeIdWorkerClockMovedBackwards() throws Exception {
+    Class<?> workerClass = Class.forName("top.ppmblszdp.common.util.CodeUtils$SnowflakeIdWorker");
+    java.lang.reflect.Constructor<?> constructor =
+        workerClass.getDeclaredConstructor(long.class, long.class);
+    constructor.setAccessible(true);
+    Object worker = constructor.newInstance(0L, 0L);
+
+    java.lang.reflect.Field lastTimestampField = workerClass.getDeclaredField("lastTimestamp");
+    lastTimestampField.setAccessible(true);
+    lastTimestampField.set(worker, System.currentTimeMillis() + 100000L);
+
+    java.lang.reflect.Method nextIdMethod = workerClass.getDeclaredMethod("nextId");
+    nextIdMethod.setAccessible(true);
+
+    var ex =
+        assertThrows(
+            java.lang.reflect.InvocationTargetException.class, () -> nextIdMethod.invoke(worker));
+    assertTrue(ex.getCause() instanceof top.ppmblszdp.common.exception.BusinessException);
+  }
+
+  @Test
+  @DisplayName("SnowflakeIdWorker 序列溢出处理")
+  void testSnowflakeIdWorkerSequenceOverflow() throws Exception {
+    Class<?> workerClass = Class.forName("top.ppmblszdp.common.util.CodeUtils$SnowflakeIdWorker");
+    java.lang.reflect.Constructor<?> constructor =
+        workerClass.getDeclaredConstructor(long.class, long.class);
+    constructor.setAccessible(true);
+    Object worker = constructor.newInstance(0L, 0L);
+
+    java.lang.reflect.Method nextIdMethod = workerClass.getDeclaredMethod("nextId");
+    nextIdMethod.setAccessible(true);
+
+    // Mock lastTimestamp and sequence to trigger overflow
+    java.lang.reflect.Field lastTimestampField = workerClass.getDeclaredField("lastTimestamp");
+    lastTimestampField.setAccessible(true);
+    long now = System.currentTimeMillis();
+    lastTimestampField.set(worker, now);
+
+    java.lang.reflect.Field sequenceField = workerClass.getDeclaredField("sequence");
+    sequenceField.setAccessible(true);
+    sequenceField.set(worker, 4095L); // Max sequence for 12 bits
+
+    // The next call should trigger sequence = 0 and tilNextMillis
+    long id = (long) nextIdMethod.invoke(worker);
+    assertTrue(id > 0);
+    assertEquals(0L, sequenceField.get(worker));
+    assertTrue((long) lastTimestampField.get(worker) >= now);
+  }
+
+  @Test
+  @DisplayName("SnowflakeIdWorker 相同毫秒内生成多个 ID")
+  void testSnowflakeIdWorkerSameMillisecond() throws Exception {
+    Class<?> workerClass = Class.forName("top.ppmblszdp.common.util.CodeUtils$SnowflakeIdWorker");
+    java.lang.reflect.Constructor<?> constructor =
+        workerClass.getDeclaredConstructor(long.class, long.class);
+    constructor.setAccessible(true);
+    Object worker = constructor.newInstance(0L, 0L);
+
+    java.lang.reflect.Method nextIdMethod = workerClass.getDeclaredMethod("nextId");
+    nextIdMethod.setAccessible(true);
+
+    long id1 = (long) nextIdMethod.invoke(worker);
+    long id2 = (long) nextIdMethod.invoke(worker);
+
+    assertNotEquals(id1, id2);
   }
 }
