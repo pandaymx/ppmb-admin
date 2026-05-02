@@ -59,7 +59,7 @@ class PostControllerTest {
   @Test
   @DisplayName("创建岗位成功")
   void createPost_success() throws Exception {
-    when(postService.createPost(any(PostDto.class))).thenReturn(post);
+    when(postService.createPost(any(PostDto.class))).thenReturn(postDto);
 
     mockMvc
         .perform(
@@ -74,7 +74,7 @@ class PostControllerTest {
   @Test
   @DisplayName("根据 ID 获取岗位成功")
   void getPostById_success() throws Exception {
-    when(postService.getPostById(1L)).thenReturn(post);
+    when(postService.getPostById(1L)).thenReturn(postDto);
 
     mockMvc
         .perform(get("/posts/1"))
@@ -85,7 +85,7 @@ class PostControllerTest {
   @Test
   @DisplayName("分页查询岗位成功")
   void getPostPage_success() throws Exception {
-    PageResult<Post> pageResult = PageResult.of(1, Arrays.asList(post), 1, 10);
+    PageResult<PostDto> pageResult = PageResult.of(1, Arrays.asList(postDto), 1, 10);
     when(postService.getPostPage(any())).thenReturn(pageResult);
 
     mockMvc
@@ -98,7 +98,7 @@ class PostControllerTest {
   @Test
   @DisplayName("更新岗位成功")
   void updatePost_success() throws Exception {
-    when(postService.updatePost(eq(1L), any(PostDto.class))).thenReturn(post);
+    when(postService.updatePost(eq(1L), any(PostDto.class))).thenReturn(postDto);
 
     mockMvc
         .perform(

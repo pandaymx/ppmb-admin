@@ -9,6 +9,8 @@ jackson = "2.17.0"
 jackson3 = "3.1.2"
 jjwt = "0.12.6"
 springRetry = "2.0.11"
+mapstruct = "1.7.0.Beta1"
+lombokMapstructBinding = "0.2.0"
 
 
 
@@ -44,6 +46,9 @@ jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref =
 jackson3-databind = { group = "tools.jackson.core", name = "jackson-databind", version.ref = "jackson3" }
 jackson3-core = { group = "tools.jackson.core", name = "jackson-core", version.ref = "jackson3" }
 jackson3-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
+mapstruct-core = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
+lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
 
 
 
