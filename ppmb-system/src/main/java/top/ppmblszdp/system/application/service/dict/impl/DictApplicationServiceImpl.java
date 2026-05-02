@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -280,7 +279,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
           List<DictData> list =
               dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc(
                   k, 0); // 0 normally means normal/enabled
-          return list.stream().map(this::convertToDto).collect(Collectors.toList());
+          return list.stream().map(this::convertToDto).toList();
         });
   }
 
