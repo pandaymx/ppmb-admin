@@ -119,6 +119,22 @@ class DictApplicationServiceImplTest {
   }
 
   @Test
+  @DisplayName("更新字典类型成功-类型为null")
+  void updateDictType_success_nullType() {
+    UpdateDictTypeCommand command = new UpdateDictTypeCommand();
+    command.setDictName("新名称");
+    command.setDictType(null);
+    command.setStatus(1);
+    command.setRemark("新备注");
+
+    when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
+
+    dictService.updateDictType(1L, command);
+
+    verify(dictTypeRepository).save(any(DictType.class));
+  }
+
+  @Test
   @DisplayName("更新字典类型成功-修改类型编码")
   void updateDictType_success_withTypeChange() {
     UpdateDictTypeCommand command = new UpdateDictTypeCommand();
@@ -306,6 +322,36 @@ class DictApplicationServiceImplTest {
   }
 
   @Test
+  @DisplayName("更新字典数据成功-修改类型但新类型与旧类型相同")
+  void updateDictData_success_sameType() {
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictType("user_status");
+    command.setDictLabel("新标签");
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+
+    dictService.updateDictData(1L, command);
+
+    verify(dictDataRepository).save(any(DictData.class));
+  }
+
+  @Test
+  @DisplayName("更新字典数据成功-同时修改键值和类型")
+  void updateDictData_success_changeValueAndType() {
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictValue("2");
+    command.setDictType("new_type");
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+    when(dictDataRepository.findByDictTypeAndDictValue("new_type", "2"))
+        .thenReturn(Optional.empty());
+
+    dictService.updateDictData(1L, command);
+
+    verify(dictDataRepository).save(any(DictData.class));
+  }
+
+  @Test
   @DisplayName("更新字典数据成功-修改键值")
   void updateDictData_success_changeValue() {
     UpdateDictDataCommand command = new UpdateDictDataCommand();
@@ -374,6 +420,25 @@ class DictApplicationServiceImplTest {
     dictService.deleteDictData(1L);
 
     verify(dictDataRepository).deleteById(1L);
+  }
+
+  @Test
+  @DisplayName("清除缓存-参数为null时不执行")
+  void clearCache_nullParam() {
+    // 先调用一次正常的数据操作来填充缓存
+    when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
+        .thenReturn(Arrays.asList(dictData));
+    dictService.getAvailableDictDataByType("user_status");
+
+    // 更新数据时，如果 dictType 为 null，不应该抛出异常
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictLabel("新标签");
+    command.setDictType(null);
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+
+    // 应该正常执行，不会抛出 NullPointerException
+    assertDoesNotThrow(() -> dictService.updateDictData(1L, command));
   }
 
   @Test
