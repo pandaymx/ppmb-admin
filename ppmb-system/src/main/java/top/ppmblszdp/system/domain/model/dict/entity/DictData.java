@@ -59,6 +59,7 @@ public class DictData extends BaseChildEntity {
    * @param remark 备注
    * @return 字典数据实体
    */
+  @SuppressWarnings("java:S107")
   public static DictData create(
       Long parentId,
       Integer dictSort,
@@ -100,6 +101,7 @@ public class DictData extends BaseChildEntity {
    * @param status 状态
    * @param remark 备注
    */
+  @SuppressWarnings("java:S107")
   public void updateInfo(
       Integer dictSort,
       String dictLabel,
