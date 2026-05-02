@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate # Database schema validation
+  # To enable liquibase, uncomment and set properties in your specific service application.yml:
+  # liquibase:
+  #   enabled: true
+  #   change-log: classpath:db/changelog/db.changelog-master.yaml
+  #   default-schema: public
+  #   drop-first: false
