@@ -279,4 +279,25 @@ class CodeUtilsTest {
       assertTrue(id > 0);
     }
   }
+
+  @Test
+  @DisplayName("Snowflake 序列溢出处理")
+  void testSnowflakeSequenceOverflow() throws Exception {
+    // 强制获取单例 worker
+    CodeUtils.getSnowflakeId();
+    java.lang.reflect.Field field = CodeUtils.class.getDeclaredField("SNOWFLAKE_ID_WORKER");
+    field.setAccessible(true);
+    java.util.concurrent.atomic.AtomicReference<?> ref =
+        (java.util.concurrent.atomic.AtomicReference<?>) field.get(null);
+    Object worker = ref.get();
+
+    java.lang.reflect.Field seqField = worker.getClass().getDeclaredField("sequence");
+    seqField.setAccessible(true);
+    // 设置为最大序列号
+    seqField.set(worker, 4095L);
+
+    // 下一次调用应触发 tilNextMillis
+    long id = CodeUtils.getSnowflakeId();
+    assertTrue(id > 0);
+  }
 }
