@@ -28,6 +28,7 @@ class RoleApplicationServiceImplTest {
 
   @Mock private RoleRepository roleRepository;
   @Mock private UserRoleRepository userRoleRepository;
+  @Mock private top.ppmblszdp.system.application.assembler.RoleAssembler roleAssembler;
 
   @InjectMocks private RoleApplicationServiceImpl service;
 
@@ -36,6 +37,8 @@ class RoleApplicationServiceImplTest {
     CreateRoleCommand command = new CreateRoleCommand("Admin", "ROLE_ADMIN", "Desc");
     Role role = Role.create(command.roleName(), command.roleCode(), command.description());
     when(roleRepository.save(any(Role.class))).thenReturn(role);
+    RoleDto dummyDto = new RoleDto(1L, "Admin", "ROLE_ADMIN", "Desc", 0, false, null);
+    when(roleAssembler.toDto(any(Role.class))).thenReturn(dummyDto);
     RoleDto dto = service.createRole(command);
     assertEquals("Admin", dto.roleName());
   }
@@ -46,6 +49,8 @@ class RoleApplicationServiceImplTest {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
     when(roleRepository.save(any(Role.class))).thenReturn(role);
+    RoleDto dummyDto = new RoleDto(1L, "Super Admin", "ROLE_ADMIN", "Super Desc", 0, false, null);
+    when(roleAssembler.toDto(any(Role.class))).thenReturn(dummyDto);
     RoleDto dto = service.updateRole(1L, command);
     assertEquals("Super Admin", dto.roleName());
   }
@@ -95,6 +100,8 @@ class RoleApplicationServiceImplTest {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     PageResult<Role> page = PageResult.of(1, List.of(role), 1, 10);
     when(roleRepository.findPage(any(), any(), any())).thenReturn(page);
+    RoleDto dummyDto = new RoleDto(1L, "Admin", "ROLE_ADMIN", "Desc", 0, false, null);
+    when(roleAssembler.toDtoList(any())).thenReturn(List.of(dummyDto));
     PageResult<RoleDto> result =
         service.getRolePage(new RolePageQuery(null, null), new PageQuery(1, 10));
     assertEquals(1, result.total());
@@ -104,6 +111,8 @@ class RoleApplicationServiceImplTest {
   void testGetRoleOptions() {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     when(roleRepository.findAll()).thenReturn(List.of(role));
+    RoleDto dummyDto = new RoleDto(1L, "Admin", "ROLE_ADMIN", "Desc", 0, false, null);
+    when(roleAssembler.toDtoList(any())).thenReturn(List.of(dummyDto));
     List<RoleDto> list = service.getRoleOptions();
     assertEquals(1, list.size());
   }

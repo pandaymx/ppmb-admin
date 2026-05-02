@@ -23,12 +23,13 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
 
   private final RoleRepository roleRepository;
   private final UserRoleRepository userRoleRepository;
+  private final top.ppmblszdp.system.application.assembler.RoleAssembler roleAssembler;
 
   @Override
   @Transactional
   public RoleDto createRole(CreateRoleCommand command) {
     Role role = Role.create(command.roleName(), command.roleCode(), command.description());
-    return toDto(roleRepository.save(role));
+    return roleAssembler.toDto(roleRepository.save(role));
   }
 
   @Override
@@ -38,7 +39,7 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
     AssertUtils.isTrue(
         !role.getIsReadonly(), CommonResultCode.PARAM_ERROR); // Built-in roles are read-only
     role.updateInfo(command.roleName(), command.description());
-    return toDto(roleRepository.save(role));
+    return roleAssembler.toDto(roleRepository.save(role));
   }
 
   @Override
@@ -58,23 +59,12 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
   @Override
   public PageResult<RoleDto> getRolePage(RolePageQuery query, PageQuery pageQuery) {
     PageResult<Role> page = roleRepository.findPage(query.name(), query.status(), pageQuery);
-    List<RoleDto> dtos = page.list().stream().map(this::toDto).toList();
+    List<RoleDto> dtos = roleAssembler.toDtoList(page.list());
     return PageResult.of(page.total(), dtos, page.pageNum(), page.pageSize());
   }
 
   @Override
   public List<RoleDto> getRoleOptions() {
-    return roleRepository.findAll().stream().map(this::toDto).toList();
-  }
-
-  private RoleDto toDto(Role role) {
-    return new RoleDto(
-        role.getId(),
-        role.getRoleName(),
-        role.getRoleCode(),
-        role.getDescription(),
-        role.getStatus(),
-        role.getIsReadonly(),
-        role.getCreateTime());
+    return roleAssembler.toDtoList(roleRepository.findAll());
   }
 }
