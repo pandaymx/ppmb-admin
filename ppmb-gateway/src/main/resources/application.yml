@@ -18,10 +18,10 @@ spring:
       server:
         webmvc:
           routes:
-            - id: admin-service-route
-              uri: lb://ppmb-admin
+            - id: system-service-route
+              uri: lb://ppmb-system
               predicates:
-                - Path=/api/admin/**
+                - Path=/api/system/**
               filters:
                 - StripPrefix=2
 

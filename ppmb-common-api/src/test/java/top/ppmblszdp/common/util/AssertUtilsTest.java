@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import top.ppmblszdp.common.api.CommonResultCode;
+import top.ppmblszdp.common.api.IResultCode;
 import top.ppmblszdp.common.exception.BusinessException;
 
 @DisplayName("业务断言工具类测试")
@@ -17,12 +18,13 @@ class AssertUtilsTest {
   @DisplayName("断言表达式为真")
   void testIsTrue() {
     assertDoesNotThrow(() -> AssertUtils.isTrue(true, CommonResultCode.SUCCESS), "表达式为真时不应抛出异常");
+    IResultCode errorCode = CommonResultCode.PARAM_ERROR;
     BusinessException ex =
         assertThrows(
             BusinessException.class,
-            () -> AssertUtils.isTrue(false, CommonResultCode.PARAM_ERROR),
+            () -> AssertUtils.isTrue(false, errorCode),
             "表达式为假时应抛出 BusinessException");
-    assertEquals(CommonResultCode.PARAM_ERROR, ex.getResultCode(), "错误码应为 PARAM_ERROR");
+    assertEquals(errorCode, ex.getResultCode(), "错误码应为 PARAM_ERROR");
   }
 
   @Test
@@ -30,12 +32,13 @@ class AssertUtilsTest {
   void testNotNull() {
     Object obj = new Object();
     assertDoesNotThrow(() -> AssertUtils.notNull(obj, CommonResultCode.SUCCESS), "对象不为空时不应抛出异常");
+    IResultCode errorCode = CommonResultCode.PARAM_ERROR;
     BusinessException ex =
         assertThrows(
             BusinessException.class,
-            () -> AssertUtils.notNull(null, CommonResultCode.PARAM_ERROR),
+            () -> AssertUtils.notNull(null, errorCode),
             "对象为空时应抛出 BusinessException");
-    assertEquals(CommonResultCode.PARAM_ERROR, ex.getResultCode(), "错误码应为 PARAM_ERROR");
+    assertEquals(errorCode, ex.getResultCode(), "错误码应为 PARAM_ERROR");
   }
 
   @Test
@@ -44,23 +47,15 @@ class AssertUtilsTest {
     assertDoesNotThrow(
         () -> AssertUtils.notEmpty("not empty", CommonResultCode.SUCCESS), "字符串不为空时不应抛出异常");
 
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty("", CommonResultCode.PARAM_ERROR),
-            "空字符串应抛出异常");
+    IResultCode errorCode = CommonResultCode.PARAM_ERROR;
+    assertThrows(BusinessException.class, () -> AssertUtils.notEmpty("", errorCode), "空字符串应抛出异常");
 
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty("  ", CommonResultCode.PARAM_ERROR),
-            "空白字符串应抛出异常");
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty("  ", errorCode), "空白字符串应抛出异常");
 
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty((String) null, CommonResultCode.PARAM_ERROR),
-            "null 字符串应抛出异常");
+    String nullStr = null;
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty(nullStr, errorCode), "null 字符串应抛出异常");
   }
 
   @Test
@@ -70,17 +65,13 @@ class AssertUtilsTest {
     assertDoesNotThrow(() -> AssertUtils.notEmpty(list, CommonResultCode.SUCCESS), "集合不为空时不应抛出异常");
 
     List<Object> emptyList = Collections.emptyList();
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty(emptyList, CommonResultCode.PARAM_ERROR),
-            "空集合应抛出异常");
+    IResultCode errorCode = CommonResultCode.PARAM_ERROR;
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty(emptyList, errorCode), "空集合应抛出异常");
 
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty((List<?>) null, CommonResultCode.PARAM_ERROR),
-            "null 集合应抛出异常");
+    List<?> nullList = null;
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty(nullList, errorCode), "null 集合应抛出异常");
   }
 
   @Test
@@ -90,16 +81,12 @@ class AssertUtilsTest {
     assertDoesNotThrow(() -> AssertUtils.notEmpty(map, CommonResultCode.SUCCESS), "Map 不为空时不应抛出异常");
 
     Map<Object, Object> emptyMap = Collections.emptyMap();
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty(emptyMap, CommonResultCode.PARAM_ERROR),
-            "空 Map 应抛出异常");
+    IResultCode errorCode = CommonResultCode.PARAM_ERROR;
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty(emptyMap, errorCode), "空 Map 应抛出异常");
 
-    BusinessException _ =
-        assertThrows(
-            BusinessException.class,
-            () -> AssertUtils.notEmpty((Map<?, ?>) null, CommonResultCode.PARAM_ERROR),
-            "null Map 应抛出异常");
+    Map<?, ?> nullMap = null;
+    assertThrows(
+        BusinessException.class, () -> AssertUtils.notEmpty(nullMap, errorCode), "null Map 应抛出异常");
   }
 }
