@@ -40,7 +40,24 @@ public class PpmbSecurityAutoConfiguration {
     return new ProblemDetailAccessDeniedHandler(objectMapper);
   }
 
+  /**
+   * Configures the SecurityFilterChain.
+   *
+   * <p>Note: CSRF protection is disabled because the application uses a stateless architecture with
+   * JWT tokens stored in non-cookie headers, which makes it inherently resistant to CSRF attacks
+   * that target browser cookie management.
+   *
+   * @param http the HttpSecurity to configure
+   * @param authenticationEntryPoint the authentication entry point
+   * @param accessDeniedHandler the access denied handler
+   * @param properties the security properties
+   * @param jwtUtils the JWT utility
+   * @param objectMapper the object mapper
+   * @return the configured SecurityFilterChain
+   * @throws Exception if an error occurs
+   */
   @Bean
+  @SuppressWarnings("java:S4502")
   public SecurityFilterChain securityFilterChain(
       HttpSecurity http,
       ProblemDetailAuthenticationEntryPoint authenticationEntryPoint,

@@ -37,6 +37,10 @@ class CodeUtilsTest {
     assertEquals(6, code6.length());
     assertTrue(code6.matches("\\d{6}"));
 
+    String code5 = CodeUtils.generateNumericCode(5);
+    assertEquals(5, code5.length());
+    assertTrue(code5.matches("\\d{5}"));
+
     assertThrows(IllegalArgumentException.class, () -> CodeUtils.generateNumericCode(3));
     assertThrows(IllegalArgumentException.class, () -> CodeUtils.generateNumericCode(7));
   }
@@ -50,6 +54,26 @@ class CodeUtilsTest {
     String code6 = CodeUtils.generateAlphabeticCode(6);
     assertEquals(6, code6.length());
     assertTrue(code6.matches("[a-zA-Z]{6}"));
+
+    // Loop to ensure both upper and lower cases are covered in generateAlphabeticCode
+    boolean seenUpper = false;
+    boolean seenLower = false;
+    for (int i = 0; i < 100; i++) {
+      String s = CodeUtils.generateAlphabeticCode(4);
+      for (char c : s.toCharArray()) {
+        if (Character.isUpperCase(c)) {
+          seenUpper = true;
+        }
+        if (Character.isLowerCase(c)) {
+          seenLower = true;
+        }
+      }
+      if (seenUpper && seenLower) {
+        break;
+      }
+    }
+    assertTrue(seenUpper, "Should have generated at least one uppercase letter");
+    assertTrue(seenLower, "Should have generated at least one lowercase letter");
 
     assertThrows(IllegalArgumentException.class, () -> CodeUtils.generateAlphabeticCode(3));
     assertThrows(IllegalArgumentException.class, () -> CodeUtils.generateAlphabeticCode(7));
@@ -106,6 +130,10 @@ class CodeUtilsTest {
     for (int i = 0; i < 1000; i++) {
       assertTrue(ids.add(CodeUtils.getSnowflakeId()));
     }
+
+    // Test getSnowflakeId initialization when already initialized
+    long id = CodeUtils.getSnowflakeId();
+    assertTrue(id > 0);
   }
 
   @Test
