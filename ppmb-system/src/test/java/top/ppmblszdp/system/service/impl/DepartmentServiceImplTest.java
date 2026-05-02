@@ -87,11 +87,8 @@ public class DepartmentServiceImplTest {
   void updateDepartmentNotFound() {
     when(departmentRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThrows(
-        RuntimeException.class,
-        () -> {
-          departmentService.updateDepartment(1L, new Department());
-        });
+    Department dept = new Department();
+    assertThrows(RuntimeException.class, () -> departmentService.updateDepartment(1L, dept));
   }
 
   @Test
