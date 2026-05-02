@@ -79,22 +79,22 @@ class GlobalExceptionHandlerTest {
   static class TestController {
 
     @GetMapping("/test/business-exception")
-    public void throwBusinessException() {
+    void throwBusinessException() {
       throw new BusinessException(CommonResultCode.USER_ERROR);
     }
 
     @GetMapping("/test/general-exception")
-    public void throwGeneralException() {
+    void throwGeneralException() {
       throw new RuntimeException("Unexpected error");
     }
 
     @GetMapping("/test/illegal-argument")
-    public void throwIllegalArgument() {
+    void throwIllegalArgument() {
       throw new IllegalArgumentException("非法参数");
     }
 
     @PostMapping("/test/validation")
-    public void validateBody(@Valid @RequestBody TestRequest request) {
+    void validateBody(@Valid @RequestBody TestRequest request) {
       // Intentionally empty. This endpoint is used solely to trigger validation errors.
     }
 

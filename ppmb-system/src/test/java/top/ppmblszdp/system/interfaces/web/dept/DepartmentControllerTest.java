@@ -29,7 +29,7 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("部门管理接口测试")
-public class DepartmentControllerTest {
+class DepartmentControllerTest {
 
   private MockMvc mockMvc;
 

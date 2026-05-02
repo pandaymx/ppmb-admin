@@ -23,7 +23,7 @@ import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("用户管理接口测试")
-public class UserControllerTest {
+class UserControllerTest {
 
   private MockMvc mockMvc;
 
