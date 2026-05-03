@@ -29,7 +29,11 @@ class GlobalExceptionHandlerTest {
   void setUp() {
     mockMvc =
         MockMvcBuilders.standaloneSetup(new TestController())
-            .setControllerAdvice(new GlobalExceptionHandler())
+            .setControllerAdvice(
+                new GlobalExceptionHandler(
+                    org.mockito.Mockito.mock(
+                        org.springframework.amqp.rabbit.core.RabbitTemplate.class),
+                    new com.fasterxml.jackson.databind.ObjectMapper()))
             .build();
   }
 
