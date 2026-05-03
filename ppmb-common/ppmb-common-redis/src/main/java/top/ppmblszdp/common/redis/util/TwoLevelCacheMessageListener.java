@@ -22,13 +22,17 @@ public class TwoLevelCacheMessageListener implements MessageListener {
   private final ObjectMapper objectMapper;
   private GenericJackson2JsonRedisSerializer serializer;
 
+  private GenericJackson2JsonRedisSerializer getSerializer() {
+    if (serializer == null) {
+      serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+    }
+    return serializer;
+  }
+
   @Override
   public void onMessage(Message message, byte[] pattern) {
     try {
-      if (serializer == null) {
-        serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-      }
-      Object deserialized = serializer.deserialize(message.getBody());
+      Object deserialized = getSerializer().deserialize(message.getBody());
       if (deserialized instanceof TwoLevelCacheMessage cacheMessage) {
         cacheManager.clearLocal(cacheMessage.getCacheName(), cacheMessage.getKey());
       }
