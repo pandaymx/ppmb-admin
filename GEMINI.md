@@ -22,9 +22,13 @@
   - 将 `if (x != null)` 赋值逻辑替换为 `Optional.ofNullable(x).ifPresent(...)`。
   - 将三元运算符或 null 检查替换为 `Optional.ofNullable(x).orElse(...)`。
 - 对不同层级采用最佳测试实践：
-  - Domain/Assembler 层：纯单元测试，验证转换逻辑和业务规则。
+  - Domain/Assembler 层：纯单元测试，验证转换逻辑 and 业务规则。
   - Web 层：使用 `MockMvc` (推荐 `standaloneSetup`) 验证 REST 接口行为。
   - 自动配置：使用 `ApplicationContextRunner` 验证 Bean 的条件加载。
+  - **严禁使用反射测试私有方法**。私有逻辑应通过公有接口的行为间接验证。
+  - **禁止在测试中通过反射强行修改实体 ID**。应提供受保护的 `setId` 或使用 `EntityTestUtils` 等合法的测试辅助工具。
+  - **严禁使用 `Thread.sleep` 等硬编码等待**。对于异步逻辑测试，必须使用 `Awaitility` 库。
+  - **JUnit 5 测试类和方法应遵循包级可见性**（Package-private），避免不必要的 `public` 修饰符。
 - 需要对新增的功能进行测试。
   - 测试类和方法应使用 `@DisplayName` 提供清晰的描述。
   - 在断言失败时，应提供友好的错误信息，帮助定位问题。
