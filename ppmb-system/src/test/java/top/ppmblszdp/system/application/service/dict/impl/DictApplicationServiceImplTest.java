@@ -534,4 +534,36 @@ class DictApplicationServiceImplTest {
     assertNotNull(result);
     assertTrue(result.isEmpty());
   }
+
+  @Test
+  @DisplayName("更新字典数据成功-仅修改键值且类型为null")
+  void updateDictData_success_changeValueOnly_nullType() {
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictValue("2");
+    command.setDictType(null);
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+    when(dictDataRepository.findByDictTypeAndDictValue("user_status", "2"))
+        .thenReturn(Optional.empty());
+
+    dictService.updateDictData(1L, command);
+
+    verify(dictDataRepository).save(any(DictData.class));
+  }
+
+  @Test
+  @DisplayName("更新字典数据成功-同时修改键值和类型且新类型不同")
+  void updateDictData_success_changeValueAndDifferentType() {
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictValue("2");
+    command.setDictType("new_type");
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+    when(dictDataRepository.findByDictTypeAndDictValue("new_type", "2"))
+        .thenReturn(Optional.empty());
+
+    dictService.updateDictData(1L, command);
+
+    verify(dictDataRepository).save(any(DictData.class));
+  }
 }
