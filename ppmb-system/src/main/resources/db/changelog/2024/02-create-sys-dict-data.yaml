@@ -1,0 +1,101 @@
+databaseChangeLog:
+  - changeSet:
+      id: "2"
+      author: jules
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sys_dict_data
+      changes:
+        - createTable:
+            tableName: sys_dict_data
+            remarks: "字典数据表"
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: "主键"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: bigint
+                  remarks: "租户ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: datetime
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: bigint
+                  remarks: "创建人"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  remarks: "父主键ID(字典类型ID)"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_sort
+                  type: int
+                  remarks: "字典排序"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_label
+                  type: varchar(100)
+                  remarks: "字典标签"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_value
+                  type: varchar(100)
+                  remarks: "字典键值"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_type
+                  type: varchar(100)
+                  remarks: "字典类型"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: char(1)
+                  remarks: "是否默认（Y是 N否）"
+                  defaultValue: "N"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: list_class
+                  type: varchar(100)
+                  remarks: "表格字典样式"
+              - column:
+                  name: status
+                  type: int
+                  remarks: "状态（0正常 1停用）"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: remark
+                  type: varchar(500)
+                  remarks: "备注"
+        - addUniqueConstraint:
+            tableName: sys_dict_data
+            columnNames: dict_type, dict_value
+            constraintName: uk_sys_dict_data_type_value
+        - createIndex:
+            tableName: sys_dict_data
+            indexName: idx_sys_dict_data_type
+            columns:
+              - column:
+                  name: dict_type

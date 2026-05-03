@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20260503-002
+      author: jules
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sys_role_menu
+      changes:
+        - createTable:
+            tableName: sys_role_menu
+            remarks: "Role and Menu Association Table"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_sys_role_menu
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  remarks: "Role ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: menu_id
+                  type: BIGINT
+                  remarks: "Menu ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  remarks: "Creator ID"
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "Creation Time"
+              - column:
+                  name: update_by
+                  type: BIGINT
+                  remarks: "Updater ID"
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+                  remarks: "Update Time"
+        - createIndex:
+            tableName: sys_role_menu
+            indexName: idx_sys_role_menu_role_id_menu_id
+            unique: true
+            columns:
+              - column:
+                  name: role_id
+              - column:
+                  name: menu_id

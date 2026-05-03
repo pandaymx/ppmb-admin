@@ -1,7 +1,12 @@
 databaseChangeLog:
   - changeSet:
-      id: 20260502-003
+      id: "20260502-003"
       author: jules
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sys_user_role
       changes:
         - createTable:
             tableName: sys_user_role
