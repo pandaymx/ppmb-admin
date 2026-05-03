@@ -36,3 +36,8 @@ all:
 # 清理构建缓存
 clean:
 	./gradlew clean
+
+# Sonar 扫描 (本地)
+# 确保已在 ~/.gradle/gradle.properties 中配置了 sonar.token
+sonar-local:
+	./gradlew sonar -Psonar.host.url=http://localhost:9000
