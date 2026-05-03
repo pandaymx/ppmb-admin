@@ -25,3 +25,5 @@ include("ppmb-common-web")
 include("ppmb-gateway")
 include("ppmb-system")
 include("ppmb-common-redis")
+
+include("ppmb-common-doc")
