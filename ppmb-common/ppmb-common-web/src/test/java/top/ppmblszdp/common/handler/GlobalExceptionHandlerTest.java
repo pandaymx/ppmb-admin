@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -18,19 +20,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.ppmblszdp.common.api.CommonResultCode;
+import top.ppmblszdp.common.api.constant.MqConstants;
+import top.ppmblszdp.common.api.dto.ExceptionLogMessage;
 import top.ppmblszdp.common.exception.BusinessException;
 
 @DisplayName("全局异常处理器测试")
 class GlobalExceptionHandlerTest {
 
   private MockMvc mockMvc;
+  private RabbitTemplate rabbitTemplate;
 
   @BeforeEach
   void setUp() {
+    rabbitTemplate = Mockito.mock(RabbitTemplate.class);
+    GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    handler.setRabbitTemplate(rabbitTemplate);
     mockMvc =
-        MockMvcBuilders.standaloneSetup(new TestController())
-            .setControllerAdvice(new GlobalExceptionHandler())
-            .build();
+        MockMvcBuilders.standaloneSetup(new TestController()).setControllerAdvice(handler).build();
   }
 
   @Test
@@ -41,6 +47,18 @@ class GlobalExceptionHandlerTest {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.code").value(CommonResultCode.USER_ERROR.getCode()))
         .andExpect(jsonPath("$.title").value(CommonResultCode.USER_ERROR.getMessage()));
+  }
+
+  @Test
+  @DisplayName("处理通用 Exception 时应异步发送日志到 MQ")
+  void testHandleGeneralExceptionAndSendLog() throws Exception {
+    mockMvc.perform(get("/test/general-exception")).andExpect(status().isInternalServerError());
+
+    Mockito.verify(rabbitTemplate, Mockito.timeout(1000).atLeastOnce())
+        .convertAndSend(
+            Mockito.eq(MqConstants.EXCEPTION_EXCHANGE),
+            Mockito.eq(MqConstants.EXCEPTION_ROUTING_KEY),
+            Mockito.any(ExceptionLogMessage.class));
   }
 
   @Test
