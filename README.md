@@ -1,5 +1,13 @@
 # PPMB 后台管理系统
 
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0-brightgreen?logo=springboot)
+![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025-blue?logo=spring)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue?logo=postgresql)
+![Redis](https://img.shields.io/badge/Redis-7.x-red?logo=redis)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-3.x-orange?logo=rabbitmq)
+![Docker](https://img.shields.io/badge/Docker-Latest-blue?logo=docker)
+![Gradle](https://img.shields.io/badge/Gradle-9.5-02303A?logo=gradle)
 [![SonarCloud](https://sonarcloud.io/api/project_badges/measure?project=pandaymx_ppmb-admin&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pandaymx_ppmb-admin)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=pandaymx_ppmb-admin&metric=coverage)](https://sonarcloud.io/summary/new_code?id=pandaymx_ppmb-admin)
 
