@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-public class RedisRateLimiterTest {
+class RedisRateLimiterTest {
 
   private StringRedisTemplate stringRedisTemplate;
   private RedisRateLimiter rateLimiter;
