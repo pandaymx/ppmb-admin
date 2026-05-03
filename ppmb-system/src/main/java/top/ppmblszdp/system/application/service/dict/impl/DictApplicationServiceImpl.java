@@ -38,9 +38,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
   private final Map<String, List<DictDataDto>> dictCache = new ConcurrentHashMap<>();
 
   private void clearCache(String dictType) {
-    if (dictType != null) {
-      dictCache.remove(dictType);
-    }
+    Optional.ofNullable(dictType).ifPresent(dictCache::remove);
   }
 
   // --- Dict Type ---
@@ -203,14 +201,17 @@ public class DictApplicationServiceImpl implements DictApplicationService {
                         null));
 
     boolean valueChanged =
-        command.getDictValue() != null && !command.getDictValue().equals(data.getDictValue());
+        Optional.ofNullable(command.getDictValue())
+            .map(v -> !v.equals(data.getDictValue()))
+            .orElse(false);
     boolean typeChanged =
-        command.getDictType() != null && !command.getDictType().equals(data.getDictType());
+        Optional.ofNullable(command.getDictType())
+            .map(v -> !v.equals(data.getDictType()))
+            .orElse(false);
 
     if (valueChanged || typeChanged) {
-      String checkType = command.getDictType() != null ? command.getDictType() : data.getDictType();
-      String checkValue =
-          command.getDictValue() != null ? command.getDictValue() : data.getDictValue();
+      String checkType = Optional.ofNullable(command.getDictType()).orElse(data.getDictType());
+      String checkValue = Optional.ofNullable(command.getDictValue()).orElse(data.getDictValue());
       dictDataRepository
           .findByDictTypeAndDictValue(checkType, checkValue)
           .ifPresent(
@@ -237,9 +238,9 @@ public class DictApplicationServiceImpl implements DictApplicationService {
     dictDataRepository.save(data);
 
     clearCache(oldType);
-    if (command.getDictType() != null && !oldType.equals(command.getDictType())) {
-      clearCache(command.getDictType());
-    }
+    Optional.ofNullable(command.getDictType())
+        .filter(t -> !oldType.equals(t))
+        .ifPresent(this::clearCache);
   }
 
   @Override

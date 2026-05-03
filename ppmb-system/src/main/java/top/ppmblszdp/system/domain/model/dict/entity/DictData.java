@@ -3,6 +3,7 @@ package top.ppmblszdp.system.domain.model.dict.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -111,25 +112,13 @@ public class DictData extends BaseChildEntity {
       String listClass,
       Integer status,
       String remark) {
-    if (dictSort != null) {
-      this.dictSort = dictSort;
-    }
-    if (dictLabel != null) {
-      this.dictLabel = dictLabel;
-    }
-    if (dictValue != null) {
-      this.dictValue = dictValue;
-    }
-    if (dictType != null) {
-      this.dictType = dictType;
-    }
-    if (isDefault != null) {
-      this.isDefault = isDefault;
-    }
+    Optional.ofNullable(dictSort).ifPresent(v -> this.dictSort = v);
+    Optional.ofNullable(dictLabel).ifPresent(v -> this.dictLabel = v);
+    Optional.ofNullable(dictValue).ifPresent(v -> this.dictValue = v);
+    Optional.ofNullable(dictType).ifPresent(v -> this.dictType = v);
+    Optional.ofNullable(isDefault).ifPresent(v -> this.isDefault = v);
     this.listClass = listClass;
-    if (status != null) {
-      this.status = status;
-    }
+    Optional.ofNullable(status).ifPresent(v -> this.status = v);
     this.remark = remark;
   }
 }

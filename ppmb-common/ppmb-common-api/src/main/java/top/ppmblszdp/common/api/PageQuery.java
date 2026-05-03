@@ -2,6 +2,7 @@ package top.ppmblszdp.common.api;
 
 import jakarta.validation.constraints.Min;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * 分页查询参数.
@@ -15,11 +16,7 @@ public record PageQuery(
     implements Serializable {
 
   public PageQuery {
-    if (pageNum == null) {
-      pageNum = 1;
-    }
-    if (pageSize == null) {
-      pageSize = 10;
-    }
+    pageNum = Optional.ofNullable(pageNum).orElse(1);
+    pageSize = Optional.ofNullable(pageSize).orElse(10);
   }
 }

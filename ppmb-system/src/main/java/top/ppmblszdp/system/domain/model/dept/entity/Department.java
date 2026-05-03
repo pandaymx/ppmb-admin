@@ -3,6 +3,7 @@ package top.ppmblszdp.system.domain.model.dept.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -63,7 +64,7 @@ public class Department extends BaseMainEntity {
     department.setDeptName(name);
     department.setDeptCode(code);
     department.setParentId(parentId);
-    department.setSortNum(sortNum != null ? sortNum : 0);
+    department.setSortNum(Optional.ofNullable(sortNum).orElse(0));
     department.setStatus(0); // 默认正常
     return department;
   }
