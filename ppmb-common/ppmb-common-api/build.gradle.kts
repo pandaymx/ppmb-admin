@@ -10,7 +10,8 @@ dependencies {
     implementation(libs.findLibrary("jacksonCore").get())
     implementation(libs.findLibrary("jacksonAnnotations").get())
     implementation(libs.findLibrary("spring-boot-starter-validation").get())
-    implementation(libs.findLibrary("spring-boot-starter-data-jpa").get())
+    implementation(libs.findLibrary("jakarta-persistence-api").get())
+    implementation(libs.findLibrary("spring-data-jpa").get())
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())
 
