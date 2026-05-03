@@ -1,6 +1,7 @@
 package top.ppmblszdp.common.redis.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -8,7 +9,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,7 @@ public class RedisUtil {
   private static final ExecutorService CACHE_REBUILD_EXECUTOR = Executors.newFixedThreadPool(10);
   private static final String LOCK_PREFIX = "lock:";
   private static final String ID_PREFIX = UUID.randomUUID().toString().replace("-", "") + "-";
+  private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
   private DefaultRedisScript<Long> unlockScript;
 
@@ -72,7 +73,7 @@ public class RedisUtil {
       return duration;
     }
     long millis = duration.toMillis();
-    long jitterMillis = ThreadLocalRandom.current().nextLong(millis / 10 + 1);
+    long jitterMillis = SECURE_RANDOM.nextLong(millis / 10 + 1);
     return Duration.ofMillis(millis + jitterMillis);
   }
 
@@ -152,7 +153,7 @@ public class RedisUtil {
    * @return true if acquired, false otherwise
    */
   private boolean tryLock(String key) {
-    String threadId = ID_PREFIX + Thread.currentThread().getId();
+    String threadId = ID_PREFIX + Thread.currentThread().threadId();
     Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, threadId, Duration.ofSeconds(10));
     return Boolean.TRUE.equals(flag);
   }
@@ -169,7 +170,7 @@ public class RedisUtil {
           new ResourceScriptSource(new ClassPathResource("lua/unlock.lua")));
       unlockScript.setResultType(Long.class);
     }
-    String threadId = ID_PREFIX + Thread.currentThread().getId();
+    String threadId = ID_PREFIX + Thread.currentThread().threadId();
     redisTemplate.execute(unlockScript, Collections.singletonList(key), threadId);
   }
 
