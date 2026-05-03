@@ -24,9 +24,6 @@ public class UserRole extends BaseEntity {
   @Column(name = "user_id", nullable = false)
   private Long userId;
 
-  @Column(name = "role_id", nullable = false)
-  private Long roleId;
-
   /**
    * 创建用户角色关联.
    *
