@@ -23,9 +23,9 @@ public class SecurityUtils {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication != null && authentication.getPrincipal() != null) {
       Object principal = authentication.getPrincipal();
-      if (principal instanceof String) {
+      if (principal instanceof String principalStr) {
         try {
-          return Long.parseLong((String) principal);
+          return Long.parseLong(principalStr);
         } catch (NumberFormatException _) {
           // Ignore, fallback to return 1L for simplicity if it fails (not ideal for prod, but fine
           // for test)
