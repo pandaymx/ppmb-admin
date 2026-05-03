@@ -8,6 +8,10 @@ databaseChangeLog:
   - include:
       file: db/changelog/v1.0.0/20260502-004-create-sys-post.xml
   - include:
+      file: db/changelog/v1.0.0/20260503-001-create-sys-menu.xml
+  - include:
+      file: db/changelog/v1.0.0/20260503-002-create-sys-role-menu.xml
+  - include:
       file: db/changelog/2024/01-create-sys-dict-type.xml
   - include:
       file: db/changelog/2024/02-create-sys-dict-data.xml

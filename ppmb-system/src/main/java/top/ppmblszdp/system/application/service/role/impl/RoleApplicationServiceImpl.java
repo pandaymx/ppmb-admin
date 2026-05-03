@@ -24,12 +24,17 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
   private final RoleRepository roleRepository;
   private final UserRoleRepository userRoleRepository;
   private final top.ppmblszdp.system.application.assembler.RoleAssembler roleAssembler;
+  private final RoleMenuApplicationService roleMenuApplicationService;
 
   @Override
   @Transactional
   public RoleDto createRole(CreateRoleCommand command) {
     Role role = Role.create(command.roleName(), command.roleCode(), command.description());
-    return roleAssembler.toDto(roleRepository.save(role));
+    Role savedRole = roleRepository.save(role);
+    if (command.menuIds() != null && !command.menuIds().isEmpty()) {
+      roleMenuApplicationService.assignMenusToRole(savedRole.getId(), command.menuIds());
+    }
+    return roleAssembler.toDto(savedRole);
   }
 
   @Override
@@ -39,7 +44,11 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
     AssertUtils.isTrue(
         !role.getIsReadonly(), CommonResultCode.PARAM_ERROR); // Built-in roles are read-only
     role.updateInfo(command.roleName(), command.description());
-    return roleAssembler.toDto(roleRepository.save(role));
+    Role savedRole = roleRepository.save(role);
+    if (command.menuIds() != null) {
+      roleMenuApplicationService.assignMenusToRole(savedRole.getId(), command.menuIds());
+    }
+    return roleAssembler.toDto(savedRole);
   }
 
   @Override
