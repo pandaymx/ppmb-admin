@@ -31,8 +31,9 @@ import top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener;
 public class PpmbRedisAutoConfiguration {
 
   @Bean
-  @ConditionalOnMissingBean
-  public ObjectMapper redisObjectMapper(ObjectMapper objectMapper) {
+  @ConditionalOnMissingBean(name = "redisObjectMapper")
+  public ObjectMapper redisObjectMapper(
+      @org.springframework.beans.factory.annotation.Qualifier("objectMapper") ObjectMapper objectMapper) {
     ObjectMapper redisObjectMapper = objectMapper.copy();
     redisObjectMapper.registerModule(new JavaTimeModule());
     PolymorphicTypeValidator ptv =
@@ -51,7 +52,8 @@ public class PpmbRedisAutoConfiguration {
   @ConditionalOnMissingBean(name = "redisTemplate")
   @SuppressWarnings("removal")
   public RedisTemplate<String, Object> redisTemplate(
-      RedisConnectionFactory factory, ObjectMapper redisObjectMapper) {
+      RedisConnectionFactory factory,
+      @org.springframework.beans.factory.annotation.Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
 
@@ -93,7 +95,8 @@ public class PpmbRedisAutoConfiguration {
   @ConditionalOnMissingBean
   @SuppressWarnings("removal")
   public RedisCacheManager redisCacheManager(
-      RedisConnectionFactory factory, ObjectMapper redisObjectMapper) {
+      RedisConnectionFactory factory,
+      @org.springframework.beans.factory.annotation.Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
     RedisSerializer<Object> serializer =
         new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(
             redisObjectMapper);
