@@ -39,15 +39,10 @@ management:
   endpoint:
     health:
       show-details: always
-    prometheus:
-      enabled: true
   metrics:
     tags:
       application: ${spring.application.name}
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs

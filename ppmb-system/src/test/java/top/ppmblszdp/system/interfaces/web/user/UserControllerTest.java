@@ -122,10 +122,50 @@ class UserControllerTest {
   @Test
   @DisplayName("测试获取用户权限")
   void testGetPermissions() throws Exception {
-    when(menuApplicationService.getMenuPermsByUserId(anyLong()))
-        .thenReturn(List.of("sys:user:list"));
+    try (var mockedSecurityUtils =
+        mockStatic(top.ppmblszdp.common.security.util.SecurityUtils.class)) {
+      mockedSecurityUtils
+          .when(top.ppmblszdp.common.security.util.SecurityUtils::getUserId)
+          .thenReturn(1L);
+      when(menuApplicationService.getMenuPermsByUserId(1L)).thenReturn(List.of("sys:user:list"));
 
-    mockMvc.perform(get("/users/permissions")).andExpect(status().isOk());
+      mockMvc
+          .perform(get("/users/permissions"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data[0]").value("sys:user:list"));
+    }
+  }
+
+  @Test
+  @DisplayName("测试更新用户角色")
+  void testUpdateUserRoles() throws Exception {
+    doNothing().when(userRoleApplicationService).assignRolesToUser(eq(1L), anyList());
+
+    mockMvc
+        .perform(
+            put("/users/1/roles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(List.of(1L, 2L))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value("00000"));
+  }
+
+  @Test
+  @DisplayName("测试批量分配角色")
+  void testBatchAssignRoles() throws Exception {
+    doNothing().when(userRoleApplicationService).batchAssignRoles(any());
+
+    top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand command =
+        new top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand(
+            List.of(1L), List.of(100L));
+
+    mockMvc
+        .perform(
+            post("/users/batch/roles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(command)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value("00000"));
   }
 
   @Test
@@ -136,6 +176,7 @@ class UserControllerTest {
     mockMvc
         .perform(get("/users/1"))
         .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value("00000"))
         .andExpect(jsonPath("$.data").doesNotExist());
   }
 }
