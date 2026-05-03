@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.findLibrary("jacksonAnnotations").get())
     implementation(libs.findLibrary("spring-boot-starter-amqp").get())
     implementation(libs.findLibrary("spring-cloud-starter-openfeign").get())
+    implementation("io.github.openfeign:feign-jackson:13.6")
     testImplementation(libs.findLibrary("spring-boot-starter-test").get())
     testImplementation(libs.findLibrary("spring-boot-starter-validation").get())
     compileOnly(libs.findLibrary("lombok").get())

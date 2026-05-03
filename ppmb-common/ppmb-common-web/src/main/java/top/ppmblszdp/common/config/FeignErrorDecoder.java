@@ -19,6 +19,11 @@ public class FeignErrorDecoder implements ErrorDecoder {
   /** Jackson 对象映射器. */
   private final ObjectMapper objectMapper;
 
+  /** 默认构造函数，使用默认 ObjectMapper. */
+  public FeignErrorDecoder() {
+    this.objectMapper = new ObjectMapper();
+  }
+
   /**
    * 构造函数.
    *
