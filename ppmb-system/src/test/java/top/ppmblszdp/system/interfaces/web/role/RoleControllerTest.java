@@ -29,7 +29,7 @@ class RoleControllerTest {
 
   @Test
   void testCreateRole() {
-    CreateRoleCommand command = new CreateRoleCommand("Admin", "ROLE_ADMIN", "Desc");
+    CreateRoleCommand command = new CreateRoleCommand("Admin", "ROLE_ADMIN", "Desc", null);
     RoleDto dto = new RoleDto(1L, "Admin", "ROLE_ADMIN", "Desc", 1, false, LocalDateTime.now());
     when(roleApplicationService.createRole(command)).thenReturn(dto);
     Result<RoleDto> result = controller.createRole(command);
@@ -39,7 +39,7 @@ class RoleControllerTest {
 
   @Test
   void testUpdateRole() {
-    UpdateRoleCommand command = new UpdateRoleCommand("Super Admin", "Super Desc");
+    UpdateRoleCommand command = new UpdateRoleCommand("Super Admin", "Super Desc", null);
     RoleDto dto =
         new RoleDto(1L, "Super Admin", "ROLE_ADMIN", "Super Desc", 1, false, LocalDateTime.now());
     when(roleApplicationService.updateRole(1L, command)).thenReturn(dto);

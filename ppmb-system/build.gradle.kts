@@ -8,6 +8,7 @@ plugins {
 dependencies {
     implementation(project(":ppmb-common-web"))
     implementation(project(":ppmb-common-api"))
+    implementation(project(":ppmb-common-security"))
 
     implementation(libs.spring.boot.starter.web)
     runtimeOnly(libs.postgresql)

@@ -34,7 +34,7 @@ class RoleApplicationServiceImplTest {
 
   @Test
   void testCreateRole() {
-    CreateRoleCommand command = new CreateRoleCommand("Admin", "ROLE_ADMIN", "Desc");
+    CreateRoleCommand command = new CreateRoleCommand("Admin", "ROLE_ADMIN", "Desc", null);
     Role role = Role.create(command.roleName(), command.roleCode(), command.description());
     when(roleRepository.save(any(Role.class))).thenReturn(role);
     RoleDto dummyDto = new RoleDto(1L, "Admin", "ROLE_ADMIN", "Desc", 0, false, null);
@@ -45,7 +45,7 @@ class RoleApplicationServiceImplTest {
 
   @Test
   void testUpdateRole() {
-    UpdateRoleCommand command = new UpdateRoleCommand("Super Admin", "Super Desc");
+    UpdateRoleCommand command = new UpdateRoleCommand("Super Admin", "Super Desc", null);
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
     when(roleRepository.save(any(Role.class))).thenReturn(role);
@@ -58,7 +58,7 @@ class RoleApplicationServiceImplTest {
   @Test
   @DisplayName("更新角色失败-只读角色")
   void testUpdateRole_readonly() {
-    UpdateRoleCommand command = new UpdateRoleCommand("New Name", "New Desc");
+    UpdateRoleCommand command = new UpdateRoleCommand("New Name", "New Desc", null);
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
     org.springframework.test.util.ReflectionTestUtils.setField(role, "isReadonly", true);
     when(roleRepository.findById(1L)).thenReturn(Optional.of(role));
