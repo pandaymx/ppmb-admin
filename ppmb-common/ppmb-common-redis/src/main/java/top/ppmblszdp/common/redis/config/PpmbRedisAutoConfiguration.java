@@ -2,14 +2,14 @@ package top.ppmblszdp.common.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -19,14 +19,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheManager;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener;
 
-@AutoConfiguration(before = DataRedisAutoConfiguration.class)
+@AutoConfiguration(
+    beforeName = "org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration")
 @ConditionalOnClass(RedisOperations.class)
 public class PpmbRedisAutoConfiguration {
 
@@ -35,21 +35,29 @@ public class PpmbRedisAutoConfiguration {
   public ObjectMapper redisObjectMapper(ObjectMapper objectMapper) {
     ObjectMapper redisObjectMapper = objectMapper.copy();
     redisObjectMapper.registerModule(new JavaTimeModule());
+    PolymorphicTypeValidator ptv =
+        BasicPolymorphicTypeValidator.builder()
+            .allowIfBaseType("top.ppmblszdp.")
+            .allowIfBaseType("java.util.")
+            .allowIfBaseType("java.time.")
+            .allowIfBaseType(Object.class)
+            .build();
     redisObjectMapper.activateDefaultTyping(
-        LaissezFaireSubTypeValidator.instance,
-        ObjectMapper.DefaultTyping.NON_FINAL,
-        JsonTypeInfo.As.PROPERTY);
+        ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
     return redisObjectMapper;
   }
 
   @Bean
   @ConditionalOnMissingBean(name = "redisTemplate")
+  @SuppressWarnings("removal")
   public RedisTemplate<String, Object> redisTemplate(
       RedisConnectionFactory factory, ObjectMapper redisObjectMapper) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
 
-    var serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
+    RedisSerializer<Object> serializer =
+        new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(
+            redisObjectMapper);
 
     template.setKeySerializer(RedisSerializer.string());
     template.setValueSerializer(serializer);
@@ -83,9 +91,12 @@ public class PpmbRedisAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
+  @SuppressWarnings("removal")
   public RedisCacheManager redisCacheManager(
       RedisConnectionFactory factory, ObjectMapper redisObjectMapper) {
-    var serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
+    RedisSerializer<Object> serializer =
+        new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(
+            redisObjectMapper);
     RedisCacheConfiguration config =
         RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(1))
