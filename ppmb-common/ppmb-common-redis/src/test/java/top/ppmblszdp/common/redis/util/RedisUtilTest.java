@@ -172,11 +172,13 @@ public class RedisUtilTest {
             key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
     Assertions.assertEquals(value, retrieved);
 
-    try {
-      Thread.sleep(200);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-    }
+    org.awaitility.Awaitility.await()
+        .atMost(1, TimeUnit.SECONDS)
+        .untilAsserted(
+            () ->
+                Mockito.verify(valueOperations)
+                    .setIfAbsent(
+                        Mockito.anyString(), Mockito.anyString(), Mockito.any(Duration.class)));
   }
 
   @Test
