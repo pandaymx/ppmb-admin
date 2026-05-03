@@ -40,6 +40,7 @@ services:
       - "5432:5432"
     volumes:
       - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql
+
   sonarqube:
     image: sonarqube:latest
     container_name: sonarqube
