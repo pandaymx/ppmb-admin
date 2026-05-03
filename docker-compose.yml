@@ -16,7 +16,7 @@ services:
       - ppmb-admin
 
   sonar-db:
-    image: postgres:18
+    image: postgres:17-alpine
     container_name: sonar-db
     networks:
       - ppmb-admin
@@ -25,10 +25,10 @@ services:
       - POSTGRES_PASSWORD=sonar
       - POSTGRES_DB=sonar
     volumes:
-      - ../ppmb-admin-docker-data/sonar-db/data:/var/lib/postgresql
+      - ../ppmb-admin-docker-data/sonar-db/data:/var/lib/postgresql/data
 
   ppmb-db:
-    image: postgres:18
+    image: postgres:17-alpine
     container_name: ppmb-db
     networks:
       - ppmb-admin
@@ -39,7 +39,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql
+      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql/data
 
   sonarqube:
     image: sonarqube:latest
