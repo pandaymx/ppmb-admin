@@ -53,6 +53,33 @@ services:
     depends_on:
       - sonar-db
 
+  redis:
+    image: redis:7-alpine
+    container_name: ppmb-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../ppmb-admin-docker-data/redis/data:/data
+    networks:
+      - ppmb-admin
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: ppmb-mq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ../ppmb-admin-docker-data/rabbitmq/data:/var/lib/rabbitmq
+      - ../ppmb-admin-docker-data/rabbitmq/log:/var/log/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - ppmb-admin
+
 networks:
   ppmb-admin:
     driver: bridge
