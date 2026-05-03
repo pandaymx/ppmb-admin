@@ -73,14 +73,24 @@ class FeignConfigTest {
   }
 
   @Test
-  @DisplayName("测试 RequestInterceptor 当 RequestAttributes 为空时")
-  void testRequestInterceptorWithNullAttributes() {
-    RequestContextHolder.resetRequestAttributes();
+  @DisplayName("测试 RequestInterceptor 当 headerNames 为空时")
+  void testRequestInterceptorWithNullHeaderNames() {
+    // Arrange
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+    RequestContextHolder.setRequestAttributes(attributes);
+
+    when(request.getHeaderNames()).thenReturn(null);
+
     RequestInterceptor interceptor = feignConfig.requestInterceptor();
     RequestTemplate template = new RequestTemplate();
 
+    // Act
     interceptor.apply(template);
 
+    // Assert
     assertTrue(template.headers().isEmpty());
+
+    RequestContextHolder.resetRequestAttributes();
   }
 }
