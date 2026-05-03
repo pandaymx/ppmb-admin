@@ -4,6 +4,7 @@ testcontainers = "1.20.1"
 caffeine = "3.1.8"
 springBoot = "4.0.6"
 springCloud = "2025.1.1"
+springCloudOpenFeign = "4.2.1"
 spotless = "8.4.0"
 checkstyle = "13.4.1"
 sonar = "7.2.3.7755"
@@ -37,6 +38,7 @@ spring-cloud-dependencies = { group = "org.springframework.cloud", name = "sprin
 spring-cloud-starter-consul-discovery = { group = "org.springframework.cloud", name = "spring-cloud-starter-consul-discovery" }
 spring-cloud-starter-consul-config = { group = "org.springframework.cloud", name = "spring-cloud-starter-consul-config" }
 spring-cloud-starter-loadbalancer = { group = "org.springframework.cloud", name = "spring-cloud-starter-loadbalancer" }
+spring-cloud-starter-openfeign = { group = "org.springframework.cloud", name = "spring-cloud-starter-openfeign" }
 spring-cloud-starter-gateway-server-webmvc = { group = "org.springframework.cloud", name = "spring-cloud-starter-gateway-server-webmvc" }
 spring-boot-starter-actuator = { group = "org.springframework.boot", name = "spring-boot-starter-actuator" }
 spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }

@@ -32,6 +32,9 @@ public class PpmbSecurityProperties {
 
     /** The HTTP Header name where the token is expected (e.g. "Authorization"). */
     private String headerName = "Authorization";
+
+    /** Token expiration in seconds. Default is 2 hours. */
+    private long expire = 7200;
   }
 
   @Data

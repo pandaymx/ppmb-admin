@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import lombok.extern.slf4j.Slf4j;
@@ -66,5 +68,29 @@ public class JwtUtils {
       log.warn("Invalid JWT token: {}", e.getMessage());
       return false;
     }
+  }
+
+  /**
+   * Creates a new JWT token.
+   *
+   * @param subject the subject (e.g. username)
+   * @param claims additional claims to include
+   * @return the generated JWT token
+   */
+  public String createToken(String subject, Map<String, Object> claims) {
+    if (this.key == null) {
+      throw new IllegalStateException("JWT Secret is not configured");
+    }
+
+    long now = System.currentTimeMillis();
+    Date validity = new Date(now + (properties.getJwt().getExpire() * 1000));
+
+    return Jwts.builder()
+        .subject(subject)
+        .claims(claims)
+        .issuedAt(new Date(now))
+        .expiration(validity)
+        .signWith(key)
+        .compact();
   }
 }
