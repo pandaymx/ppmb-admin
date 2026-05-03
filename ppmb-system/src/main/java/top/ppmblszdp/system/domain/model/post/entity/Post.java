@@ -3,6 +3,7 @@ package top.ppmblszdp.system.domain.model.post.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -84,9 +85,7 @@ public class Post extends BaseMainEntity {
     this.postCode = code;
     this.postName = name;
     this.sortNum = sortNum;
-    if (status != null) {
-      this.status = status;
-    }
+    Optional.ofNullable(status).ifPresent(v -> this.status = v);
     this.remark = remark;
   }
 

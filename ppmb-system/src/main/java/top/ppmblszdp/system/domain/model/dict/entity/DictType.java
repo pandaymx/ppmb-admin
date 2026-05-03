@@ -3,6 +3,7 @@ package top.ppmblszdp.system.domain.model.dict.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -73,15 +74,9 @@ public class DictType extends BaseMainEntity {
    * @param remark 备注
    */
   public void updateInfo(String dictName, String dictType, Integer status, String remark) {
-    if (dictName != null) {
-      this.dictName = dictName;
-    }
-    if (dictType != null) {
-      this.dictType = dictType;
-    }
-    if (status != null) {
-      this.status = status;
-    }
+    Optional.ofNullable(dictName).ifPresent(v -> this.dictName = v);
+    Optional.ofNullable(dictType).ifPresent(v -> this.dictType = v);
+    Optional.ofNullable(status).ifPresent(v -> this.status = v);
     this.remark = remark;
   }
 

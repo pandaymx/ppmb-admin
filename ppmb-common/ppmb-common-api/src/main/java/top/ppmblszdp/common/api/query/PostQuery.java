@@ -2,6 +2,7 @@ package top.ppmblszdp.common.api.query;
 
 import jakarta.validation.constraints.Min;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * 岗位查询参数.
@@ -21,11 +22,7 @@ public record PostQuery(
     implements Serializable {
 
   public PostQuery {
-    if (pageNum == null) {
-      pageNum = 1;
-    }
-    if (pageSize == null) {
-      pageSize = 10;
-    }
+    pageNum = Optional.ofNullable(pageNum).orElse(1);
+    pageSize = Optional.ofNullable(pageSize).orElse(10);
   }
 }
