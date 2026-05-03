@@ -1,14 +1,11 @@
 package top.ppmblszdp.common.config;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import feign.Request;
 import feign.Response;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -17,86 +14,65 @@ import top.ppmblszdp.common.exception.BusinessException;
 @DisplayName("Feign 异常解码器测试")
 class FeignErrorDecoderTest {
 
-  private FeignErrorDecoder feignErrorDecoder;
-  private ObjectMapper objectMapper;
-
-  @BeforeEach
-  void setUp() {
-    objectMapper = new ObjectMapper();
-    feignErrorDecoder = new FeignErrorDecoder(objectMapper);
-  }
+  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final FeignErrorDecoder decoder = new FeignErrorDecoder(objectMapper);
 
   @Test
-  @DisplayName("应成功解析远程服务的 ProblemDetail 并转换为 BusinessException")
-  void shouldDecodeProblemDetailCorrectly() {
-    // Arrange
-    String problemDetailJson =
-        """
-        {
-          "type": "about:blank",
-          "title": "Bad Request",
-          "status": 400,
-          "detail": "Invalid parameter",
-          "instance": "/api/users",
-          "code": "A0400"
-        }
-        """;
-
+  @DisplayName("测试解析正确的 ProblemDetail 响应")
+  void testDecodeProblemDetail() {
+    String body = "{\"title\":\"Business Error\", \"detail\":\"Some detail\", \"code\":\"40001\"}";
     Response response =
         Response.builder()
             .status(400)
             .reason("Bad Request")
-            .request(
-                Request.create(
-                    Request.HttpMethod.GET,
-                    "/api/users",
-                    Collections.emptyMap(),
-                    null,
-                    StandardCharsets.UTF_8,
-                    null))
-            .body(problemDetailJson, StandardCharsets.UTF_8)
-            .headers(Collections.emptyMap())
+            .request(mock(feign.Request.class))
+            .body(body, StandardCharsets.UTF_8)
             .build();
 
-    // Act
-    Exception result = feignErrorDecoder.decode("userService#getUser", response);
+    Exception exception = decoder.decode("testMethod", response);
 
-    // Assert
-    assertTrue(result instanceof BusinessException);
-    BusinessException ex = (BusinessException) result;
-    assertEquals(HttpStatus.BAD_REQUEST, ex.getStatus());
-    assertEquals("A0400", ex.getResultCode().getCode());
-    assertEquals("Bad Request", ex.getResultCode().getMessage());
-    assertEquals("Invalid parameter", ex.getDetail());
+    assertTrue(exception instanceof BusinessException);
+    BusinessException bizEx = (BusinessException) exception;
+    assertEquals(HttpStatus.BAD_REQUEST, bizEx.getStatus());
+    assertEquals("40001", bizEx.getResultCode().getCode());
+    assertEquals("Business Error", bizEx.getResultCode().getMessage());
+    assertEquals("Some detail", bizEx.getDetail());
   }
 
   @Test
-  @DisplayName("当响应体为空时应返回默认的远程服务异常")
-  void shouldReturnDefaultExceptionWhenBodyIsEmpty() {
-    // Arrange
+  @DisplayName("测试当响应体为空时")
+  void testDecodeEmptyBody() {
     Response response =
         Response.builder()
             .status(500)
             .reason("Internal Server Error")
-            .request(
-                Request.create(
-                    Request.HttpMethod.GET,
-                    "/api/users",
-                    Collections.emptyMap(),
-                    null,
-                    StandardCharsets.UTF_8,
-                    null))
-            .body((byte[]) null)
-            .headers(Collections.emptyMap())
+            .request(mock(feign.Request.class))
             .build();
 
-    // Act
-    Exception result = feignErrorDecoder.decode("userService#getUser", response);
+    Exception exception = decoder.decode("testMethod", response);
 
-    // Assert
-    assertTrue(result instanceof BusinessException);
-    BusinessException ex = (BusinessException) result;
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ex.getStatus());
-    assertEquals("C0001", ex.getResultCode().getCode());
+    assertTrue(exception instanceof BusinessException);
+    BusinessException bizEx = (BusinessException) exception;
+    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, bizEx.getStatus());
+    assertEquals("C0001", bizEx.getResultCode().getCode());
+  }
+
+  @Test
+  @DisplayName("测试当解析响应体失败时")
+  void testDecodeInvalidBody() {
+    Response response =
+        Response.builder()
+            .status(400)
+            .reason("Bad Request")
+            .request(mock(feign.Request.class))
+            .body("invalid json", StandardCharsets.UTF_8)
+            .build();
+
+    Exception exception = decoder.decode("testMethod", response);
+
+    assertTrue(exception instanceof BusinessException);
+    BusinessException bizEx = (BusinessException) exception;
+    assertEquals(HttpStatus.BAD_REQUEST, bizEx.getStatus());
+    assertEquals("C0001", bizEx.getResultCode().getCode());
   }
 }
