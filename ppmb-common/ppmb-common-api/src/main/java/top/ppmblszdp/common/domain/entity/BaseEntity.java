@@ -24,6 +24,7 @@ public abstract class BaseEntity implements Serializable {
 
   /** Primary key. */
   @Id
+  @jakarta.persistence.GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
   @Column(name = "id", nullable = false, updatable = false)
   private Long id;
 

@@ -44,9 +44,8 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-  prometheus:
-    metrics:
-      export:
+    export:
+      prometheus:
         enabled: true
 
 springdoc:

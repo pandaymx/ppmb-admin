@@ -19,6 +19,9 @@ import top.ppmblszdp.common.util.AssertUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "sys_user")
+@org.hibernate.annotations.SQLRestriction("del_flag = 0")
+@org.hibernate.annotations.SQLDelete(
+    sql = "UPDATE sys_user SET del_flag = 1 WHERE id = ? AND version = ?")
 public class User extends BaseMainEntity {
 
   @Column(name = "username", nullable = false, unique = true, length = 50)
