@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":ppmb-common-web"))
+    implementation(project(":ppmb-common:ppmb-common-web"))
 
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
 

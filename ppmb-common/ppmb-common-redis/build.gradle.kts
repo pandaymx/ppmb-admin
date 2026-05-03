@@ -1,14 +1,13 @@
 plugins {
     id("buildlogic.java-common-conventions")
 }
-
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
     implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
     implementation(platform(libs.findLibrary("testcontainers-bom").get()))
 
-    implementation(project(":ppmb-common-api"))
+    implementation(project(":ppmb-common:ppmb-common-api"))
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation(libs.findLibrary("spring-boot-starter-data-redis").get())

@@ -1,7 +1,6 @@
 plugins {
     id("buildlogic.java-common-conventions")
 }
-
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
