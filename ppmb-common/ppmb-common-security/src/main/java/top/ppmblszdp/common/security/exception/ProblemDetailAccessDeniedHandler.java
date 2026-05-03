@@ -1,6 +1,5 @@
 package top.ppmblszdp.common.security.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import tools.jackson.databind.ObjectMapper;
 
 /** Handles AccessDenied exceptions by returning RFC 7807 ProblemDetail format. */
 public class ProblemDetailAccessDeniedHandler implements AccessDeniedHandler {

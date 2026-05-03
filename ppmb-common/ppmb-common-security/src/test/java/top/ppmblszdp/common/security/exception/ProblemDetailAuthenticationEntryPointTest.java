@@ -2,7 +2,6 @@ package top.ppmblszdp.common.security.exception;
 
 import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
+import tools.jackson.databind.ObjectMapper;
 
 @DisplayName("AuthenticationEntryPoint 测试")
 class ProblemDetailAuthenticationEntryPointTest {
