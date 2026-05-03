@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.ppmblszdp.common.api.Result;
+import top.ppmblszdp.common.security.util.SecurityUtils;
+import top.ppmblszdp.system.application.service.menu.MenuApplicationService;
 import top.ppmblszdp.system.application.service.role.UserRoleApplicationService;
 import top.ppmblszdp.system.application.service.user.UserApplicationService;
 import top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand;
@@ -25,6 +27,7 @@ public class UserController {
 
   private final UserApplicationService userApplicationService;
   private final UserRoleApplicationService userRoleApplicationService;
+  private final MenuApplicationService menuApplicationService;
 
   @PostMapping
   public Result<UserDto> createUser(@Valid @RequestBody CreateUserCommand command) {
@@ -57,5 +60,11 @@ public class UserController {
   public Result<Void> batchAssignRoles(@Valid @RequestBody BatchUserRoleCommand command) {
     userRoleApplicationService.batchAssignRoles(command);
     return Result.success();
+  }
+
+  @GetMapping("/permissions")
+  public Result<List<String>> getPermissions() {
+    Long userId = SecurityUtils.getUserId();
+    return Result.success(menuApplicationService.getMenuPermsByUserId(userId));
   }
 }
