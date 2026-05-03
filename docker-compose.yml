@@ -23,7 +23,7 @@ services:
       - POSTGRES_PASSWORD=sonar
       - POSTGRES_DB=sonar
     volumes:
-      - ../ppmb-admin-docker-data/sonar-db/data:/var/lib/postgresql/data
+      - ../ppmb-admin-docker-data/sonar-db/data:/var/lib/postgresql
 
   ppmb-db:
     image: postgres:18
@@ -37,7 +37,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql/data
+      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql
 
   sonarqube:
     image: sonarqube:latest
