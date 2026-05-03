@@ -1,16 +1,17 @@
 package top.ppmblszdp.common.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tools.jackson.databind.ObjectMapper;
 import top.ppmblszdp.common.security.exception.ProblemDetailAccessDeniedHandler;
 import top.ppmblszdp.common.security.exception.ProblemDetailAuthenticationEntryPoint;
 import top.ppmblszdp.common.security.filter.HeaderAuthenticationFilter;
@@ -57,6 +58,9 @@ public class PpmbSecurityAutoConfiguration {
    * @throws Exception if an error occurs
    */
   @Bean
+  @Order(
+      org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterProperties
+          .BASIC_AUTH_ORDER)
   @SuppressWarnings("java:S4502")
   public SecurityFilterChain securityFilterChain(
       HttpSecurity http,
@@ -67,7 +71,8 @@ public class PpmbSecurityAutoConfiguration {
       ObjectMapper objectMapper)
       throws Exception {
 
-    http.csrf(AbstractHttpConfigurer::disable)
+    http.securityMatcher("/**")
+        .csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(
