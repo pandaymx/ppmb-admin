@@ -7,6 +7,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SecurityUtils {
+  private SecurityUtils() {
+    throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+  }
 
   public static Long getUserId() {
     ServletRequestAttributes attributes =
