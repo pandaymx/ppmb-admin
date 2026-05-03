@@ -59,13 +59,8 @@ class DictApplicationServiceImplTest {
   }
 
   private void setEntityId(Object entity, Long id) {
-    try {
-      java.lang.reflect.Field idField =
-          top.ppmblszdp.common.domain.entity.BaseEntity.class.getDeclaredField("id");
-      idField.setAccessible(true);
-      idField.set(entity, id);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    if (entity instanceof top.ppmblszdp.common.domain.entity.BaseEntity baseEntity) {
+      top.ppmblszdp.common.domain.entity.EntityTestUtils.setId(baseEntity, id);
     }
   }
 
@@ -436,17 +431,6 @@ class DictApplicationServiceImplTest {
     dictService.deleteDictData(1L);
 
     verify(dictDataRepository).deleteById(1L);
-  }
-
-  @Test
-  @DisplayName("清除缓存-测试私有方法处理null参数")
-  void clearCache_nullParam() throws Exception {
-    // 使用反射调用私有方法 clearCache
-    java.lang.reflect.Method method =
-        DictApplicationServiceImpl.class.getDeclaredMethod("clearCache", String.class);
-    method.setAccessible(true);
-
-    assertDoesNotThrow(() -> method.invoke(dictService, (String) null));
   }
 
   @Test

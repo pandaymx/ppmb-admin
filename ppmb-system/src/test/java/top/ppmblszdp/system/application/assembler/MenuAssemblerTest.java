@@ -31,7 +31,7 @@ class MenuAssemblerTest {
   @DisplayName("测试 Entity 转换为 DTO")
   void testToDto() {
     SysMenu entity = new SysMenu();
-    entity.setId(1L);
+    top.ppmblszdp.common.domain.entity.EntityTestUtils.setId(entity, 1L);
     entity.setMenuName("测试");
 
     MenuDto dto = assembler.toDto(entity);
