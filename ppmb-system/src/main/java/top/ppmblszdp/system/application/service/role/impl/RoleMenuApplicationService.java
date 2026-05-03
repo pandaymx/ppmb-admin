@@ -1,7 +1,6 @@
 package top.ppmblszdp.system.application.service.role.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class RoleMenuApplicationService {
                     roleMenu.setMenuId(menuId);
                     return roleMenu;
                   })
-              .collect(Collectors.toList());
+              .toList();
 
       roleMenuRepository.saveAll(roleMenus);
     }
