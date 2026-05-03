@@ -77,7 +77,17 @@ public class PpmbSecurityAutoConfiguration {
                 exceptions
                     .authenticationEntryPoint(authenticationEntryPoint)
                     .accessDeniedHandler(accessDeniedHandler))
-        .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
+        .authorizeHttpRequests(
+            authorize ->
+                authorize
+                    .requestMatchers("/", "/favicon.ico", "/error")
+                    .permitAll()
+                    .requestMatchers("/actuator/**")
+                    .permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated());
 
     if (!properties.isGatewayMode()) {
       http.addFilterBefore(
