@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-public class RedisUtilTest {
+class RedisUtilTest {
 
   private RedisTemplate<String, Object> redisTemplate;
   private ValueOperations<String, Object> valueOperations;
