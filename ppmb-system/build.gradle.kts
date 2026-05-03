@@ -10,6 +10,8 @@ dependencies {
     implementation(project(":ppmb-common:ppmb-common-api"))
     implementation(project(":ppmb-common:ppmb-common-doc"))
     implementation(project(":ppmb-common:ppmb-common-security"))
+    implementation(project(":ppmb-common:ppmb-common-mq"))
+    implementation(libs.spring.boot.starter.amqp)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.mapstruct.core)
 
