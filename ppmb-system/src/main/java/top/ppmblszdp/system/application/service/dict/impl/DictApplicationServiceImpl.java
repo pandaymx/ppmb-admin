@@ -13,6 +13,7 @@ import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.PageQuery;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.DictAssembler;
 import top.ppmblszdp.system.application.service.dict.DictApplicationService;
 import top.ppmblszdp.system.domain.model.dict.entity.DictData;
 import top.ppmblszdp.system.domain.model.dict.entity.DictType;
@@ -31,7 +32,7 @@ public class DictApplicationServiceImpl implements DictApplicationService {
 
   private final DictTypeRepository dictTypeRepository;
   private final DictDataRepository dictDataRepository;
-  private final top.ppmblszdp.system.application.assembler.DictAssembler dictAssembler;
+  private final DictAssembler dictAssembler;
 
   // Simple local cache for dict data
   private final Map<String, List<DictDataDto>> dictCache = new ConcurrentHashMap<>();

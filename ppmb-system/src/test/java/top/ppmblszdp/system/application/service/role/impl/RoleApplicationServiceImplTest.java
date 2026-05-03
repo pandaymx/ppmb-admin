@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import top.ppmblszdp.common.api.PageQuery;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.RoleAssembler;
 import top.ppmblszdp.system.domain.model.role.entity.Role;
 import top.ppmblszdp.system.domain.model.role.repository.RoleRepository;
 import top.ppmblszdp.system.domain.model.role.repository.UserRoleRepository;
@@ -28,7 +29,7 @@ class RoleApplicationServiceImplTest {
 
   @Mock private RoleRepository roleRepository;
   @Mock private UserRoleRepository userRoleRepository;
-  @Mock private top.ppmblszdp.system.application.assembler.RoleAssembler roleAssembler;
+  @Mock private RoleAssembler roleAssembler;
 
   @InjectMocks private RoleApplicationServiceImpl service;
 

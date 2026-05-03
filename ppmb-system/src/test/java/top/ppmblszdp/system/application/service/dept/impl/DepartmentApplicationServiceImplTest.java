@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.DepartmentAssembler;
 import top.ppmblszdp.system.domain.model.dept.entity.Department;
 import top.ppmblszdp.system.domain.model.dept.repository.DepartmentRepository;
 import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
@@ -29,7 +30,7 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 class DepartmentApplicationServiceImplTest {
 
   @Mock private DepartmentRepository departmentRepository;
-  @Mock private top.ppmblszdp.system.application.assembler.DepartmentAssembler departmentAssembler;
+  @Mock private DepartmentAssembler departmentAssembler;
 
   @InjectMocks private DepartmentApplicationServiceImpl departmentService;
 

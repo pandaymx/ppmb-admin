@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.DepartmentAssembler;
 import top.ppmblszdp.system.application.service.dept.DepartmentApplicationService;
 import top.ppmblszdp.system.domain.model.dept.entity.Department;
 import top.ppmblszdp.system.domain.model.dept.repository.DepartmentRepository;
@@ -18,7 +19,7 @@ import top.ppmblszdp.system.interfaces.web.dept.dto.DepartmentDto;
 public class DepartmentApplicationServiceImpl implements DepartmentApplicationService {
 
   private final DepartmentRepository departmentRepository;
-  private final top.ppmblszdp.system.application.assembler.DepartmentAssembler departmentAssembler;
+  private final DepartmentAssembler departmentAssembler;
 
   @Override
   @Transactional

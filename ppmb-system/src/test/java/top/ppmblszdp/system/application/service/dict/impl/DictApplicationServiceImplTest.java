@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import top.ppmblszdp.common.api.PageQuery;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.exception.BusinessException;
+import top.ppmblszdp.system.application.assembler.DictAssembler;
 import top.ppmblszdp.system.domain.model.dict.entity.DictData;
 import top.ppmblszdp.system.domain.model.dict.entity.DictType;
 import top.ppmblszdp.system.domain.model.dict.repository.DictDataRepository;
@@ -41,7 +42,7 @@ class DictApplicationServiceImplTest {
 
   @Mock private DictTypeRepository dictTypeRepository;
   @Mock private DictDataRepository dictDataRepository;
-  @Mock private top.ppmblszdp.system.application.assembler.DictAssembler dictAssembler;
+  @Mock private DictAssembler dictAssembler;
 
   @InjectMocks private DictApplicationServiceImpl dictService;
 
