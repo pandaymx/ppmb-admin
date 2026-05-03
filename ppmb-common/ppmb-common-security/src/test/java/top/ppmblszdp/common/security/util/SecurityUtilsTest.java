@@ -20,12 +20,15 @@ class SecurityUtilsTest {
 
   @BeforeEach
   void setUp() {
-    RequestContextHolder.resetRequestAttributes();
-    SecurityContextHolder.clearContext();
+    clearContext();
   }
 
   @AfterEach
   void tearDown() {
+    clearContext();
+  }
+
+  private void clearContext() {
     RequestContextHolder.resetRequestAttributes();
     SecurityContextHolder.clearContext();
   }

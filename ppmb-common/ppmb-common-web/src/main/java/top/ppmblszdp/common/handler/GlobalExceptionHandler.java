@@ -1,8 +1,6 @@
 package top.ppmblszdp.common.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -62,9 +60,6 @@ public class GlobalExceptionHandler {
 
   private void sendExceptionLog(Exception ex, HttpServletRequest request) {
     try {
-      StringWriter sw = new StringWriter();
-      ex.printStackTrace(new PrintWriter(sw));
-
       String userIdStr = request.getHeader("X-User-Id");
       Long userId = (userIdStr != null && !userIdStr.isEmpty()) ? Long.parseLong(userIdStr) : null;
 
@@ -73,7 +68,7 @@ public class GlobalExceptionHandler {
               serviceName,
               ex.getClass().getName(),
               ex.getMessage(),
-              sw.toString(),
+              sanitizeStackTrace(ex),
               request.getRequestURI(),
               request.getMethod(),
               request.getQueryString(),
@@ -86,6 +81,52 @@ public class GlobalExceptionHandler {
     } catch (Exception e) {
       log.error("发送异常日志到 MQ 失败", e);
     }
+  }
+
+  /** 脱敏处理堆栈信息，避免泄露内部代码结构。 只保留异常类型、消息和首行堆栈，过滤掉项目包名的详细堆栈。. */
+  private String sanitizeStackTrace(Exception ex) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(ex.getClass().getName()).append(": ").append(ex.getMessage()).append("\n");
+
+    StackTraceElement[] stackTrace = ex.getStackTrace();
+    if (stackTrace.length > 0) {
+      // 只保留第一行堆栈（最接近异常发生点）
+      sb.append("\tat ").append(stackTrace[0]).append("\n");
+
+      // 添加简短摘要：统计每个包的异常帧数
+      sb.append("\n[堆栈摘要]\n");
+      java.util.Map<String, Long> packageCounts =
+          java.util.Arrays.stream(stackTrace)
+              .limit(20) // 限制前20帧
+              .collect(
+                  Collectors.groupingBy(
+                      e -> {
+                        String className = e.getClassName();
+                        int dotIndex = className.lastIndexOf('.');
+                        return dotIndex > 0 ? className.substring(0, dotIndex) : "default";
+                      },
+                      Collectors.counting()));
+
+      packageCounts.entrySet().stream()
+          .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+          .limit(5) // 只显示前5个包
+          .forEach(
+              e ->
+                  sb.append("  ")
+                      .append(e.getKey())
+                      .append(": ")
+                      .append(e.getValue())
+                      .append(" 帧\n"));
+
+      if (stackTrace.length > 20) {
+        sb.append("  ... 以及 ").append(stackTrace.length - 20).append(" 个堆栈帧被隐藏\n");
+      }
+    }
+
+    // 记录完整堆栈到日志（供内部排查使用），但不发送到外部系统
+    log.debug("完整异常堆栈: ", ex);
+
+    return sb.toString();
   }
 
   private ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
