@@ -11,4 +11,5 @@ dependencies {
     implementation(libs.findLibrary("spring-cloud-starter-consul-discovery").get())
     implementation(libs.findLibrary("spring-cloud-starter-consul-config").get())
     implementation(libs.findLibrary("spring-cloud-starter-loadbalancer").get())
+    implementation(libs.findLibrary("spring-boot-starter-actuator").get())
 }
