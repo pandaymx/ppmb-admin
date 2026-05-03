@@ -2,6 +2,7 @@ package top.ppmblszdp.common.web.serializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,7 +59,7 @@ class SensitiveSerializerTest {
 
     com.fasterxml.jackson.databind.JavaType javaType =
         mock(com.fasterxml.jackson.databind.JavaType.class);
-    when(javaType.getRawClass()).thenReturn((Class) String.class);
+    doReturn(String.class).when(javaType).getRawClass();
 
     when(property.getType()).thenReturn(javaType);
     when(property.getAnnotation(Sensitive.class)).thenReturn(sensitive);
@@ -86,7 +87,7 @@ class SensitiveSerializerTest {
 
     com.fasterxml.jackson.databind.JavaType javaType =
         mock(com.fasterxml.jackson.databind.JavaType.class);
-    when(javaType.getRawClass()).thenReturn((Class) String.class);
+    doReturn(String.class).when(javaType).getRawClass();
 
     when(property.getType()).thenReturn(javaType);
     when(property.getAnnotation(Sensitive.class)).thenReturn(sensitive);
@@ -104,5 +105,29 @@ class SensitiveSerializerTest {
     assertEquals("******", SensitiveStrategy.PASSWORD.getDesensitizer().apply("mysecret"));
     assertEquals("***", SensitiveStrategy.HIDE.getDesensitizer().apply("secretdata"));
     assertEquals("custom", SensitiveStrategy.CUSTOM.getDesensitizer().apply("custom"));
+  }
+
+  @Test
+  void testContextualBranches() throws Exception {
+    // Property is null
+    assertEquals(prov.findNullValueSerializer(null), serializer.createContextual(prov, null));
+
+    // Type is not String
+    BeanProperty intProperty = mock(BeanProperty.class);
+    com.fasterxml.jackson.databind.JavaType intType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(Integer.class).when(intType).getRawClass();
+    when(intProperty.getType()).thenReturn(intType);
+    serializer.createContextual(prov, intProperty);
+    verify(prov).findValueSerializer(intType, intProperty);
+
+    // No annotation
+    BeanProperty noAnnoProperty = mock(BeanProperty.class);
+    com.fasterxml.jackson.databind.JavaType stringType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(stringType).getRawClass();
+    when(noAnnoProperty.getType()).thenReturn(stringType);
+    serializer.createContextual(prov, noAnnoProperty);
+    verify(prov).findValueSerializer(stringType, noAnnoProperty);
   }
 }

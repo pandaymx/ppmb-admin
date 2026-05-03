@@ -76,4 +76,30 @@ class SecurityUtilsTest {
 
     assertEquals(1L, SecurityUtils.getUserId());
   }
+
+  @Test
+  @DisplayName("测试私有构造函数")
+  void testPrivateConstructor() throws Exception {
+    java.lang.reflect.Constructor<SecurityUtils> constructor =
+        SecurityUtils.class.getDeclaredConstructor();
+    constructor.setAccessible(true);
+    try {
+      constructor.newInstance();
+    } catch (java.lang.reflect.InvocationTargetException e) {
+      assertEquals(
+          "This is a utility class and cannot be instantiated",
+          e.getTargetException().getMessage());
+    }
+  }
+
+  @Test
+  @DisplayName("用户 ID 响应头为空时返回默认 ID")
+  void shouldReturnDefaultWhenHeaderIsEmpty() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader("X-User-Id")).thenReturn("");
+    ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+    RequestContextHolder.setRequestAttributes(attributes);
+
+    assertEquals(1L, SecurityUtils.getUserId());
+  }
 }
