@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'consul-microservices'
+    metrics_path: '/actuator/prometheus'
+    consul_sd_configs:
+      - server: 'consul-server:8500' # Matches the consul-server container name in docker-compose.yml
+    relabel_configs:
+      # Keep only services that have a name (ignore consul itself if needed, or filter by tags)
+      - source_labels: [__meta_consul_service]
+        action: keep
+        regex: .*(ppmb-).* # Only keep services that have "ppmb-" in their name (e.g. ppmb-gateway, ppmb-system)
+
+      # Use the Consul service name as the target job name
+      - source_labels: [__meta_consul_service]
+        target_label: job
+
+      # Use the Consul service id as the target instance name
+      - source_labels: [__meta_consul_service_id]
+        target_label: instance
