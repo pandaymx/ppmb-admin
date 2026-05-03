@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,9 +51,12 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             Arrays.stream(rolesHeader.split(","))
                 .map(String::trim)
                 .filter(StringUtils::hasText)
-                .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .map(
+                    role ->
+                        (GrantedAuthority)
+                            new SimpleGrantedAuthority(
+                                role.startsWith("ROLE_") ? role : "ROLE_" + role))
+                .toList();
       }
 
       // In a real application, you might create a custom UserDetails object here.
