@@ -42,7 +42,14 @@ sonar {
     properties {
         property("sonar.organization", "pandaymx")
         property("sonar.projectKey", "pandaymx_ppmb-admin")
-        property("sonar.host.url", "https://sonarcloud.io")
+        val hostUrl = project.findProperty("sonar.host.url") as? String ?: "https://sonarcloud.io"
+        property("sonar.host.url", hostUrl)
+
+        // 显式读取 Token，支持从 gradle.properties 或命令行 -P 获取
+        val token = (project.findProperty("sonar.token") ?: project.findProperty("sonar.login")) as? String
+        if (token != null) {
+            property("sonar.token", token)
+        }
         property("sonar.language", "java")
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
