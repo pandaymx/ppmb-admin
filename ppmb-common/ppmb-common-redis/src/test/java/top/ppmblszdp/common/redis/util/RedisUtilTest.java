@@ -146,7 +146,7 @@ public class RedisUtilTest {
 
     String retrieved =
         redisUtil.getWithLogicalExpire(
-            key, String.class, 1L, Duration.ofSeconds(2), (id) -> "newValue");
+            key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
     Assertions.assertEquals(value, retrieved);
   }
 
@@ -169,7 +169,7 @@ public class RedisUtilTest {
 
     String retrieved =
         redisUtil.getWithLogicalExpire(
-            key, String.class, 1L, Duration.ofSeconds(2), (id) -> "newValue");
+            key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
     Assertions.assertEquals(value, retrieved);
 
     try {
@@ -184,13 +184,13 @@ public class RedisUtilTest {
     String key = "logicalExpireNullKey";
     String retrieved =
         redisUtil.getWithLogicalExpire(
-            key, String.class, 1L, Duration.ofSeconds(2), (id) -> "newValue");
+            key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
     Assertions.assertNull(retrieved);
 
     Mockito.when(valueOperations.get(key)).thenReturn("invalidWrapper");
     String retrievedInvalid =
         redisUtil.getWithLogicalExpire(
-            key, String.class, 1L, Duration.ofSeconds(2), (id) -> "newValue");
+            key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
     Assertions.assertNull(retrievedInvalid);
 
     LogicalExpirationWrapper<Object> invalidWrapper = new LogicalExpirationWrapper<>();
@@ -199,7 +199,7 @@ public class RedisUtilTest {
 
     redisTemplate.opsForValue().set(key, invalidWrapper);
     Integer retrievedCastEx =
-        redisUtil.getWithLogicalExpire(key, Integer.class, 1L, Duration.ofSeconds(2), (id) -> 5);
+        redisUtil.getWithLogicalExpire(key, Integer.class, 1L, Duration.ofSeconds(2), id -> 5);
     Assertions.assertNull(retrievedCastEx);
   }
 }
