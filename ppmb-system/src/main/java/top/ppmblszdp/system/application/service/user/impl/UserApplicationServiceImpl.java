@@ -4,6 +4,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.ppmblszdp.system.application.assembler.UserAssembler;
 import top.ppmblszdp.system.application.service.user.UserApplicationService;
 import top.ppmblszdp.system.domain.model.user.entity.User;
 import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
@@ -15,7 +16,7 @@ import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 public class UserApplicationServiceImpl implements UserApplicationService {
 
   private final UserRepository userRepository;
-  private final top.ppmblszdp.system.application.assembler.UserAssembler userAssembler;
+  private final UserAssembler userAssembler;
 
   @Override
   @Transactional

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import top.ppmblszdp.system.application.assembler.UserAssembler;
 import top.ppmblszdp.system.domain.model.user.entity.User;
 import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
 import top.ppmblszdp.system.interfaces.web.user.dto.CreateUserCommand;
@@ -22,7 +23,7 @@ import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 class UserApplicationServiceImplTest {
 
   @Mock private UserRepository userRepository;
-  @Mock private top.ppmblszdp.system.application.assembler.UserAssembler userAssembler;
+  @Mock private UserAssembler userAssembler;
 
   @InjectMocks private UserApplicationServiceImpl userService;
 

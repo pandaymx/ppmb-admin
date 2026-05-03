@@ -8,6 +8,7 @@ import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.PageQuery;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.util.AssertUtils;
+import top.ppmblszdp.system.application.assembler.RoleAssembler;
 import top.ppmblszdp.system.application.service.role.RoleApplicationService;
 import top.ppmblszdp.system.domain.model.role.entity.Role;
 import top.ppmblszdp.system.domain.model.role.repository.RoleRepository;
@@ -23,7 +24,7 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
 
   private final RoleRepository roleRepository;
   private final UserRoleRepository userRoleRepository;
-  private final top.ppmblszdp.system.application.assembler.RoleAssembler roleAssembler;
+  private final RoleAssembler roleAssembler;
   private final RoleMenuApplicationService roleMenuApplicationService;
 
   @Override
