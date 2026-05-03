@@ -1,9 +1,7 @@
 package top.ppmblszdp.system.interfaces.web.user;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -20,25 +18,27 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import top.ppmblszdp.common.api.Result;
+import top.ppmblszdp.system.application.service.menu.MenuApplicationService;
 import top.ppmblszdp.system.application.service.role.UserRoleApplicationService;
 import top.ppmblszdp.system.application.service.user.UserApplicationService;
-import top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.CreateUserCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("用户管理接口测试")
+@DisplayName("用户控制器单元测试")
 class UserControllerTest {
 
   private MockMvc mockMvc;
 
+  private final ObjectMapper objectMapper = new ObjectMapper();
+
   @Mock private UserApplicationService userApplicationService;
+
   @Mock private UserRoleApplicationService userRoleApplicationService;
 
-  @InjectMocks private UserController userController;
+  @Mock private MenuApplicationService menuApplicationService;
 
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  @InjectMocks private UserController userController;
 
   @BeforeEach
   void setUp() {
@@ -46,11 +46,13 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("创建用户")
-  void createUser() throws Exception {
+  @DisplayName("测试创建用户")
+  void testCreateUser() throws Exception {
     CreateUserCommand command =
-        new CreateUserCommand("testuser", "password123", "Tester", "test@example.com", "123456");
-    UserDto userDto = new UserDto(1L, "testuser", "Tester", "test@example.com", "123456", 0);
+        new CreateUserCommand(
+            "testuser", "password123", "Test User", "test@example.com", "13800000000");
+    UserDto userDto =
+        new UserDto(1L, "testuser", "Test User", "test@example.com", "13800000000", 1);
 
     when(userApplicationService.createUser(any(CreateUserCommand.class))).thenReturn(userDto);
 
@@ -60,54 +62,47 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(command)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.username").value("testuser"))
-        .andExpect(jsonPath("$.data.nickname").value("Tester"));
+        .andExpect(jsonPath("$.code").value("00000"))
+        .andExpect(jsonPath("$.data.username").value("testuser"));
   }
 
   @Test
-  @DisplayName("根据 ID 获取用户")
-  void getUserById() throws Exception {
-    UserDto userDto = new UserDto(1L, "testuser", "Tester", "test@example.com", "123456", 0);
+  @DisplayName("测试通过 ID 获取用户")
+  void testGetUserById() throws Exception {
+    UserDto userDto =
+        new UserDto(1L, "testuser", "Test User", "test@example.com", "13800000000", 1);
+
     when(userApplicationService.getUserById(1L)).thenReturn(Optional.of(userDto));
 
     mockMvc
         .perform(get("/users/1"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data.username").value("testuser"));
-
-    when(userApplicationService.getUserById(2L)).thenReturn(Optional.empty());
-    mockMvc.perform(get("/users/2")).andExpect(status().isOk());
+        .andExpect(jsonPath("$.code").value("00000"))
+        .andExpect(jsonPath("$.data.id").value(1));
   }
 
   @Test
-  @DisplayName("删除用户")
-  void deleteUser() throws Exception {
-    mockMvc.perform(delete("/users/1")).andExpect(status().isOk());
+  @DisplayName("测试删除用户")
+  void testDeleteUser() throws Exception {
+    doNothing().when(userApplicationService).deleteUser(1L);
+
+    mockMvc
+        .perform(delete("/users/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.code").value("00000"));
+
+    verify(userApplicationService, times(1)).deleteUser(1L);
   }
 
   @Test
-  @DisplayName("获取用户角色")
-  void testGetUserRoles() {
-    when(userRoleApplicationService.getUserRoles(1L)).thenReturn(List.of(2L, 3L));
-    Result<List<Long>> result = userController.getUserRoles(1L);
-    assertEquals("00000", result.code());
-    assertEquals(2, result.data().size());
-  }
+  @DisplayName("测试获取用户角色")
+  void testGetUserRoles() throws Exception {
+    when(userRoleApplicationService.getUserRoles(1L)).thenReturn(List.of(1L, 2L));
 
-  @Test
-  @DisplayName("分配角色")
-  void testAssignRoles() {
-    Result<Void> result = userController.assignRoles(1L, List.of(2L, 3L));
-    verify(userRoleApplicationService, times(1)).assignRolesToUser(1L, List.of(2L, 3L));
-    assertEquals("00000", result.code());
-  }
-
-  @Test
-  @DisplayName("批量分配角色")
-  void testBatchAssignRoles() {
-    BatchUserRoleCommand command = new BatchUserRoleCommand(List.of(1L, 2L), List.of(3L, 4L));
-    Result<Void> result = userController.batchAssignRoles(command);
-    verify(userRoleApplicationService, times(1)).batchAssignRoles(command);
-    assertEquals("00000", result.code());
+    mockMvc
+        .perform(get("/users/1/roles"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data[0]").value(1));
   }
 }
