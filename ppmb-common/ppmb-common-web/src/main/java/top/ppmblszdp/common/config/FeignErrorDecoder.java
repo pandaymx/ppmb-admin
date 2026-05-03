@@ -1,0 +1,73 @@
+package top.ppmblszdp.common.config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.Response;
+import feign.codec.ErrorDecoder;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import top.ppmblszdp.common.api.CommonResultCode;
+import top.ppmblszdp.common.api.IResultCode;
+import top.ppmblszdp.common.exception.BusinessException;
+
+/** Feign 异常解码器，将远程服务的 ProblemDetail 转换为本地 BusinessException. */
+@Slf4j
+public class FeignErrorDecoder implements ErrorDecoder {
+
+  /** Jackson 对象映射器. */
+  private final ObjectMapper objectMapper;
+
+  /**
+   * 构造函数.
+   *
+   * @param objectMapper Jackson 对象映射器
+   */
+  public FeignErrorDecoder(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
+
+  @Override
+  public Exception decode(String methodKey, Response response) {
+    try {
+      if (response.body() != null) {
+        try (InputStream inputStream = response.body().asInputStream()) {
+          // 使用 Map 读取，以便处理 ProblemDetail 及其扩展属性（如 code）
+          @SuppressWarnings("unchecked")
+          Map<String, Object> map = objectMapper.readValue(inputStream, Map.class);
+          log.warn("Feign 调用异常 [{}]: {}", methodKey, map);
+
+          String title = map.getOrDefault("title", "Remote Service Error").toString();
+          String detail = map.getOrDefault("detail", title).toString();
+          String code =
+              map.getOrDefault("code", CommonResultCode.REMOTE_ERROR.getCode()).toString();
+
+          IResultCode resultCode =
+              new IResultCode() {
+                @Override
+                public String getCode() {
+                  return code;
+                }
+
+                @Override
+                public String getMessage() {
+                  return title;
+                }
+              };
+
+          return new BusinessException(
+              HttpStatus.valueOf(response.status()), resultCode, title, detail);
+        }
+      }
+    } catch (IOException e) {
+      log.error("解析 Feign 错误响应失败", e);
+    }
+
+    return new BusinessException(
+        HttpStatus.valueOf(response.status()),
+        CommonResultCode.REMOTE_ERROR,
+        "远程服务调用失败",
+        "HTTP Status: " + response.status());
+  }
+}
