@@ -43,15 +43,7 @@ class PostControllerTest {
     mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
 
     post = Post.create("P001", "Software Engineer", 1, 0, "Remark");
-    // Reflection to set ID since it's private and usually set by JPA
-    try {
-      java.lang.reflect.Field idField =
-          top.ppmblszdp.common.domain.entity.BaseEntity.class.getDeclaredField("id");
-      idField.setAccessible(true);
-      idField.set(post, 1L);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    top.ppmblszdp.common.domain.entity.EntityTestUtils.setId(post, 1L);
 
     postDto = new PostDto(1L, "P001", "Software Engineer", 1, 0, "Remark");
   }

@@ -41,7 +41,7 @@ class MenuApplicationServiceImplTest {
   @BeforeEach
   void setUp() {
     menu = new SysMenu();
-    menu.setId(1L);
+    top.ppmblszdp.common.domain.entity.EntityTestUtils.setId(menu, 1L);
     menu.setMenuName("System");
     menu.setMenuType("M");
     menu.setPath("system");

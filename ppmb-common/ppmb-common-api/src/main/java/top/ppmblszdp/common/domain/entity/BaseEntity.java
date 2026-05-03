@@ -52,4 +52,12 @@ public abstract class BaseEntity implements Serializable {
   /** Data scope level (0: default, 1: read-only, 99: hidden). */
   @Column(name = "data_scope", nullable = false)
   private Integer dataScope = 0;
+
+  /**
+   * Sets the ID for testing or internal framework use. Protected to discourage direct use in
+   * application logic.
+   */
+  protected void setId(Long id) {
+    this.id = id;
+  }
 }
