@@ -47,6 +47,19 @@ class PpmbSecurityAutoConfigurationTest {
             });
   }
 
+  @Test
+  @DisplayName("非网关模式应注入相应的过滤器")
+  void nonGatewayMode() {
+    contextRunner
+        .withPropertyValues("ppmb.security.gateway-mode=false")
+        .run(
+            context -> {
+              assertThat(context).hasSingleBean(SecurityFilterChain.class);
+              PpmbSecurityProperties props = context.getBean(PpmbSecurityProperties.class);
+              assertThat(props.isGatewayMode()).isFalse();
+            });
+  }
+
   @Configuration
   static class TestConfig {
     @Bean
