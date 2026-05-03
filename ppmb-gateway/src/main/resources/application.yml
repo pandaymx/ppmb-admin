@@ -39,3 +39,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    urls:
+      - name: ppmb-system
+        url: /api/system/v3/api-docs

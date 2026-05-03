@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":ppmb-common-web"))
 
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
+    implementation(libs.springdoc.openapi.starter.webmvc.ui)
 
     developmentOnly(libs.spring.boot.devtools)
 }
