@@ -19,10 +19,6 @@ public abstract class BaseMainEntity extends BaseEntity {
 
   private static final long serialVersionUID = 1L;
 
-  /** Department of the creator. */
-  @Column(name = "create_by_dept", updatable = false)
-  private Long createByDept;
-
   /** Last modified by user identifier. */
   @LastModifiedBy
   @Column(name = "update_by")
