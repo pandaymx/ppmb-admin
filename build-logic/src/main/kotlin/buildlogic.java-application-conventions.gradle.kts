@@ -11,3 +11,10 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
+
+val libs = the<VersionCatalogsExtension>().named("libs")
+
+dependencies {
+    implementation(libs.findLibrary("spring-boot-starter-actuator").get())
+    implementation(libs.findLibrary("micrometer-registry-prometheus").get())
+}
