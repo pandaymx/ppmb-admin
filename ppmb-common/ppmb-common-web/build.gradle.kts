@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.findLibrary("jacksonDatabind").get())
     implementation(libs.findLibrary("jacksonCore").get())
     implementation(libs.findLibrary("jacksonAnnotations").get())
+    implementation(libs.findLibrary("spring-boot-starter-amqp").get())
     testImplementation(libs.findLibrary("spring-boot-starter-test").get())
     testImplementation(libs.findLibrary("spring-boot-starter-validation").get())
     compileOnly(libs.findLibrary("lombok").get())
