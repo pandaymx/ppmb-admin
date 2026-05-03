@@ -43,4 +43,13 @@ class BaseEntityTest {
     // 测试 null 实体
     EntityTestUtils.setId(null, 300L);
   }
+
+  @Test
+  @DisplayName("测试 EntityTestUtils 私有构造函数")
+  void testEntityTestUtilsConstructor() throws Exception {
+    var constructor = EntityTestUtils.class.getDeclaredConstructor();
+    constructor.setAccessible(true);
+    org.junit.jupiter.api.Assertions.assertThrows(
+        java.lang.reflect.InvocationTargetException.class, constructor::newInstance);
+  }
 }
