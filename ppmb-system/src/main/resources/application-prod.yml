@@ -1,0 +1,10 @@
+server:
+  port: 8080 # 生产环境常用 8080
+
+spring:
+  cloud:
+    consul:
+      host: 192.168.1.100 # 生产环境 Consul 集群地址
+      port: 8500
+      discovery:
+        tags: version=1.0, env=prod
