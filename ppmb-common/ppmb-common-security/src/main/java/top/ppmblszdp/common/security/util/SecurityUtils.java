@@ -26,7 +26,7 @@ public class SecurityUtils {
       if (principal instanceof String) {
         try {
           return Long.parseLong((String) principal);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException _) {
           // Ignore, fallback to return 1L for simplicity if it fails (not ideal for prod, but fine
           // for test)
           return 1L;

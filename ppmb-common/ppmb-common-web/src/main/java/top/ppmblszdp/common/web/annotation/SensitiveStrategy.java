@@ -1,6 +1,6 @@
 package top.ppmblszdp.common.web.annotation;
 
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public enum SensitiveStrategy {
   PHONE(s -> s.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2")),
@@ -9,13 +9,13 @@ public enum SensitiveStrategy {
   HIDE(s -> "***"),
   CUSTOM(s -> s);
 
-  private final Function<String, String> desensitizer;
+  private final UnaryOperator<String> desensitizer;
 
-  SensitiveStrategy(Function<String, String> desensitizer) {
+  SensitiveStrategy(UnaryOperator<String> desensitizer) {
     this.desensitizer = desensitizer;
   }
 
-  public Function<String, String> getDesensitizer() {
+  public UnaryOperator<String> getDesensitizer() {
     return desensitizer;
   }
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +64,7 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
     return menuRepository.findAll().stream()
         .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
         .map(menuAssembler::toDto)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   @Override
@@ -86,15 +85,13 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
     return getMenusByUserId(userId).stream()
         .map(SysMenu::getPerms)
         .filter(StringUtils::hasText)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private List<SysMenu> getMenusByUserId(Long userId) {
     // Here we could implement admin bypassing
     List<Long> roleIds =
-        userRoleRepository.findByUserId(userId).stream()
-            .map(UserRole::getRoleId)
-            .collect(Collectors.toList());
+        userRoleRepository.findByUserId(userId).stream().map(UserRole::getRoleId).toList();
 
     if (roleIds.isEmpty()) {
       return new ArrayList<>();
@@ -104,7 +101,7 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
         roleMenuRepository.findByRoleIdIn(roleIds).stream()
             .map(SysRoleMenu::getMenuId)
             .distinct()
-            .collect(Collectors.toList());
+            .toList();
 
     if (menuIds.isEmpty()) {
       return new ArrayList<>();
@@ -112,7 +109,7 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
 
     return menuRepository.findByIdIn(menuIds).stream()
         .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private List<MenuDto> buildMenuTree(List<MenuDto> menus, Long parentId) {
