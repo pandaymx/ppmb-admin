@@ -7,7 +7,7 @@ val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
     api(platform(libs.findLibrary("spring-boot-dependencies").get()))
-    api(project(":ppmb-common-api"))
+    api(project(":ppmb-common:ppmb-common-api"))
 
     api(libs.findLibrary("spring-boot-starter-security").get())
     api(libs.findLibrary("spring-boot-starter-web").get())

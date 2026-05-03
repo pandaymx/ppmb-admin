@@ -6,10 +6,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":ppmb-common-web"))
-    implementation(project(":ppmb-common-api"))
-    implementation(project(":ppmb-common-doc"))
-    implementation(project(":ppmb-common-security"))
+    implementation(project(":ppmb-common:ppmb-common-web"))
+    implementation(project(":ppmb-common:ppmb-common-api"))
+    implementation(project(":ppmb-common:ppmb-common-doc"))
+    implementation(project(":ppmb-common:ppmb-common-security"))
     implementation(libs.spring.boot.starter.web)
     implementation(libs.mapstruct.core)
 
