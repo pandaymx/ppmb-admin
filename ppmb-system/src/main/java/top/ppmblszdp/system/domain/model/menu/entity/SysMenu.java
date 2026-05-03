@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
@@ -13,6 +14,7 @@ import top.ppmblszdp.common.domain.entity.BaseMainEntity;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "sys_menu")
 @SQLRestriction("del_flag = 0")
