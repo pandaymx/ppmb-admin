@@ -13,6 +13,7 @@ dependencies {
 
     developmentOnly(libs.spring.boot.devtools)
     testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.mockito.core)
 
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
