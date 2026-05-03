@@ -28,7 +28,7 @@ services:
       - ../ppmb-admin-docker-data/sonar-db/data:/var/lib/postgresql/data
 
   ppmb-db:
-    image: postgres:17-alpine
+    image: postgres:18
     container_name: ppmb-db
     networks:
       - ppmb-admin
@@ -39,8 +39,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql/data
-
+      - ../ppmb-admin-docker-data/ppmb-db/data:/var/lib/postgresql
   sonarqube:
     image: sonarqube:latest
     container_name: sonarqube
@@ -90,6 +89,7 @@ services:
       - "9090:9090"
     volumes:
       - ../ppmb-admin-docker-data/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../ppmb-admin-docker-data/prometheus/config/sonarqube_token:/etc/prometheus/sonarqube_token
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
