@@ -61,15 +61,26 @@ public class RedisUtil {
   public void set(String key, Object value, Duration duration) {
     Duration durationWithJitter = addJitter(duration);
     if (value == null) {
-      redisTemplate.opsForValue().set(key, NULL_VALUE, durationWithJitter);
+      if (durationWithJitter == null) {
+        redisTemplate.opsForValue().set(key, NULL_VALUE);
+      } else {
+        redisTemplate.opsForValue().set(key, NULL_VALUE, durationWithJitter);
+      }
     } else {
-      redisTemplate.opsForValue().set(key, value, durationWithJitter);
+      if (durationWithJitter == null) {
+        redisTemplate.opsForValue().set(key, value);
+      } else {
+        redisTemplate.opsForValue().set(key, value, durationWithJitter);
+      }
     }
   }
 
   /** Adds a random jitter (between 0% and 10% of the duration) to prevent cache avalanche. */
   private Duration addJitter(Duration duration) {
-    if (duration == null || duration.isZero() || duration.isNegative()) {
+    if (duration == null) {
+      return null;
+    }
+    if (duration.isZero() || duration.isNegative()) {
       return duration;
     }
     long millis = duration.toMillis();
@@ -117,8 +128,11 @@ public class RedisUtil {
    * @return true if the key was set, false otherwise
    */
   public boolean setIfAbsent(String key, Object value, Duration duration) {
-    return Boolean.TRUE.equals(
-        redisTemplate.opsForValue().setIfAbsent(key, value != null ? value : NULL_VALUE, duration));
+    Object val = value != null ? value : NULL_VALUE;
+    if (duration == null) {
+      return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, val));
+    }
+    return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, val, duration));
   }
 
   /**
