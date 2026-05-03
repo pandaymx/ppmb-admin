@@ -24,7 +24,7 @@ dependencies {
     testImplementation(libs.findLibrary("testcontainers").get())
     testImplementation(libs.findLibrary("testcontainers-junit-jupiter").get())
     testImplementation(libs.findLibrary("spring-boot-testcontainers").get())
-    testImplementation("org.mockito:mockito-core:5.11.0")
+    testImplementation(libs.findLibrary("mockito-core").get())
 
     testCompileOnly(libs.findLibrary("lombok").get())
     testAnnotationProcessor(libs.findLibrary("lombok").get())
