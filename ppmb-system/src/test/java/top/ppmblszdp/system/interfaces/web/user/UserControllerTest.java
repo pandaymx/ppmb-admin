@@ -105,4 +105,37 @@ class UserControllerTest {
         .andExpect(jsonPath("$.data").isArray())
         .andExpect(jsonPath("$.data[0]").value(1));
   }
+
+  @Test
+  @DisplayName("测试分配角色")
+  void testAssignRoles() throws Exception {
+    doNothing().when(userRoleApplicationService).assignRolesToUser(eq(1L), anyList());
+
+    mockMvc
+        .perform(
+            put("/users/1/roles")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(List.of(1L, 2L))))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("测试获取用户权限")
+  void testGetPermissions() throws Exception {
+    when(menuApplicationService.getMenuPermsByUserId(anyLong()))
+        .thenReturn(List.of("sys:user:list"));
+
+    mockMvc.perform(get("/users/permissions")).andExpect(status().isOk());
+  }
+
+  @Test
+  @DisplayName("测试用户未找到")
+  void testGetUserByIdNotFound() throws Exception {
+    when(userApplicationService.getUserById(1L)).thenReturn(Optional.empty());
+
+    mockMvc
+        .perform(get("/users/1"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.data").doesNotExist());
+  }
 }
