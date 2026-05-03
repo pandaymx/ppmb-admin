@@ -6,11 +6,18 @@ plugins {
 
 dependencies {
     implementation(project(":ppmb-common:ppmb-common-web"))
+    implementation(project(":ppmb-common:ppmb-common-api"))
 
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
 
     developmentOnly(libs.spring.boot.devtools)
+    testImplementation(libs.spring.boot.starter.test)
+
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     archiveFileName.set("app.jar")
