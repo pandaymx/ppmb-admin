@@ -3,7 +3,6 @@ package top.ppmblszdp.common.config;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -27,8 +26,7 @@ class FeignConfigTest {
   @Test
   @DisplayName("测试 ErrorDecoder Bean 注册")
   void testErrorDecoder() {
-    ObjectMapper mapper = new ObjectMapper();
-    ErrorDecoder decoder = feignConfig.errorDecoder(mapper);
+    ErrorDecoder decoder = feignConfig.errorDecoder();
     assertNotNull(decoder);
     assertTrue(decoder instanceof FeignErrorDecoder);
   }

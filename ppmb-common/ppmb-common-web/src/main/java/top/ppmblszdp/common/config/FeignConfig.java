@@ -1,9 +1,12 @@
 package top.ppmblszdp.common.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Logger;
 import feign.RequestInterceptor;
+import feign.codec.Decoder;
+import feign.codec.Encoder;
 import feign.codec.ErrorDecoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import org.springframework.context.annotation.Bean;
@@ -16,14 +19,33 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class FeignConfig {
 
   /**
+   * 配置 Feign 编码器.
+   *
+   * @return Encoder
+   */
+  @Bean
+  public Encoder feignEncoder() {
+    return new JacksonEncoder();
+  }
+
+  /**
+   * 配置 Feign 解码器.
+   *
+   * @return Decoder
+   */
+  @Bean
+  public Decoder feignDecoder() {
+    return new JacksonDecoder();
+  }
+
+  /**
    * 注册 Feign 异常解码器.
    *
-   * @param objectMapper Jackson 对象映射器
    * @return ErrorDecoder
    */
   @Bean
-  public ErrorDecoder errorDecoder(ObjectMapper objectMapper) {
-    return new FeignErrorDecoder(objectMapper);
+  public ErrorDecoder errorDecoder() {
+    return new FeignErrorDecoder();
   }
 
   /**
@@ -40,23 +62,26 @@ public class FeignConfig {
   /**
    * 请求拦截器，实现请求头透传（如 X-User-Id, Authorization 等）.
    *
+   * <p>注意：非 Servlet 上下文（如启动时、异步线程）调用 Feign 时，RequestContextHolder 返回 null， 此时不做请求头透传。
+   *
    * @return RequestInterceptor
    */
   @Bean
   public RequestInterceptor requestInterceptor() {
     return template -> {
-      ServletRequestAttributes attributes =
-          (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-      if (attributes != null) {
-        HttpServletRequest request = attributes.getRequest();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-          while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            // 透传指定的头信息，或者全部透传（注意安全风险）
-            if (name.equalsIgnoreCase("X-User-Id") || name.equalsIgnoreCase("Authorization")) {
-              template.header(name, request.getHeader(name));
-            }
+      var attributes = RequestContextHolder.getRequestAttributes();
+      if (!(attributes instanceof ServletRequestAttributes servletAttributes)) {
+        // 非 Servlet 上下文（如启动时、异步线程），不做透传
+        return;
+      }
+      HttpServletRequest request = servletAttributes.getRequest();
+      Enumeration<String> headerNames = request.getHeaderNames();
+      if (headerNames != null) {
+        while (headerNames.hasMoreElements()) {
+          String name = headerNames.nextElement();
+          // 透传指定的头信息，或者全部透传（注意安全风险）
+          if (name.equalsIgnoreCase("X-User-Id") || name.equalsIgnoreCase("Authorization")) {
+            template.header(name, request.getHeader(name));
           }
         }
       }
