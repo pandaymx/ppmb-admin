@@ -11,6 +11,8 @@ spring:
   cloud:
     consul:
       discovery:
+        ip-address: host.docker.internal
+        health-check-path: /actuator/health
         service-name: ${spring.application.name}
         instance-id: ${spring.application.name}:${server.port}
         prefer-ip-address: true
