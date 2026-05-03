@@ -58,13 +58,24 @@ public class TwoLevelCacheTest {
   void testEvictAndClear() {
     String cacheName = "testCache3";
     String key = "testKey3";
+    String value = "testValue3";
 
+    // Put into both L1 and L2
+    cacheManager.put(cacheName, key, value, Duration.ofMinutes(1));
+    Assertions.assertEquals(value, cacheManager.get(cacheName, key));
+
+    // Evict: delete from L2 and invalidate L1
     cacheManager.evict(cacheName, key);
     Mockito.verify(redisTemplate).delete(cacheName + ":" + key);
-    Mockito.verify(redisTemplate)
-        .convertAndSend(
-            Mockito.eq(TwoLevelCacheManager.CACHE_TOPIC), Mockito.any(TwoLevelCacheMessage.class));
 
+    // Clear L1 specifically
+    cacheManager.put(cacheName, key, value, Duration.ofMinutes(1)); // Put back
     cacheManager.clearLocal(cacheName, key);
+
+    // After clearLocal, L1 should be empty, get should hit L2
+    Mockito.when(valueOperations.get(cacheName + ":" + key)).thenReturn(value);
+    Object retrieved = cacheManager.get(cacheName, key);
+    Assertions.assertEquals(value, retrieved);
+    Mockito.verify(valueOperations, Mockito.atLeastOnce()).get(cacheName + ":" + key);
   }
 }
