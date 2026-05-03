@@ -19,7 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -49,7 +49,7 @@ public class PpmbRedisAutoConfiguration {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
 
-    var serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+    var serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
 
     template.setKeySerializer(RedisSerializer.string());
     template.setValueSerializer(serializer);
@@ -85,7 +85,7 @@ public class PpmbRedisAutoConfiguration {
   @ConditionalOnMissingBean
   public RedisCacheManager redisCacheManager(
       RedisConnectionFactory factory, ObjectMapper redisObjectMapper) {
-    var serializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+    var serializer = new Jackson2JsonRedisSerializer<>(redisObjectMapper, Object.class);
     RedisCacheConfiguration config =
         RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(1))
