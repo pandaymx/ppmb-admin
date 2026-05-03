@@ -5,6 +5,7 @@ val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
     implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
+    implementation(project(":ppmb-common:ppmb-common-api"))
 
     implementation(libs.findLibrary("spring-boot-starter-amqp").get())
     implementation(libs.findLibrary("spring-retry").get())
