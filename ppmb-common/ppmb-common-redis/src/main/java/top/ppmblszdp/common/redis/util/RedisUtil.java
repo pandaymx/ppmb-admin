@@ -93,7 +93,7 @@ public class RedisUtil {
     }
     try {
       return Optional.of(clazz.cast(value));
-    } catch (ClassCastException e) {
+    } catch (ClassCastException _) {
       return Optional.empty();
     }
   }
@@ -196,7 +196,7 @@ public class RedisUtil {
     LogicalExpirationWrapper<?> wrapper = null;
     try {
       wrapper = objectMapper.convertValue(wrapperObj, LogicalExpirationWrapper.class);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException _) {
       return null;
     }
 
@@ -207,7 +207,7 @@ public class RedisUtil {
     T data = null;
     try {
       data = objectMapper.convertValue(wrapper.getData(), clazz);
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalArgumentException _) {
       return null;
     }
 
