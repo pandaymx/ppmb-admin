@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
+import top.ppmblszdp.common.redis.serializer.Jackson3JsonRedisSerializer;
 
 @Slf4j
 @Component
@@ -20,11 +21,11 @@ public class TwoLevelCacheMessageListener implements MessageListener {
 
   private final TwoLevelCacheManager cacheManager;
   private final ObjectMapper objectMapper;
-  private GenericJacksonJsonRedisSerializer serializer;
+  private RedisSerializer<Object> serializer;
 
-  private GenericJacksonJsonRedisSerializer getSerializer() {
+  private RedisSerializer<Object> getSerializer() {
     if (serializer == null) {
-      serializer = new GenericJacksonJsonRedisSerializer(objectMapper);
+      serializer = new Jackson3JsonRedisSerializer<>(objectMapper, Object.class);
     }
     return serializer;
   }

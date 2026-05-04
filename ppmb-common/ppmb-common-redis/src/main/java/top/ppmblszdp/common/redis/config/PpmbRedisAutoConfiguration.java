@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -23,6 +22,7 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+import top.ppmblszdp.common.redis.serializer.Jackson3JsonRedisSerializer;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheManager;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener;
 
@@ -50,15 +50,16 @@ public class PpmbRedisAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(name = "redisTemplate")
-  @SuppressWarnings("removal")
   public RedisTemplate<String, Object> redisTemplate(
       RedisConnectionFactory factory,
       @org.springframework.beans.factory.annotation.Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
 
-    GenericJacksonJsonRedisSerializer serializer =
-        new GenericJacksonJsonRedisSerializer(redisObjectMapper);
+    Jackson3JsonRedisSerializer<Object> serializer =
+        new Jackson3JsonRedisSerializer<>(redisObjectMapper, Object.class);
+    // In newer Spring Data Redis versions, we might need a different way to set ObjectMapper
+    // but this is the most compatible one if direct constructor fails.
 
     template.setKeySerializer(RedisSerializer.string());
     template.setValueSerializer(serializer);
@@ -92,12 +93,11 @@ public class PpmbRedisAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  @SuppressWarnings("removal")
   public RedisCacheManager redisCacheManager(
       RedisConnectionFactory factory,
       @org.springframework.beans.factory.annotation.Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
-    GenericJacksonJsonRedisSerializer serializer =
-        new GenericJacksonJsonRedisSerializer(redisObjectMapper);
+    Jackson3JsonRedisSerializer<Object> serializer =
+        new Jackson3JsonRedisSerializer<>(redisObjectMapper, Object.class);
 
     RedisCacheConfiguration config =
         RedisCacheConfiguration.defaultCacheConfig()
