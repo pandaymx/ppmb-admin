@@ -323,46 +323,23 @@ class DictApplicationServiceImplTest {
     verify(dictDataRepository).save(any(DictData.class));
   }
 
-  @Test
-  @DisplayName("更新字典数据成功-同时修改键值和类型")
-  void updateDictData_success_changeValueAndType() {
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "2, new_type, 同时修改键值和类型",
+    "2, user_status, 仅修改键值",
+    "1, new_type, 仅修改类型"
+  })
+  @DisplayName("更新字典数据成功-修改键值或类型")
+  void updateDictData_success_parameterized(String newValue, String newType, String scenario) {
     UpdateDictDataCommand command = new UpdateDictDataCommand();
-    command.setDictValue("2");
-    command.setDictType("new_type");
+    command.setDictValue(newValue);
+    command.setDictType(newType);
 
     when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-    when(dictDataRepository.findByDictTypeAndDictValue("new_type", "2"))
-        .thenReturn(Optional.empty());
-
-    dictService.updateDictData(1L, command);
-
-    verify(dictDataRepository).save(any(DictData.class));
-  }
-
-  @Test
-  @DisplayName("更新字典数据成功-修改键值")
-  void updateDictData_success_changeValue() {
-    UpdateDictDataCommand command = new UpdateDictDataCommand();
-    command.setDictValue("2");
-
-    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-    when(dictDataRepository.findByDictTypeAndDictValue("user_status", "2"))
-        .thenReturn(Optional.empty());
-
-    dictService.updateDictData(1L, command);
-
-    verify(dictDataRepository).save(any(DictData.class));
-  }
-
-  @Test
-  @DisplayName("更新字典数据成功-修改类型")
-  void updateDictData_success_changeType() {
-    UpdateDictDataCommand command = new UpdateDictDataCommand();
-    command.setDictType("new_type");
-
-    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-    when(dictDataRepository.findByDictTypeAndDictValue("new_type", "1"))
-        .thenReturn(Optional.empty());
+    if (!"1".equals(newValue) || !"user_status".equals(newType)) {
+      when(dictDataRepository.findByDictTypeAndDictValue(newType, newValue))
+          .thenReturn(Optional.empty());
+    }
 
     dictService.updateDictData(1L, command);
 
