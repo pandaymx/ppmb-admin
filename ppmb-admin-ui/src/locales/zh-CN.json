@@ -1,0 +1,18 @@
+{
+  "translation": {
+    "common": {
+      "search": "搜索",
+      "reset": "重置",
+      "submit": "提交",
+      "cancel": "取消",
+      "save": "保存",
+      "delete": "删除",
+      "edit": "编辑",
+      "add": "新增",
+      "actions": "操作",
+      "confirmDelete": "确定要删除此项吗？",
+      "success": "成功",
+      "error": "失败"
+    }
+  }
+}

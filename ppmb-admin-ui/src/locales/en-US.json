@@ -1,0 +1,18 @@
+{
+  "translation": {
+    "common": {
+      "search": "Search",
+      "reset": "Reset",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "actions": "Actions",
+      "confirmDelete": "Are you sure you want to delete this item?",
+      "success": "Success",
+      "error": "Error"
+    }
+  }
+}
