@@ -94,6 +94,8 @@ public class PpmbSecurityAutoConfiguration {
                     .permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
+                    .requestMatchers("/auth/login")
+                    .permitAll()
                     .anyRequest()
                     .authenticated());
 
