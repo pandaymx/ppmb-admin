@@ -1,13 +1,13 @@
 package top.ppmblszdp.common.redis.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component
@@ -20,11 +20,11 @@ public class TwoLevelCacheMessageListener implements MessageListener {
 
   private final TwoLevelCacheManager cacheManager;
   private final ObjectMapper objectMapper;
-  private GenericJackson2JsonRedisSerializer serializer;
+  private GenericJacksonJsonRedisSerializer serializer;
 
-  private GenericJackson2JsonRedisSerializer getSerializer() {
+  private GenericJacksonJsonRedisSerializer getSerializer() {
     if (serializer == null) {
-      serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+      serializer = new GenericJacksonJsonRedisSerializer(objectMapper);
     }
     return serializer;
   }

@@ -16,7 +16,6 @@ dependencies {
 
     implementation(libs.findLibrary("jackson3-databind").get())
     implementation(libs.findLibrary("jackson3-core").get())
-    implementation(libs.findLibrary("jackson3-annotations").get())
 
     compileOnly(libs.findLibrary("lombok").get())
     annotationProcessor(libs.findLibrary("lombok").get())

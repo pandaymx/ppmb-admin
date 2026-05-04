@@ -1,10 +1,6 @@
 package top.ppmblszdp.common.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,9 +15,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheManager;
 import top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener;
 
@@ -34,8 +35,6 @@ public class PpmbRedisAutoConfiguration {
   @ConditionalOnMissingBean(name = "redisObjectMapper")
   public ObjectMapper redisObjectMapper(
       @org.springframework.beans.factory.annotation.Qualifier("objectMapper") ObjectMapper objectMapper) {
-    ObjectMapper redisObjectMapper = objectMapper.copy();
-    redisObjectMapper.registerModule(new JavaTimeModule());
     PolymorphicTypeValidator ptv =
         BasicPolymorphicTypeValidator.builder()
             .allowIfBaseType("top.ppmblszdp.")
@@ -43,9 +42,10 @@ public class PpmbRedisAutoConfiguration {
             .allowIfBaseType("java.time.")
             .allowIfBaseType(Object.class)
             .build();
-    redisObjectMapper.activateDefaultTyping(
-        ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    return redisObjectMapper;
+    return JsonMapper.builder()
+        .activateDefaultTyping(
+            ptv, tools.jackson.databind.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+        .build();
   }
 
   @Bean
@@ -57,9 +57,8 @@ public class PpmbRedisAutoConfiguration {
     RedisTemplate<String, Object> template = new RedisTemplate<>();
     template.setConnectionFactory(factory);
 
-    RedisSerializer<Object> serializer =
-        new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(
-            redisObjectMapper);
+    GenericJacksonJsonRedisSerializer serializer =
+        new GenericJacksonJsonRedisSerializer(redisObjectMapper);
 
     template.setKeySerializer(RedisSerializer.string());
     template.setValueSerializer(serializer);
@@ -97,9 +96,9 @@ public class PpmbRedisAutoConfiguration {
   public RedisCacheManager redisCacheManager(
       RedisConnectionFactory factory,
       @org.springframework.beans.factory.annotation.Qualifier("redisObjectMapper") ObjectMapper redisObjectMapper) {
-    RedisSerializer<Object> serializer =
-        new org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer(
-            redisObjectMapper);
+    GenericJacksonJsonRedisSerializer serializer =
+        new GenericJacksonJsonRedisSerializer(redisObjectMapper);
+
     RedisCacheConfiguration config =
         RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofHours(1))

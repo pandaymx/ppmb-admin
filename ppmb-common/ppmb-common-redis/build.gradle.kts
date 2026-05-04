@@ -12,8 +12,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation(libs.findLibrary("spring-boot-starter-data-redis").get())
     implementation(libs.findLibrary("jacksonDatabind").get())
-    implementation(libs.findLibrary("jacksonCore").get())
-    implementation(libs.findLibrary("jacksonAnnotations").get())
+    implementation(libs.findLibrary("jackson3-databind").get())
+    implementation(libs.findLibrary("jackson3-core").get())
+
     implementation(libs.findLibrary("jacksonDatatypeJsr310").get())
     implementation(libs.findLibrary("caffeine").get())
 
