@@ -28,10 +28,11 @@ public class ProblemDetailAccessDeniedHandler implements AccessDeniedHandler {
       AccessDeniedException accessDeniedException)
       throws IOException, ServletException {
     ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, accessDeniedException.getMessage());
-    problemDetail.setTitle("Forbidden");
+        ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "您没有权限访问该资源");
+    problemDetail.setTitle("拒绝访问");
     problemDetail.setType(URI.create("https://ppmb.top/errors/forbidden"));
     problemDetail.setInstance(URI.create(request.getRequestURI()));
+    problemDetail.setProperty("code", "A0403");
 
     response.setStatus(HttpStatus.FORBIDDEN.value());
     response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);

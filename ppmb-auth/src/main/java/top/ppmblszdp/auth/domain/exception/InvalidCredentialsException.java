@@ -7,6 +7,6 @@ import top.ppmblszdp.common.exception.BusinessException;
 /** 无效凭证异常（用户名或密码错误）. */
 public class InvalidCredentialsException extends BusinessException {
   public InvalidCredentialsException() {
-    super(HttpStatus.BAD_REQUEST, CommonResultCode.USER_ERROR, "用户名或密码错误", null);
+    super(HttpStatus.UNAUTHORIZED, CommonResultCode.UNAUTHORIZED, "用户名或密码错误", null);
   }
 }

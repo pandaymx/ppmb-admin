@@ -28,10 +28,11 @@ public class ProblemDetailAuthenticationEntryPoint implements AuthenticationEntr
       AuthenticationException authException)
       throws IOException, ServletException {
     ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, authException.getMessage());
-    problemDetail.setTitle("Unauthorized");
+        ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "鉴权失败，请重新登录");
+    problemDetail.setTitle("未授权访问");
     problemDetail.setType(URI.create("https://ppmb.top/errors/unauthorized"));
     problemDetail.setInstance(URI.create(request.getRequestURI()));
+    problemDetail.setProperty("code", "A0401");
 
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
     response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
