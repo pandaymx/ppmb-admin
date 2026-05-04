@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import javax.crypto.SecretKey;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,5 +98,33 @@ class JwtUtilsTest {
     PpmbSecurityProperties props = new PpmbSecurityProperties();
     JwtUtils utils = new JwtUtils(props);
     assertThrows(IllegalStateException.class, () -> utils.parseToken("some-token"));
+    assertThrows(IllegalStateException.class, () -> utils.createToken("subject", Map.of()));
+  }
+
+  @Test
+  @DisplayName("创建 Token 并验证内容")
+  void createAndVerifyToken() {
+    String subject = "testuser";
+    Map<String, Object> claims = Map.of("role", "admin");
+
+    String token = jwtUtils.createToken(subject, claims);
+    assertNotNull(token);
+
+    Claims parsedClaims = jwtUtils.parseToken(token);
+    assertEquals(subject, parsedClaims.getSubject());
+    assertEquals("admin", parsedClaims.get("role"));
+    // 验证有效期
+    assertTrue(parsedClaims.getExpiration().after(new Date()));
+  }
+
+  @Test
+  @DisplayName("验证非法格式的 Token")
+  void validateMalformedToken() {
+    // 完全不是 JWT 格式的字符串
+    assertFalse(jwtUtils.validateToken("not.a.jwt"));
+    // 篡改后的 Token (更改签名部分)
+    String token = jwtUtils.createToken("user", Map.of());
+    String tamperedToken = token.substring(0, token.lastIndexOf('.') + 1) + "tampered";
+    assertFalse(jwtUtils.validateToken(tamperedToken));
   }
 }
