@@ -19,6 +19,7 @@ const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const setToken = useAuthStore((state) => state.setToken);
   const setUser = useAuthStore((state) => state.setUser);
+  const setPermissions = useAuthStore((state) => state.setPermissions);
 
   const onLogin = (values: any) => {
     setLoading(true);
@@ -28,6 +29,8 @@ const AuthPage: React.FC = () => {
       // Simulating a successful login
       setToken("fake-jwt-token-" + Math.random().toString(36).substring(7));
       setUser({ username: values.username || "Admin" });
+      // Simulate backend returning some permissions
+      setPermissions(["sys:user:list", "sys:role:list"]);
       message.success("登录成功");
       navigate("/");
     }, 1500);
