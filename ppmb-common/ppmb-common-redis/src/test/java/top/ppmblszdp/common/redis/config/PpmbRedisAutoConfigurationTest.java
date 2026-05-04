@@ -3,7 +3,6 @@ package top.ppmblszdp.common.redis.config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -11,6 +10,8 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @DisplayName("Redis 自动配置测试")
 class PpmbRedisAutoConfigurationTest {
@@ -40,8 +41,8 @@ class PpmbRedisAutoConfigurationTest {
               assertThat(context).hasBean("redisObjectMapper");
               ObjectMapper mapper = context.getBean("redisObjectMapper", ObjectMapper.class);
               assertThat(mapper).isNotNull();
-              // 验证是否注册了 JavaTimeModule
-              assertThat(mapper.getRegisteredModuleIds()).contains("jackson-datatype-jsr310");
+              // Jackson 3 默认支持 JSR310，无需单独验证模块
+
             });
   }
 
@@ -58,7 +59,7 @@ class PpmbRedisAutoConfigurationTest {
 
     @Bean
     ObjectMapper objectMapper() {
-      return new ObjectMapper();
+      return JsonMapper.builder().build();
     }
   }
 }
