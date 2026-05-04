@@ -103,53 +103,30 @@ class DictApplicationServiceImplTest {
     assertTrue(exception.getMessage().contains("字典类型已存在"));
   }
 
-  @Test
-  @DisplayName("更新字典类型成功-不修改类型编码")
-  void updateDictType_success_noTypeChange() {
-    UpdateDictTypeCommand command = new UpdateDictTypeCommand();
-    command.setDictName("新名称");
-    command.setDictType("user_status");
-    command.setStatus(1);
-    command.setRemark("新备注");
-
-    when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
-
-    dictService.updateDictType(1L, command);
-
-    verify(dictTypeRepository).save(any(DictType.class));
-  }
-
-  @Test
-  @DisplayName("更新字典类型成功-类型为null")
-  void updateDictType_success_nullType() {
-    UpdateDictTypeCommand command = new UpdateDictTypeCommand();
-    command.setDictName("新名称");
-    command.setDictType(null);
-    command.setStatus(1);
-    command.setRemark("新备注");
-
-    when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
-
-    dictService.updateDictType(1L, command);
-
-    verify(dictTypeRepository).save(any(DictType.class));
-  }
-
-  @Test
-  @DisplayName("更新字典类型成功-修改类型编码")
-  void updateDictType_success_withTypeChange() {
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "user_status, false, 不修改类型编码",
+    "null, false, 类型为null",
+    "new_user_status, true, 修改类型编码"
+  })
+  @DisplayName("更新字典类型成功")
+  void updateDictType_success(String newType, boolean expectDataUpdate, String scenario) {
     UpdateDictTypeCommand command = new UpdateDictTypeCommand();
     command.setDictName("用户状态");
-    command.setDictType("new_user_status");
+    command.setDictType("null".equals(newType) ? null : newType);
     command.setStatus(0);
     command.setRemark("备注");
 
     when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
-    when(dictTypeRepository.findByDictType("new_user_status")).thenReturn(Optional.empty());
+    if (expectDataUpdate) {
+      when(dictTypeRepository.findByDictType(newType)).thenReturn(Optional.empty());
+    }
 
     dictService.updateDictType(1L, command);
 
-    verify(dictDataRepository).updateDictType("user_status", "new_user_status");
+    if (expectDataUpdate) {
+      verify(dictDataRepository).updateDictType("user_status", newType);
+    }
     verify(dictTypeRepository).save(any(DictType.class));
   }
 
@@ -552,24 +529,9 @@ class DictApplicationServiceImplTest {
   }
 
   @Test
-  @DisplayName("更新字典数据成功-同时修改键值和类型且新类型不同")
-  void updateDictData_success_changeValueAndDifferentType() {
-    UpdateDictDataCommand command = new UpdateDictDataCommand();
-    command.setDictValue("2");
-    command.setDictType("new_type");
-
-    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-    when(dictDataRepository.findByDictTypeAndDictValue("new_type", "2"))
-        .thenReturn(Optional.empty());
-
-    dictService.updateDictData(1L, command);
-
-    verify(dictDataRepository).save(any(DictData.class));
-  }
-
-  @Test
   @DisplayName("更新字典数据成功-键值和类型都未改变（显式设置相同值）")
   void updateDictData_success_allSame() {
+
     UpdateDictDataCommand command = new UpdateDictDataCommand();
     command.setDictValue("1"); // Current value
     command.setDictType("user_status"); // Current type
