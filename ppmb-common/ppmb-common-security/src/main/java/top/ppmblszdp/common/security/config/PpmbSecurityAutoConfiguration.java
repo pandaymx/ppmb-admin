@@ -62,7 +62,7 @@ public class PpmbSecurityAutoConfiguration {
    * @throws Exception if an error occurs
    */
   @Bean
-  @Order(100)
+  @Order(0)
   @SuppressWarnings("java:S4502")
   public SecurityFilterChain securityFilterChain(
       HttpSecurity http,
@@ -73,10 +73,7 @@ public class PpmbSecurityAutoConfiguration {
       ObjectMapper objectMapper)
       throws Exception {
 
-    http.securityMatcher(
-            request ->
-                !request.getServletPath().startsWith("/actuator")
-                    && !request.getServletPath().startsWith("/error"))
+    http.securityMatcher(request -> !request.getRequestURI().startsWith("/actuator"))
         .csrf(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable)
@@ -90,13 +87,15 @@ public class PpmbSecurityAutoConfiguration {
         .authorizeHttpRequests(
             authorize ->
                 authorize
-                    .requestMatchers("/", "/favicon.ico", "/error")
+                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**")
                     .permitAll()
-                    .requestMatchers("/actuator/**")
+                    .requestMatchers("/", "/index.html", "/favicon.ico", "/error")
                     .permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
-                    .requestMatchers("/auth/login")
+                    .requestMatchers("/auth/login", "/api/auth/login", "/auth/**", "/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/*/remote/**")
                     .permitAll()
                     .anyRequest()
                     .authenticated());
