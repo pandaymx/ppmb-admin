@@ -37,7 +37,7 @@ jobs:
         run: bun run lint
 
       - name: Type Checking
-        run: bun x tsc --noEmit
+        run: bun run tsc --noEmit
 
       - name: Production Build
         run: bun run build
