@@ -8,7 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
-public class TwoLevelCacheTest {
+class TwoLevelCacheTest {
 
   private RedisTemplate<String, Object> redisTemplate;
   private ValueOperations<String, Object> valueOperations;

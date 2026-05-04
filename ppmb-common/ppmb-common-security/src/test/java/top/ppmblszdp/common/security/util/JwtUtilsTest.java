@@ -97,8 +97,9 @@ class JwtUtilsTest {
   void parseTokenWithoutSecret() {
     PpmbSecurityProperties props = new PpmbSecurityProperties();
     JwtUtils utils = new JwtUtils(props);
+    Map<String, Object> claims = Map.of();
     assertThrows(IllegalStateException.class, () -> utils.parseToken("some-token"));
-    assertThrows(IllegalStateException.class, () -> utils.createToken("subject", Map.of()));
+    assertThrows(IllegalStateException.class, () -> utils.createToken("subject", claims));
   }
 
   @Test
