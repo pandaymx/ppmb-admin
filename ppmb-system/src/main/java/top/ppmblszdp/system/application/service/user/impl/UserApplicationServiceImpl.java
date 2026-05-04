@@ -17,12 +17,25 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
   private final UserRepository userRepository;
   private final UserAssembler userAssembler;
+  private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   @Override
   @Transactional
   public UserDto createUser(CreateUserCommand command) {
-    User user = User.create(command.username(), command.password(), command.nickname());
+    User user =
+        User.create(
+            command.username(), passwordEncoder.encode(command.password()), command.nickname());
     user.updateInfo(command.nickname(), command.email(), command.phone());
+    return userAssembler.toDto(userRepository.save(user));
+  }
+
+  @Override
+  @Transactional
+  public UserDto registerUser(top.ppmblszdp.api.system.dto.UserRegisterDto command) {
+    User user =
+        User.create(
+            command.username(), passwordEncoder.encode(command.password()), command.nickname());
+    user.updateInfo(command.nickname(), command.email(), null);
     return userAssembler.toDto(userRepository.save(user));
   }
 

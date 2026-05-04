@@ -3,6 +3,8 @@ package top.ppmblszdp.system.interfaces.remote.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.ppmblszdp.api.system.dto.SysUserDto;
@@ -16,6 +18,8 @@ import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
 public class RemoteUserController implements RemoteUserService {
 
   private final UserRepository userRepository;
+  private final top.ppmblszdp.system.application.service.user.UserApplicationService
+      userApplicationService;
 
   @Override
   @GetMapping("/info/{username}")
@@ -36,5 +40,22 @@ public class RemoteUserController implements RemoteUserService {
               return Result.success(dto);
             })
         .orElseGet(() -> Result.failure("USER_NOT_FOUND", "User not found"));
+  }
+
+  @Override
+  @PostMapping("/register")
+  public Result<SysUserDto> registerUser(
+      @RequestBody top.ppmblszdp.api.system.dto.UserRegisterDto userRegisterDto) {
+    top.ppmblszdp.system.interfaces.web.user.dto.UserDto userDto =
+        userApplicationService.registerUser(userRegisterDto);
+    return Result.success(
+        new SysUserDto(
+            userDto.id(),
+            userDto.username(),
+            null, // Don't return password
+            userDto.nickname(),
+            userDto.email(),
+            userDto.phone(),
+            userDto.status()));
   }
 }

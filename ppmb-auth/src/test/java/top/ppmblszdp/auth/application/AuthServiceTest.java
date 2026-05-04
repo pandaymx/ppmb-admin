@@ -105,4 +105,38 @@ class AuthServiceTest {
     // Act & Assert
     assertThrows(AccountDisabledException.class, () -> authService.login(command));
   }
+
+  @Test
+  @DisplayName("注册成功")
+  void registerSuccess() {
+    // Arrange
+    top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand command =
+        new top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand(
+            "testuser", "password123", "test@example.com", "Tester");
+    SysUserDto userDto =
+        new SysUserDto(1L, "testuser", null, "Tester", "test@example.com", null, 0);
+    when(remoteUserService.registerUser(any())).thenReturn(Result.success(userDto));
+
+    // Act
+    assertDoesNotThrow(() -> authService.register(command));
+
+    // Assert
+    verify(remoteUserService, times(1)).registerUser(any());
+  }
+
+  @Test
+  @DisplayName("注册失败")
+  void registerFailed() {
+    // Arrange
+    top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand command =
+        new top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand(
+            "testuser", "password123", "test@example.com", "Tester");
+    when(remoteUserService.registerUser(any()))
+        .thenReturn(Result.failure("ERROR", "User already exists"));
+
+    // Act & Assert
+    assertThrows(
+        top.ppmblszdp.common.exception.BusinessException.class,
+        () -> authService.register(command));
+  }
 }

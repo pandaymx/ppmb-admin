@@ -59,4 +59,23 @@ public class AuthService {
     String token = jwtUtils.createToken(user.username(), claims);
     return new TokenDto(token, securityProperties.getJwt().getExpire());
   }
+
+  /**
+   * 用户注册.
+   *
+   * @param command 注册参数
+   */
+  public void register(top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand command) {
+    top.ppmblszdp.api.system.dto.UserRegisterDto dto =
+        new top.ppmblszdp.api.system.dto.UserRegisterDto(
+            command.username(), command.password(), command.email(), command.nickname());
+    Result<top.ppmblszdp.api.system.dto.SysUserDto> result = remoteUserService.registerUser(dto);
+    if (!CommonResultCode.SUCCESS.getCode().equals(result.code())) {
+      throw new top.ppmblszdp.common.exception.BusinessException(
+          org.springframework.http.HttpStatus.BAD_REQUEST,
+          CommonResultCode.USER_ERROR,
+          result.message(),
+          null);
+    }
+  }
 }

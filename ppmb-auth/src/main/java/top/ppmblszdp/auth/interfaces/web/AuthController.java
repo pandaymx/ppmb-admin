@@ -23,4 +23,11 @@ public class AuthController {
     TokenDto tokenDto = authService.login(command);
     return Result.success(tokenDto);
   }
+
+  @PostMapping("/register")
+  public Result<Void> register(
+      @RequestBody @Valid top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand command) {
+    authService.register(command);
+    return Result.success();
+  }
 }

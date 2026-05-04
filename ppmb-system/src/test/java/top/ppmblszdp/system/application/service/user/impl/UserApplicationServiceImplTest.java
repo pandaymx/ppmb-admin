@@ -24,6 +24,7 @@ class UserApplicationServiceImplTest {
 
   @Mock private UserRepository userRepository;
   @Mock private UserAssembler userAssembler;
+  @Mock private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
   @InjectMocks private UserApplicationServiceImpl userService;
 
@@ -32,6 +33,9 @@ class UserApplicationServiceImplTest {
 
   @BeforeEach
   void setUp() {
+    lenient()
+        .when(passwordEncoder.encode(any()))
+        .thenAnswer(invocation -> invocation.getArgument(0));
     user = User.create("testuser", "password123", "Tester");
     command =
         new CreateUserCommand("testuser", "password123", "Tester", "test@example.com", "123456");
@@ -45,6 +49,23 @@ class UserApplicationServiceImplTest {
     when(userAssembler.toDto(any(User.class))).thenReturn(dummyDto);
 
     UserDto result = userService.createUser(command);
+
+    assertNotNull(result);
+    assertEquals("testuser", result.username());
+    verify(userRepository, times(1)).save(any(User.class));
+  }
+
+  @Test
+  @DisplayName("注册用户成功")
+  void registerUser() {
+    top.ppmblszdp.api.system.dto.UserRegisterDto registerDto =
+        new top.ppmblszdp.api.system.dto.UserRegisterDto(
+            "testuser", "password123", "test@example.com", "Tester");
+    when(userRepository.save(any(User.class))).thenReturn(user);
+    UserDto dummyDto = new UserDto(1L, "testuser", "Tester", "test@example.com", null, 0);
+    when(userAssembler.toDto(any(User.class))).thenReturn(dummyDto);
+
+    UserDto result = userService.registerUser(registerDto);
 
     assertNotNull(result);
     assertEquals("testuser", result.username());
