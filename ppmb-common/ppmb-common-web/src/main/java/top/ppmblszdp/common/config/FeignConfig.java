@@ -25,7 +25,10 @@ public class FeignConfig {
    */
   @Bean
   public Encoder feignEncoder() {
-    return new JacksonEncoder();
+    com.fasterxml.jackson.databind.ObjectMapper objectMapper =
+        new com.fasterxml.jackson.databind.ObjectMapper();
+    objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    return new JacksonEncoder(objectMapper);
   }
 
   /**
@@ -35,7 +38,10 @@ public class FeignConfig {
    */
   @Bean
   public Decoder feignDecoder() {
-    return new JacksonDecoder();
+    com.fasterxml.jackson.databind.ObjectMapper objectMapper =
+        new com.fasterxml.jackson.databind.ObjectMapper();
+    objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
+    return new JacksonDecoder(objectMapper);
   }
 
   /**

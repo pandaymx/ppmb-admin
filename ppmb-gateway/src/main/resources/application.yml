@@ -39,10 +39,18 @@ spring:
           cors:
             configurations:
               '[/**]':
-                allowedOrigins: "http://localhost:3000"
+                allowedOrigins:
+                  - "http://localhost:3000"
+                  - "http://localhost:3001"
                 allowedMethods: "*"
                 allowedHeaders: "*"
                 allowCredentials: true
+ 
+ppmb:
+  security:
+    gateway-mode: true
+    jwt:
+      secret: "dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3ItZGV2ZWxvcG1lbnQtcHVycG9zZXM=" # 32 bytes Base64
 
 management:
   endpoints:

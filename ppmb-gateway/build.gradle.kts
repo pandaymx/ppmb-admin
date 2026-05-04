@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":ppmb-common:ppmb-common-web"))
     implementation(project(":ppmb-common:ppmb-common-api"))
+    implementation(project(":ppmb-common:ppmb-common-security"))
 
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)

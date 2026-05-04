@@ -34,3 +34,8 @@ management:
     metrics:
       export:
         enabled: true
+
+ppmb:
+  security:
+    jwt:
+      secret: "dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3ItZGV2ZWxvcG1lbnQtcHVycG9zZXM="

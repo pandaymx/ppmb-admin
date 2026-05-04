@@ -1,4 +1,8 @@
-import axios, { InternalAxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+import axios, {
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+  AxiosError,
+} from "axios";
 import { message } from "antd";
 import { useAuthStore } from "../store/useAuthStore";
 import { Result } from "../api/types/common";
@@ -24,7 +28,7 @@ request.interceptors.request.use(
   },
   (error: AxiosError) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor
@@ -51,8 +55,10 @@ request.interceptors.response.use(
           message.error("登录已过期，请重新登录");
           // Clear auth state
           useAuthStore.getState().logout();
-          // Force redirect to login page
-          window.location.href = "/login";
+          // Only redirect if not already on login page to avoid refresh loops
+          if (window.location.pathname !== "/login") {
+            window.location.href = "/login";
+          }
           break;
         case 403:
           message.error("没有权限访问");
@@ -72,7 +78,7 @@ request.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default request;
