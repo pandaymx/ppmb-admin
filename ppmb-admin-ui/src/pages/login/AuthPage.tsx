@@ -46,7 +46,6 @@ const AuthPage: React.FC = () => {
       navigate("/");
     } catch (error: any) {
       console.error("Login failed:", error);
-      message.error(error.message || "登录失败，请检查账号密码");
     } finally {
       setLoading(false);
     }
