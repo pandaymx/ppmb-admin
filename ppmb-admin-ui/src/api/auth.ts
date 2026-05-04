@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { LoginParams, LoginResult } from "@/api/types/auth";
+import { LoginParams, LoginResult, RegisterParams } from "@/api/types/auth";
 
 /**
  * 登录接口
@@ -7,6 +7,14 @@ import { LoginParams, LoginResult } from "@/api/types/auth";
  */
 export function login(data: LoginParams) {
   return request.post<LoginResult>("/auth/login", data);
+}
+
+/**
+ * 注册接口
+ * @param data 注册参数
+ */
+export function register(data: RegisterParams) {
+  return request.post<void>("/auth/register", data);
 }
 
 /**

@@ -13,3 +13,10 @@ export interface UserInfo {
   username: string;
   permissions: string[];
 }
+
+export interface RegisterParams {
+  username: string;
+  password?: string;
+  email?: string;
+  nickname?: string;
+}

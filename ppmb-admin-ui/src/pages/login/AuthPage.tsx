@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, Tabs, message, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  Tabs,
+  message,
+  Divider,
+  notification,
+} from "antd";
+
 import {
   UserOutlined,
   LockOutlined,
@@ -13,7 +23,7 @@ import bgImage from "../../assets/login-bg.png";
 
 import { useAuthStore } from "../../store/useAuthStore";
 
-import { login } from "../../api/auth";
+import { login, register } from "../../api/auth";
 
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -51,14 +61,28 @@ const AuthPage: React.FC = () => {
     }
   };
 
-  const onRegister = (values: any) => {
+  const onRegister = async (values: any) => {
     setLoading(true);
-    console.log("Register values:", values);
-    setTimeout(() => {
-      setLoading(false);
-      message.success("注册成功，请登录");
+    try {
+      await register({
+        username: values.username,
+        password: values.password,
+        email: values.email,
+        nickname: values.nickname || values.username,
+      });
+
+      notification.success({
+        message: "注册成功",
+        description: "账号已创建，现在您可以进行登录了",
+        placement: "topRight",
+      });
       setActiveTab("login");
-    }, 1500);
+    } catch (error: any) {
+      console.error("Register failed:", error);
+      // 错误由拦截器统一通知，这里无需额外处理
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
