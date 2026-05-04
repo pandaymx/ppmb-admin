@@ -117,7 +117,8 @@ databaseChangeLog:
               - column: {name: role_id, valueNumeric: 1}
               - column: {name: data_scope, valueNumeric: 0}
               - column: {name: username, value: "admin"}
-              - column: {name: password, value: "$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dMnvzhkByS9nUu9Z.G"}
+              - column: {name: password, value: "$2a$10$bQ7TASPd8A6f5TT48u0xsOOVi9z/hcfNahJNPb.ADUzj4tVodh7IW"}
+
               - column: {name: nickname, value: "管理员"}
               - column: {name: status, valueNumeric: 0}
               - column: {name: del_flag, valueNumeric: 0}
