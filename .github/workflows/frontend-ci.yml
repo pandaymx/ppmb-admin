@@ -1,0 +1,51 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'ppmb-admin-ui/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'ppmb-admin-ui/**'
+
+jobs:
+  build-and-lint:
+    name: Lint, Type Check and Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ppmb-admin-ui
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Linting
+        run: bun run lint
+
+      - name: Type Checking
+        run: bun x tsc --noEmit
+
+      - name: Production Build
+        run: bun run build
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: ppmb-admin-ui
