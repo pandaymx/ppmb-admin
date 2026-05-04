@@ -1,4 +1,4 @@
-package top.ppmblszdp.auth.service;
+package top.ppmblszdp.auth.application;
 
 import java.util.Map;
 import java.util.Optional;
@@ -8,8 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import top.ppmblszdp.api.system.dto.SysUserDto;
 import top.ppmblszdp.api.system.feign.RemoteUserService;
-import top.ppmblszdp.auth.dto.LoginCommand;
-import top.ppmblszdp.auth.dto.TokenDto;
+import top.ppmblszdp.auth.domain.exception.AccountDisabledException;
+import top.ppmblszdp.auth.domain.exception.InvalidCredentialsException;
+import top.ppmblszdp.auth.interfaces.web.dto.LoginCommand;
+import top.ppmblszdp.auth.interfaces.web.dto.TokenDto;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.Result;
 import top.ppmblszdp.common.security.config.PpmbSecurityProperties;
@@ -33,13 +35,12 @@ public class AuthService {
             .orElseThrow(
                 () -> {
                   log.warn("Login failed: User not found or error for {}", command.username());
-                  return new top.ppmblszdp.common.exception.BusinessException(
-                      "Invalid username or password");
+                  return new InvalidCredentialsException();
                 });
 
     if (!passwordEncoder.matches(command.password(), user.password())) {
       log.warn("Login failed: Invalid password for {}", command.username());
-      throw new top.ppmblszdp.common.exception.BusinessException("Invalid username or password");
+      throw new InvalidCredentialsException();
     }
 
     Optional.ofNullable(user.status())
@@ -47,8 +48,7 @@ public class AuthService {
         .ifPresent(
             status -> {
               log.warn("Login failed: User is disabled {}", command.username());
-              throw new top.ppmblszdp.common.exception.BusinessException(
-                  "User account is disabled");
+              throw new AccountDisabledException();
             });
 
     Map<String, Object> claims =

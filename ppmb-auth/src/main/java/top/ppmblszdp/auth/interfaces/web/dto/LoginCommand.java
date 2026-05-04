@@ -1,4 +1,4 @@
-package top.ppmblszdp.auth.dto;
+package top.ppmblszdp.auth.interfaces.web.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

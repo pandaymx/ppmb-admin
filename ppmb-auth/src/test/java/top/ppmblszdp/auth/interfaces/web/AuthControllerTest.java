@@ -1,4 +1,4 @@
-package top.ppmblszdp.auth.controller;
+package top.ppmblszdp.auth.interfaces.web;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -9,9 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import top.ppmblszdp.auth.dto.LoginCommand;
-import top.ppmblszdp.auth.dto.TokenDto;
-import top.ppmblszdp.auth.service.AuthService;
+import top.ppmblszdp.auth.application.AuthService;
+import top.ppmblszdp.auth.interfaces.web.dto.LoginCommand;
+import top.ppmblszdp.auth.interfaces.web.dto.TokenDto;
 import top.ppmblszdp.common.api.Result;
 
 @ExtendWith(MockitoExtension.class)

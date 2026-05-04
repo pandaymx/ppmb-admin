@@ -1,4 +1,4 @@
-package top.ppmblszdp.auth.service;
+package top.ppmblszdp.auth.application;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -12,11 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import top.ppmblszdp.api.system.dto.SysUserDto;
 import top.ppmblszdp.api.system.feign.RemoteUserService;
-import top.ppmblszdp.auth.dto.LoginCommand;
-import top.ppmblszdp.auth.dto.TokenDto;
+import top.ppmblszdp.auth.domain.exception.AccountDisabledException;
+import top.ppmblszdp.auth.domain.exception.InvalidCredentialsException;
+import top.ppmblszdp.auth.interfaces.web.dto.LoginCommand;
+import top.ppmblszdp.auth.interfaces.web.dto.TokenDto;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.Result;
-import top.ppmblszdp.common.exception.BusinessException;
 import top.ppmblszdp.common.security.config.PpmbSecurityProperties;
 import top.ppmblszdp.common.security.util.JwtUtils;
 
@@ -68,9 +69,7 @@ class AuthServiceTest {
     when(remoteUserService.getUserInfo("testuser")).thenReturn(result);
 
     // Act & Assert
-    BusinessException exception =
-        assertThrows(BusinessException.class, () -> authService.login(command));
-    assertEquals("Invalid username or password", exception.getMessage());
+    assertThrows(InvalidCredentialsException.class, () -> authService.login(command));
   }
 
   @Test
@@ -87,9 +86,7 @@ class AuthServiceTest {
     when(passwordEncoder.matches("password123", "encryptedPassword")).thenReturn(false);
 
     // Act & Assert
-    BusinessException exception =
-        assertThrows(BusinessException.class, () -> authService.login(command));
-    assertEquals("Invalid username or password", exception.getMessage());
+    assertThrows(InvalidCredentialsException.class, () -> authService.login(command));
   }
 
   @Test
@@ -106,8 +103,6 @@ class AuthServiceTest {
     when(passwordEncoder.matches("password123", "encryptedPassword")).thenReturn(true);
 
     // Act & Assert
-    BusinessException exception =
-        assertThrows(BusinessException.class, () -> authService.login(command));
-    assertEquals("User account is disabled", exception.getMessage());
+    assertThrows(AccountDisabledException.class, () -> authService.login(command));
   }
 }
