@@ -14,10 +14,12 @@ repositories {
     mavenCentral()
 }
 
+val libs = the<VersionCatalogsExtension>().named("libs")
+
 dependencies {
     constraints {
         // Define dependency versions as constraints
-        implementation("org.apache.commons:commons-text:1.14.0")
+        implementation(libs.findLibrary("commons-text").get())
     }
 }
 

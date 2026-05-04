@@ -15,6 +15,6 @@ repositories {
 }
 
 dependencies {
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:7.0.2")
-    implementation("org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:1.1.0")
+    implementation(libs.spotless.plugin.gradle)
+    implementation(libs.graalvm.native.plugin)
 }

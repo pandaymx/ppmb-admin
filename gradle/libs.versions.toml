@@ -17,6 +17,10 @@ mapstruct = "1.7.0.Beta1"
 lombokMapstructBinding = "0.2.0"
 mockito = "5.11.0"
 micrometer = "1.14.0"
+feignJackson = "13.6"
+commonsText = "1.14.0"
+spotlessPlugin = "7.0.2"
+graalvmNative = "1.1.0"
 
 
 
@@ -69,6 +73,10 @@ mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", v
 lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
+feign-jackson = { group = "io.github.openfeign", name = "feign-jackson", version.ref = "feignJackson" }
+commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commonsText" }
+spotless-plugin-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotlessPlugin" }
+graalvm-native-plugin = { group = "org.graalvm.buildtools.native", name = "org.graalvm.buildtools.native.gradle.plugin", version.ref = "graalvmNative" }
 
 
 
