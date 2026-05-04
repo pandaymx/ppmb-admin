@@ -1,7 +1,5 @@
 package top.ppmblszdp.common.redis.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -14,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import tools.jackson.databind.ObjectMapper;
 
 class RedisUtilTest {
 
@@ -28,7 +27,7 @@ class RedisUtilTest {
     redisTemplate = Mockito.mock(RedisTemplate.class);
     valueOperations = Mockito.mock(ValueOperations.class);
     Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-    objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    objectMapper = tools.jackson.databind.json.JsonMapper.builder().findAndAddModules().build();
     redisUtil = new RedisUtil(redisTemplate, objectMapper);
   }
 
@@ -201,6 +200,12 @@ class RedisUtilTest {
     invalidWrapper.setLogicalExpire(LocalDateTime.now().plusSeconds(60));
 
     Mockito.when(valueOperations.get(key)).thenReturn(invalidWrapper);
+    // In Jackson 3, this might throw a different exception or handle differently
+    // For now, we just ensure it doesn't crash or handles null data correctly
+    String retrievedInvalid2 =
+        redisUtil.getWithLogicalExpire(
+            key, String.class, 1L, Duration.ofSeconds(2), id -> "newValue");
+    Assertions.assertEquals("invalid", retrievedInvalid2);
   }
 
   @Test

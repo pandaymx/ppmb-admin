@@ -1,6 +1,5 @@
 package top.ppmblszdp.common.redis.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @RequiredArgsConstructor
@@ -210,7 +210,7 @@ public class RedisUtil {
     LogicalExpirationWrapper<?> wrapper = null;
     try {
       wrapper = objectMapper.convertValue(wrapperObj, LogicalExpirationWrapper.class);
-    } catch (IllegalArgumentException _) {
+    } catch (Exception _) {
       return null;
     }
 
@@ -221,7 +221,7 @@ public class RedisUtil {
     T data = null;
     try {
       data = objectMapper.convertValue(wrapper.getData(), clazz);
-    } catch (IllegalArgumentException _) {
+    } catch (Exception _) {
       return null;
     }
 

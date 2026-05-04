@@ -5,11 +5,11 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+import top.ppmblszdp.common.redis.serializer.Jackson3JsonRedisSerializer;
 
 @DisplayName("TwoLevelCacheMessageListener 单元测试")
 class TwoLevelCacheMessageListenerTest {
@@ -34,9 +34,8 @@ class TwoLevelCacheMessageListenerTest {
     String key = "user:1";
     TwoLevelCacheMessage cacheMessage = new TwoLevelCacheMessage(cacheName, key);
 
-    GenericJacksonJsonRedisSerializer serializer =
-        new GenericJacksonJsonRedisSerializer(objectMapper);
-
+    Jackson3JsonRedisSerializer<Object> serializer =
+        new Jackson3JsonRedisSerializer<>(objectMapper, Object.class);
     byte[] body = serializer.serialize(cacheMessage);
 
     Message message = mock(Message.class);
