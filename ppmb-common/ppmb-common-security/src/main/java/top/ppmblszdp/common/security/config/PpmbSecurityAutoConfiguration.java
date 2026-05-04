@@ -78,6 +78,8 @@ public class PpmbSecurityAutoConfiguration {
                 !request.getServletPath().startsWith("/actuator")
                     && !request.getServletPath().startsWith("/error"))
         .csrf(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable)
+        .logout(AbstractHttpConfigurer::disable)
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(

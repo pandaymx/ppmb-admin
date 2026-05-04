@@ -36,6 +36,13 @@ spring:
                 - Path=/api/user/**
               filters:
                 - StripPrefix=2
+          cors:
+            configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:3000"
+                allowedMethods: "*"
+                allowedHeaders: "*"
+                allowCredentials: true
 
 management:
   endpoints:
@@ -48,8 +55,9 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
-    export:
-      prometheus:
+  prometheus:
+    metrics:
+      export:
         enabled: true
 
 springdoc:
