@@ -13,6 +13,8 @@ import bgImage from "../../assets/login-bg.png";
 
 import { useAuthStore } from "../../store/useAuthStore";
 
+import { login } from "../../api/auth";
+
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [loading, setLoading] = useState(false);
@@ -21,19 +23,33 @@ const AuthPage: React.FC = () => {
   const setUser = useAuthStore((state) => state.setUser);
   const setPermissions = useAuthStore((state) => state.setPermissions);
 
-  const onLogin = (values: any) => {
+  const onLogin = async (values: any) => {
     setLoading(true);
-    console.log("Login values:", values);
-    setTimeout(() => {
-      setLoading(false);
-      // Simulating a successful login
-      setToken("fake-jwt-token-" + Math.random().toString(36).substring(7));
-      setUser({ username: values.username || "Admin" });
-      // Simulate backend returning some permissions
+    try {
+      const response = await login({
+        username: values.username,
+        password: values.password,
+      });
+
+      // login 接口返回的是 Result<TokenDto>，request 拦截器已处理过 Result 包装
+      // 这里的 response 就是 TokenDto (accessToken, expiresIn)
+      const { accessToken } = response as any;
+
+      setToken(accessToken);
+      setUser({ username: values.username });
+
+      // 注意：目前后端可能还没实现获取用户详情/权限的接口
+      // 我们暂时保留这里的模拟权限，或者从 Token 中解析（如果有的话）
       setPermissions(["sys:user:list", "sys:role:list"]);
+
       message.success("登录成功");
       navigate("/");
-    }, 1500);
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      message.error(error.message || "登录失败，请检查账号密码");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onRegister = (values: any) => {
