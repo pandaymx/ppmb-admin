@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { LoginParams, LoginResult } from "./types/auth";
+import { LoginParams, LoginResult } from "@/api/types/auth";
 
 /**
  * 登录接口
