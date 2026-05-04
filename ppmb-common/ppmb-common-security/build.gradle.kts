@@ -3,24 +3,22 @@ plugins {
     id("java-library")
 }
 
-val libs = the<VersionCatalogsExtension>().named("libs")
-
 dependencies {
-    api(platform(libs.findLibrary("spring-boot-dependencies").get()))
+    api(platform(libs.spring.boot.dependencies))
     api(project(":ppmb-common:ppmb-common-api"))
 
-    api(libs.findLibrary("spring-boot-starter-security").get())
-    api(libs.findLibrary("spring-boot-starter-web").get())
+    api(libs.spring.boot.starter.security)
+    api(libs.spring.boot.starter.web)
 
-    implementation(libs.findLibrary("jacksonDatabind").get())
-    implementation(libs.findLibrary("jjwt-api").get())
-    runtimeOnly(libs.findLibrary("jjwt-impl").get())
-    runtimeOnly(libs.findLibrary("jjwt-jackson").get())
+    implementation(libs.jacksonDatabind)
+    implementation(libs.jjwt.api)
+    runtimeOnly(libs.jjwt.impl)
+    runtimeOnly(libs.jjwt.jackson)
 
-    compileOnly(libs.findLibrary("lombok").get())
-    annotationProcessor(libs.findLibrary("lombok").get())
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    testImplementation(libs.findLibrary("spring-boot-starter-test").get())
-    testCompileOnly(libs.findLibrary("lombok").get())
-    testAnnotationProcessor(libs.findLibrary("lombok").get())
+    testImplementation(libs.spring.boot.starter.test)
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }

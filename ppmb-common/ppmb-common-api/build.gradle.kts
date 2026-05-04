@@ -1,21 +1,20 @@
 plugins {
     id("buildlogic.java-common-conventions")
 }
-val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
-    implementation(platform(libs.findLibrary("spring-cloud-dependencies").get()))
+    implementation(platform(libs.spring.boot.dependencies))
+    implementation(platform(libs.spring.cloud.dependencies))
     implementation("org.springframework:spring-web")
-    implementation(libs.findLibrary("jacksonDatabind").get())
-    implementation(libs.findLibrary("jacksonCore").get())
-    implementation(libs.findLibrary("jacksonAnnotations").get())
-    implementation(libs.findLibrary("spring-boot-starter-validation").get())
-    implementation(libs.findLibrary("jakarta-persistence-api").get())
-    implementation(libs.findLibrary("spring-data-jpa").get())
-    implementation(libs.findLibrary("spring-cloud-starter-openfeign").get())
-    compileOnly(libs.findLibrary("lombok").get())
-    annotationProcessor(libs.findLibrary("lombok").get())
+    implementation(libs.jacksonDatabind)
+    implementation(libs.jacksonCore)
+    implementation(libs.jacksonAnnotations)
+    implementation(libs.spring.boot.starter.validation)
+    implementation(libs.jakarta.persistence.api)
+    implementation(libs.spring.data.jpa)
+    implementation(libs.spring.cloud.starter.openfeign)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    testImplementation(libs.findLibrary("spring-boot-starter-test").get())
+    testImplementation(libs.spring.boot.starter.test)
 }

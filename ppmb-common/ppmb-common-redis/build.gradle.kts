@@ -1,32 +1,31 @@
 plugins {
     id("buildlogic.java-common-conventions")
 }
-val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
-    implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
-    implementation(platform(libs.findLibrary("testcontainers-bom").get()))
+    implementation(platform(libs.spring.boot.dependencies))
+    implementation(platform(libs.testcontainers.bom))
 
     implementation(project(":ppmb-common:ppmb-common-api"))
 
     implementation("org.springframework.boot:spring-boot-autoconfigure")
-    implementation(libs.findLibrary("spring-boot-starter-data-redis").get())
-    implementation(libs.findLibrary("jacksonDatabind").get())
-    implementation(libs.findLibrary("jackson3-databind").get())
-    implementation(libs.findLibrary("jackson3-core").get())
+    implementation(libs.spring.boot.starter.data.redis)
+    implementation(libs.jacksonDatabind)
+    implementation(libs.jackson3.databind)
+    implementation(libs.jackson3.core)
 
-    implementation(libs.findLibrary("jacksonDatatypeJsr310").get())
-    implementation(libs.findLibrary("caffeine").get())
+    implementation(libs.jacksonDatatypeJsr310)
+    implementation(libs.caffeine)
 
-    compileOnly(libs.findLibrary("lombok").get())
-    annotationProcessor(libs.findLibrary("lombok").get())
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
 
-    testImplementation(libs.findLibrary("spring-boot-starter-test").get())
-    testImplementation(libs.findLibrary("testcontainers").get())
-    testImplementation(libs.findLibrary("testcontainers-junit-jupiter").get())
-    testImplementation(libs.findLibrary("spring-boot-testcontainers").get())
-    testImplementation(libs.findLibrary("mockito-core").get())
+    testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.testcontainers)
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.spring.boot.testcontainers)
+    testImplementation(libs.mockito.core)
 
-    testCompileOnly(libs.findLibrary("lombok").get())
-    testAnnotationProcessor(libs.findLibrary("lombok").get())
+    testCompileOnly(libs.lombok)
+    testAnnotationProcessor(libs.lombok)
 }
