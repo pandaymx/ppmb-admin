@@ -67,7 +67,8 @@ jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwt
 jjwt-jackson = { group = "io.jsonwebtoken", name = "jjwt-jackson", version.ref = "jjwt" }
 jackson3-databind = { group = "tools.jackson.core", name = "jackson-databind", version.ref = "jackson3" }
 jackson3-core = { group = "tools.jackson.core", name = "jackson-core", version.ref = "jackson3" }
-jackson3-annotations = { group = "com.fasterxml.jackson.core", name = "jackson-annotations", version.ref = "jackson" }
+
+
 mapstruct-core = { group = "org.mapstruct", name = "mapstruct", version.ref = "mapstruct" }
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
