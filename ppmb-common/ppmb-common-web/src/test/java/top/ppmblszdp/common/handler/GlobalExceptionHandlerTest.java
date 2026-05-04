@@ -168,6 +168,40 @@ class GlobalExceptionHandlerTest {
                     }));
   }
 
+  @Test
+  @DisplayName("测试默认包（无点号）堆栈信息的处理")
+  void testSanitizeStackTraceWithDefaultPackage() throws Exception {
+    mockMvc.perform(get("/test/default-package-stack")).andExpect(status().isInternalServerError());
+
+    Mockito.verify(rabbitTemplate)
+        .convertAndSend(
+            Mockito.anyString(),
+            Mockito.anyString(),
+            (Object)
+                Mockito.argThat(
+                    msg -> {
+                      if (msg instanceof ExceptionLogMessage logMsg) {
+                        String stack = logMsg.stackTrace();
+                        return stack.contains("default:");
+                      }
+                      return false;
+                    }));
+  }
+
+  @Test
+  @DisplayName("当 RabbitTemplate 为 null 时发送日志不应抛出异常")
+  void testSendExceptionLogWithNullRabbitTemplate() throws Exception {
+    GlobalExceptionHandler handler = new GlobalExceptionHandler();
+    handler.setRabbitTemplate(null);
+    MockMvc customMockMvc =
+        MockMvcBuilders.standaloneSetup(new TestController()).setControllerAdvice(handler).build();
+
+    customMockMvc
+        .perform(get("/test/general-exception"))
+        .andExpect(status().isInternalServerError())
+        .andExpect(jsonPath("$.code").value(CommonResultCode.SYSTEM_ERROR.getCode()));
+  }
+
   @RestController
   static class TestController {
 
@@ -196,6 +230,15 @@ class GlobalExceptionHandlerTest {
     void throwEmptyStackException() {
       RuntimeException ex = new RuntimeException("Empty stack");
       ex.setStackTrace(new StackTraceElement[0]);
+      throw ex;
+    }
+
+    @GetMapping("/test/default-package-stack")
+    void throwDefaultPackageStack() {
+      RuntimeException ex = new RuntimeException("Default package stack");
+      StackTraceElement[] elements = new StackTraceElement[1];
+      elements[0] = new StackTraceElement("GlobalClass", "method", "GlobalClass.java", 1);
+      ex.setStackTrace(elements);
       throw ex;
     }
 

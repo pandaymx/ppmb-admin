@@ -566,4 +566,19 @@ class DictApplicationServiceImplTest {
 
     verify(dictDataRepository).save(any(DictData.class));
   }
+
+  @Test
+  @DisplayName("更新字典数据成功-键值和类型都未改变（显式设置相同值）")
+  void updateDictData_success_allSame() {
+    UpdateDictDataCommand command = new UpdateDictDataCommand();
+    command.setDictValue("1"); // Current value
+    command.setDictType("user_status"); // Current type
+    command.setDictLabel("新标签");
+
+    when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
+
+    dictService.updateDictData(1L, command);
+
+    verify(dictDataRepository).save(any(DictData.class));
+  }
 }
