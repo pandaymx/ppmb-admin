@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -200,19 +201,17 @@ class RedisUtilTest {
     invalidWrapper.setLogicalExpire(LocalDateTime.now().plusSeconds(60));
 
     Mockito.when(valueOperations.get(key)).thenReturn(invalidWrapper);
-    // Integer retrievedCastEx =
-    //    redisUtil.getWithLogicalExpire(key, Integer.class, 1L, Duration.ofSeconds(2), id -> 5);
-    // Assertions.assertNull(retrievedCastEx);
   }
 
   @Test
+  @DisplayName("Duration为null时应调用不带过期时间的set方法")
   void testSetNullDuration() {
     String key = "nullDurationKey";
     redisUtil.set(key, "value", (Duration) null);
-    Mockito.verify(valueOperations).set(Mockito.eq(key), Mockito.eq("value"));
+    Mockito.verify(valueOperations).set(key, "value");
 
     redisUtil.setIfAbsent(key, "value", null);
-    Mockito.verify(valueOperations).setIfAbsent(Mockito.eq(key), Mockito.eq("value"));
+    Mockito.verify(valueOperations).setIfAbsent(key, "value");
   }
 
   @Test
