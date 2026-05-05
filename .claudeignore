@@ -1,0 +1,72 @@
+# Dependency directories
+node_modules/
+.gradle/
+.bun/
+.pnpm-store/
+
+# Build artifacts
+build/
+bin/
+out/
+target/
+dist/
+.next/
+.eslintcache
+.stylelintcache
+
+# IDE and System files
+.idea/
+.vscode/
+.project
+.classpath
+.settings/
+.nb-gradle/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.iml
+*.iws
+*.ipr
+
+# Binary and Assets
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.pdf
+*.zip
+*.gz
+*.tar
+*.jar
+*.war
+*.webp
+*.svg
+
+# Logs and Temporaries
+*.log
+logs/
+tmp/
+temp/
+*.swp
+*.swo
+
+# Lock files (too large for AI context)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
+
+# Environment and Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Local Data
+data/
+*.db
+*.sqlite
+
+# Git internal
+.git/
