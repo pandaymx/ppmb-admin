@@ -22,8 +22,8 @@ class EntityTestUtilsTest {
   @Test
   @DisplayName("测试 setId 方法 - 传入 null")
   void testSetId_Null() {
-    EntityTestUtils.setId(null, 123L);
-    // Should not throw exception
+    org.assertj.core.api.Assertions.assertThatCode(() -> EntityTestUtils.setId(null, 123L))
+        .doesNotThrowAnyException();
   }
 
   @Test

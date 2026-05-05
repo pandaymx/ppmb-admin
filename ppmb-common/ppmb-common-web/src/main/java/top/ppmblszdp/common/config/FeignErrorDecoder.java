@@ -66,7 +66,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
           return new BusinessException(
               HttpStatus.valueOf(response.status()), resultCode, title, detail);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException _) {
           log.warn("Feign 错误响应非 JSON 格式 [{}]: {}", methodKey, body);
         }
       }
