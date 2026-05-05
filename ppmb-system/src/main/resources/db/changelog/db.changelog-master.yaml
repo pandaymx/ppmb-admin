@@ -20,3 +20,10 @@ databaseChangeLog:
       file: db/changelog/2024/01-create-sys-dict-type.yaml
   - include:
       file: db/changelog/2024/02-create-sys-dict-data.yaml
+
+  - include:
+      file: db/changelog/v1.0.0/20260505-001-fix-sys-menu-common-columns.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260505-001-fix-sys-dict-data-common-columns.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260505-002-add-default-values.yaml

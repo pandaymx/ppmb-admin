@@ -2,8 +2,6 @@ package top.ppmblszdp.system.domain.model.log.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -15,9 +13,14 @@ import lombok.Data;
 @Table(name = "sys_exception_log")
 public class SysExceptionLog {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+  @Id @top.ppmblszdp.common.domain.generator.SnowflakeId private Long id;
+
+  @jakarta.persistence.PrePersist
+  public void prePersist() {
+    if (this.createTime == null) {
+      this.createTime = java.time.LocalDateTime.now();
+    }
+  }
 
   @Column(name = "service_name")
   private String serviceName;

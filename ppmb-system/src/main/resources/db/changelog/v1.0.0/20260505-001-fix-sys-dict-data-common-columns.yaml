@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: "20260505-001-dict-data-del-flag"
+      author: antigravity
+      comment: "补齐 sys_dict_data 通用字段 del_flag（旧表结构缺失会导致后续默认值变更失败）"
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sys_dict_data
+        - not:
+            - columnExists:
+                tableName: sys_dict_data
+                columnName: del_flag
+      changes:
+        - addColumn:
+            tableName: sys_dict_data
+            columns:
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: "20260505-001-dict-data-version"
+      author: antigravity
+      comment: "补齐 sys_dict_data 通用字段 version（旧表结构缺失会导致后续默认值变更失败）"
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sys_dict_data
+        - not:
+            - columnExists:
+                tableName: sys_dict_data
+                columnName: version
+      changes:
+        - addColumn:
+            tableName: sys_dict_data
+            columns:
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+

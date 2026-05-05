@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: "20260505-002"
+      author: antigravity
+      comment: "为所有系统表添加通用字段的默认值约束"
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              -- 为所有表添加通用的默认值约束 (如果尚未设置)
+              -- sys_user
+              ALTER TABLE sys_user ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN status SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN dept_id SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN role_id SET DEFAULT 0;
+              ALTER TABLE sys_user ALTER COLUMN data_scope SET DEFAULT 0;
+
+              -- sys_role
+              ALTER TABLE sys_role ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_role ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_role ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_role ALTER COLUMN status SET DEFAULT 0;
+
+              -- sys_department
+              ALTER TABLE sys_department ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_department ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_department ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_department ALTER COLUMN status SET DEFAULT 0;
+
+              -- sys_post
+              ALTER TABLE sys_post ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_post ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_post ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_post ALTER COLUMN status SET DEFAULT 0;
+
+              -- sys_menu
+              ALTER TABLE sys_menu ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_menu ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_menu ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_menu ALTER COLUMN status SET DEFAULT 0;
+
+              -- sys_dict_type
+              ALTER TABLE sys_dict_type ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_dict_type ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_dict_type ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_dict_type ALTER COLUMN status SET DEFAULT 0;
+
+              -- sys_dict_data
+              ALTER TABLE sys_dict_data ALTER COLUMN tenant_id SET DEFAULT 0;
+              ALTER TABLE sys_dict_data ALTER COLUMN del_flag SET DEFAULT 0;
+              ALTER TABLE sys_dict_data ALTER COLUMN version SET DEFAULT 0;
+              ALTER TABLE sys_dict_data ALTER COLUMN status SET DEFAULT 0;
