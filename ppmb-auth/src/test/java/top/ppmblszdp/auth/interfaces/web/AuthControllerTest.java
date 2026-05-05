@@ -56,4 +56,39 @@ class AuthControllerTest {
     // Assert
     verify(authService, times(1)).login(command);
   }
+
+  @Test
+  @DisplayName("注册成功")
+  void registerSuccess() {
+    // Arrange
+    final var command =
+        new top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand(
+            "testuser", "password123", "test@example.com", "nickname");
+
+    doNothing().when(authService).register(command);
+
+    // Act
+    Result<Void> result = authController.register(command);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals("00000", result.code());
+  }
+
+  @Test
+  @DisplayName("注册调用服务层")
+  void registerCallsService() {
+    // Arrange
+    final var command =
+        new top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand(
+            "testuser", "password123", "test@example.com", "nickname");
+
+    doNothing().when(authService).register(command);
+
+    // Act
+    authController.register(command);
+
+    // Assert
+    verify(authService, times(1)).register(command);
+  }
 }
