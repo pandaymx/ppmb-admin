@@ -31,10 +31,10 @@ public abstract class BaseMainEntity extends BaseEntity {
 
   /** Logical deletion flag (0 = not deleted). */
   @Column(name = "del_flag", nullable = false)
-  private Integer delFlag;
+  private Integer delFlag = 0;
 
   /** Optimistic lock version number. */
   @Version
   @Column(name = "version", nullable = false)
-  private Integer version;
+  private Integer version = 0;
 }

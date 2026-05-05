@@ -30,7 +30,7 @@ public abstract class BaseEntity implements Serializable {
 
   /** Multi-tenant identifier. */
   @Column(name = "tenant_id", nullable = false, updatable = false)
-  private Long tenantId;
+  private Long tenantId = 0L;
 
   /** Creation timestamp. */
   @CreatedDate

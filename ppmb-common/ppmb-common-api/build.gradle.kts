@@ -1,5 +1,6 @@
 plugins {
     id("buildlogic.java-common-conventions")
+    id("java-library")
 }
 
 dependencies {
@@ -11,7 +12,7 @@ dependencies {
     implementation(libs.jacksonAnnotations)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.jakarta.persistence.api)
-    implementation(libs.spring.data.jpa)
+    api(libs.spring.data.jpa)
     implementation(libs.spring.cloud.starter.openfeign)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
