@@ -8,6 +8,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients(basePackages = "top.ppmblszdp")
 public class AuthApplication {
   public static void main(String[] args) {
+    System.setProperty(
+        "log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
     SpringApplication.run(AuthApplication.class, args);
   }
 }

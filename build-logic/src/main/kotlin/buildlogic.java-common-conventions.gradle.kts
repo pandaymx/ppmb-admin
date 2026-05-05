@@ -17,9 +17,18 @@ repositories {
 val libs = the<VersionCatalogsExtension>().named("libs")
 
 dependencies {
+    implementation(platform(libs.findLibrary("spring-boot-dependencies").get()))
     constraints {
         // Define dependency versions as constraints
         implementation(libs.findLibrary("commons-text").get())
+    }
+    implementation(libs.findLibrary("spring-boot-starter-log4j2").get())
+    implementation(libs.findLibrary("disruptor").get())
+}
+
+configurations {
+    all {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
     }
 }
 

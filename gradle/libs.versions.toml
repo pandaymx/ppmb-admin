@@ -21,6 +21,9 @@ feignJackson = "13.6"
 commonsText = "1.14.0"
 spotlessPlugin = "7.0.2"
 graalvmNative = "1.1.0"
+disruptor = "3.4.4"
+
+
 
 
 
@@ -78,6 +81,9 @@ feign-jackson = { group = "io.github.openfeign", name = "feign-jackson", version
 commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commonsText" }
 spotless-plugin-gradle = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotlessPlugin" }
 graalvm-native-plugin = { group = "org.graalvm.buildtools.native", name = "org.graalvm.buildtools.native.gradle.plugin", version.ref = "graalvmNative" }
+spring-boot-starter-log4j2 = { group = "org.springframework.boot", name = "spring-boot-starter-log4j2" }
+disruptor = { group = "com.lmax", name = "disruptor", version.ref = "disruptor" }
+
 
 
 
