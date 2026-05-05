@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.jakarta.persistence.api)
     api(libs.spring.data.jpa)
+    api("org.hibernate.orm:hibernate-core")
     implementation(libs.spring.cloud.starter.openfeign)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)

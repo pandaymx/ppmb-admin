@@ -1,55 +1,56 @@
 package top.ppmblszdp.common.domain.entity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.time.LocalDateTime;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import top.ppmblszdp.common.domain.generator.SnowflakeIdentifierGenerator;
 
-@DisplayName("BaseEntity 及 EntityTestUtils 测试")
+@DisplayName("基础实体基类单元测试")
 class BaseEntityTest {
 
-  private static class TestEntity extends BaseEntity {}
+  @Test
+  @DisplayName("验证雪花算法生成器")
+  void testSnowflakeGenerator() {
+    SnowflakeIdentifierGenerator generator = new SnowflakeIdentifierGenerator();
+    SharedSessionContractImplementor session = mock(SharedSessionContractImplementor.class);
+
+    Object id1 = generator.generate(session, new TestEntity());
+    Object id2 = generator.generate(session, new TestEntity());
+
+    assertThat(id1).isNotNull().isInstanceOf(Long.class);
+    assertThat(id2).isNotNull().isInstanceOf(Long.class);
+    assertThat(id1).isNotEqualTo(id2);
+  }
 
   @Test
-  @DisplayName("测试 BaseEntity 基础字段及 setId")
-  void testBaseEntityFields() {
+  @DisplayName("验证 Getter 和 Setter")
+  void testGettersAndSetters() {
+    LocalDateTime now = LocalDateTime.now();
     TestEntity entity = new TestEntity();
-    entity.setId(100L);
-    entity.setTenantId(1L);
-    entity.setCreateBy(1L);
-    entity.setCreateTime(LocalDateTime.now());
-    entity.setDeptId(2L);
-    entity.setRoleId(3L);
+    entity.setId(1L);
+    entity.setTenantId(10L);
+    entity.setCreateTime(now);
+    entity.setCreateBy(100L);
+    entity.setDeptId(200L);
+    entity.setRoleId(300L);
     entity.setDataScope(1);
 
-    assertEquals(100L, entity.getId());
-    assertEquals(1L, entity.getTenantId());
-    assertEquals(1L, entity.getCreateBy());
-    assertNotNull(entity.getCreateTime());
-    assertEquals(2L, entity.getDeptId());
-    assertEquals(3L, entity.getRoleId());
-    assertEquals(1, entity.getDataScope());
+    assertThat(entity.getId()).isEqualTo(1L);
+    assertThat(entity.getTenantId()).isEqualTo(10L);
+    assertThat(entity.getCreateTime()).isEqualTo(now);
+    assertThat(entity.getCreateBy()).isEqualTo(100L);
+    assertThat(entity.getDeptId()).isEqualTo(200L);
+    assertThat(entity.getRoleId()).isEqualTo(300L);
+    assertThat(entity.getDataScope()).isEqualTo(1);
+    assertThat(entity.toString()).contains("id=1");
+    assertThat(entity.hashCode()).isNotZero();
+    assertThat(entity).isEqualTo(entity);
+    assertThat(entity).isNotEqualTo(new TestEntity());
   }
 
-  @Test
-  @DisplayName("测试 EntityTestUtils.setId")
-  void testEntityTestUtils() {
-    TestEntity entity = new TestEntity();
-    EntityTestUtils.setId(entity, 200L);
-    assertEquals(200L, entity.getId());
-
-    // 测试 null 实体
-    EntityTestUtils.setId(null, 300L);
-  }
-
-  @Test
-  @DisplayName("测试 EntityTestUtils 私有构造函数")
-  void testEntityTestUtilsConstructor() throws Exception {
-    var constructor = EntityTestUtils.class.getDeclaredConstructor();
-    constructor.setAccessible(true);
-    org.junit.jupiter.api.Assertions.assertThrows(
-        java.lang.reflect.InvocationTargetException.class, constructor::newInstance);
-  }
+  static class TestEntity extends BaseEntity {}
 }

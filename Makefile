@@ -1,4 +1,4 @@
-.PHONY: infra backend frontend all stop clean help
+.PHONY: infra backend frontend app all stop clean setup setup-root setup-frontend help
 
 # 默认显示帮助
 help:
@@ -6,8 +6,30 @@ help:
 	@echo "  make infra     - 启动基础设施 (Docker: Consul, Postgres, Redis, RabbitMQ, Monitoring)"
 	@echo "  make backend   - 一键启动后端所有服务 (Gateway + System + Auth)"
 	@echo "  make frontend  - 启动前端服务 (React + Vite)"
+	@echo "  make app       - 启动应用 (后端 + 前端，不启动基础设施；适合 worktree)"
 	@echo "  make all       - 启动全部 (基础设施 + 后端 + 前端)"
+	@echo "  make setup     - 安装依赖 (根目录工具链 + 前端依赖)"
 	@echo "  make stop      - 停止基础设施"
+
+# 安装依赖（面向新同学/首次运行）
+setup: setup-root setup-frontend
+
+# 根目录仅包含 commitlint/husky/prettier 等工具链依赖（不影响运行服务）
+setup-root:
+	@if [ -f package.json ]; then \
+		if [ ! -d node_modules ]; then \
+			echo "安装根目录工具链依赖 (bun install)..."; \
+			bun install; \
+		fi; \
+	fi
+
+setup-frontend:
+	@if [ -d ppmb-admin-ui ]; then \
+		if [ ! -d ppmb-admin-ui/node_modules ]; then \
+			echo "安装前端依赖 (ppmb-admin-ui, bun install)..."; \
+			cd ppmb-admin-ui && bun install; \
+		fi; \
+	fi
 
 # 启动基础设施
 infra:
@@ -24,7 +46,12 @@ backend:
 
 # 启动前端服务
 frontend:
+	@$(MAKE) setup-frontend
 	cd ppmb-admin-ui && bun run dev
+
+# 启动应用（适合 worktree：只起前后端，不包含基础设施）
+app:
+	@$(MAKE) -j 2 backend frontend
 
 # 一键启动所有应用
 all:

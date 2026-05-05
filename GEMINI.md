@@ -34,6 +34,11 @@
   - 在断言失败时，应提供友好的错误信息，帮助定位问题。
   - 对于仅用于占位的变量（如 `assertThrows` 的返回值），优先使用 Java 21+ 的匿名变量 `_`。
 - 初始化内容需要删除不需要的内容，比如 bun init 后无需 README.md 等文件需要删除
+- **禁止使用已弃用且标记为删除的代码** (java:S5738)。在 Hibernate 6+ 中，应使用 `@IdGeneratorType` 或自定义组合注解替代 `@GenericGenerator`。
+- **AssertJ 断言应当简化为专用断言**（例如使用 `isEqualTo` 而非 `equals().isTrue()`），以提高错误信息的可读性 (java:S5838)。
+- **禁止方法具有相同的实现** (java:S4144)。重复的测试或逻辑应合并或区分测试场景。
+- **相似的测试应当合并为参数化测试** (java:S5976)。使用 `@ParameterizedTest` 减少代码冗余并提高覆盖率。
+- 所有的 `main` 方法中必须设置 `log4j2.contextSelector` 以开启 Log4j2 全异步模式。
 
 # Git 规范
 
@@ -41,5 +46,6 @@
 - 使用中文提交 commit。
 - 功能原子化，每次都要提交 commit 信息。
 - commit 信息需要规范。
+- 当要修改代码问题（如 Sonar 扫描出的 issue）时，必须将具体的问题描述（如 issue ID 或错误描述）写在 `update_topic` 的提示词或 `summary` 中，以便追溯和防止重复出现。
 - 不使用 checkout。
 - 使用 Trunk-Based flow 工作流。
