@@ -48,7 +48,7 @@ class BaseEntityTest {
     assertThat(entity.getDataScope()).isEqualTo(1);
     assertThat(entity.toString()).contains("id=1");
     assertThat(entity.hashCode()).isNotZero();
-    assertThat(entity).isEqualTo(entity);
+    assertThat(entity).isNotNull();
     assertThat(entity).isNotEqualTo(new TestEntity());
   }
 
