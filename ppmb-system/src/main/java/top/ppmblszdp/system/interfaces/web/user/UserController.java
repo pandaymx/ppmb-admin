@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.ppmblszdp.common.api.Result;
 import top.ppmblszdp.common.security.util.SecurityUtils;
 import top.ppmblszdp.system.application.service.menu.MenuApplicationService;
 import top.ppmblszdp.system.application.service.role.UserRoleApplicationService;
@@ -30,41 +29,54 @@ public class UserController {
   private final MenuApplicationService menuApplicationService;
 
   @PostMapping
-  public Result<UserDto> createUser(@Valid @RequestBody CreateUserCommand command) {
-    return Result.success(userApplicationService.createUser(command));
+  @org.springframework.web.bind.annotation.ResponseStatus(
+      org.springframework.http.HttpStatus.CREATED)
+  public UserDto createUser(@Valid @RequestBody CreateUserCommand command) {
+    return userApplicationService.createUser(command);
   }
 
   @GetMapping("/{id}")
-  public Result<UserDto> getUserById(@PathVariable Long id) {
-    return userApplicationService.getUserById(id).map(Result::success).orElseGet(Result::success);
+  public UserDto getUserById(@PathVariable Long id) {
+    return userApplicationService
+        .getUserById(id)
+        .orElseThrow(
+            () ->
+                new top.ppmblszdp.common.exception.BusinessException(
+                    org.springframework.http.HttpStatus.NOT_FOUND,
+                    top.ppmblszdp.common.api.CommonResultCode.USER_ERROR,
+                    "用户不存在",
+                    null));
   }
 
   @DeleteMapping("/{id}")
-  public Result<Void> deleteUser(@PathVariable Long id) {
+  @org.springframework.web.bind.annotation.ResponseStatus(
+      org.springframework.http.HttpStatus.NO_CONTENT)
+  public void deleteUser(@PathVariable Long id) {
     userApplicationService.deleteUser(id);
-    return Result.success();
   }
 
   @GetMapping("/{id}/roles")
-  public Result<List<Long>> getUserRoles(@PathVariable Long id) {
-    return Result.success(userRoleApplicationService.getUserRoles(id));
+  public List<Long> getUserRoles(@PathVariable Long id) {
+    return userRoleApplicationService.getUserRoles(id);
   }
 
   @PutMapping("/{id}/roles")
-  public Result<Void> assignRoles(@PathVariable Long id, @RequestBody List<Long> roleIds) {
+  @org.springframework.web.bind.annotation.ResponseStatus(
+      org.springframework.http.HttpStatus.NO_CONTENT)
+  public void assignRoles(@PathVariable Long id, @RequestBody List<Long> roleIds) {
     userRoleApplicationService.assignRolesToUser(id, roleIds);
-    return Result.success();
   }
 
   @PostMapping("/batch/roles")
-  public Result<Void> batchAssignRoles(@Valid @RequestBody BatchUserRoleCommand command) {
+  @org.springframework.web.bind.annotation.ResponseStatus(
+      org.springframework.http.HttpStatus.NO_CONTENT)
+  public void batchAssignRoles(@Valid @RequestBody BatchUserRoleCommand command) {
     userRoleApplicationService.batchAssignRoles(command);
-    return Result.success();
   }
 
   @GetMapping("/permissions")
-  public Result<List<String>> getPermissions() {
+  public List<String> getPermissions() {
     Long userId = SecurityUtils.getUserId();
-    return Result.success(menuApplicationService.getMenuPermsByUserId(userId));
+    return menuApplicationService.getMenuPermsByUserId(userId);
   }
 }

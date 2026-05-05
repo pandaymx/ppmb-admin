@@ -42,7 +42,10 @@ class UserControllerTest {
 
   @BeforeEach
   void setUp() {
-    mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(userController)
+            .setControllerAdvice(new top.ppmblszdp.common.handler.GlobalExceptionHandler())
+            .build();
   }
 
   @Test
@@ -61,9 +64,8 @@ class UserControllerTest {
             post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(command)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"))
-        .andExpect(jsonPath("$.data.username").value("testuser"));
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.username").value("testuser"));
   }
 
   @Test
@@ -77,8 +79,7 @@ class UserControllerTest {
     mockMvc
         .perform(get("/users/1"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"))
-        .andExpect(jsonPath("$.data.id").value(1));
+        .andExpect(jsonPath("$.id").value(1));
   }
 
   @Test
@@ -86,10 +87,7 @@ class UserControllerTest {
   void testDeleteUser() throws Exception {
     doNothing().when(userApplicationService).deleteUser(1L);
 
-    mockMvc
-        .perform(delete("/users/1"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"));
+    mockMvc.perform(delete("/users/1")).andExpect(status().isNoContent());
 
     verify(userApplicationService, times(1)).deleteUser(1L);
   }
@@ -102,8 +100,8 @@ class UserControllerTest {
     mockMvc
         .perform(get("/users/1/roles"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data[0]").value(1));
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$[0]").value(1));
   }
 
   @Test
@@ -116,7 +114,7 @@ class UserControllerTest {
             put("/users/1/roles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(List.of(1L, 2L))))
-        .andExpect(status().isOk());
+        .andExpect(status().isNoContent());
   }
 
   @Test
@@ -132,7 +130,7 @@ class UserControllerTest {
       mockMvc
           .perform(get("/users/permissions"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.data[0]").value("sys:user:list"));
+          .andExpect(jsonPath("$[0]").value("sys:user:list"));
     }
   }
 
@@ -146,8 +144,7 @@ class UserControllerTest {
             put("/users/1/roles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(List.of(1L, 2L))))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"));
+        .andExpect(status().isNoContent());
   }
 
   @Test
@@ -164,8 +161,7 @@ class UserControllerTest {
             post("/users/batch/roles")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(command)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"));
+        .andExpect(status().isNoContent());
   }
 
   @Test
@@ -173,10 +169,6 @@ class UserControllerTest {
   void testGetUserByIdNotFound() throws Exception {
     when(userApplicationService.getUserById(1L)).thenReturn(Optional.empty());
 
-    mockMvc
-        .perform(get("/users/1"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.code").value("00000"))
-        .andExpect(jsonPath("$.data").doesNotExist());
+    mockMvc.perform(get("/users/1")).andExpect(status().isNotFound());
   }
 }
