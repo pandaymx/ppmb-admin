@@ -48,4 +48,29 @@ class ExceptionLogListenerTest {
 
     verify(exceptionLogRepository, times(1)).save(any(SysExceptionLog.class));
   }
+
+  @Test
+  @DisplayName("保存失败时不应抛出异常")
+  void testHandleExceptionLog_SaveError() {
+    ExceptionLogMessage message =
+        new ExceptionLogMessage(
+            "test-service",
+            "java.lang.RuntimeException",
+            "test error",
+            "stack trace",
+            "/test",
+            "GET",
+            "id=1",
+            "127.0.0.1",
+            1L,
+            LocalDateTime.now());
+
+    org.mockito.Mockito.when(exceptionLogRepository.save(any()))
+        .thenThrow(new RuntimeException("DB error"));
+
+    // 不应抛出异常
+    exceptionLogListener.handleExceptionLog(message);
+
+    verify(exceptionLogRepository, times(1)).save(any(SysExceptionLog.class));
+  }
 }

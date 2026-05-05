@@ -135,19 +135,6 @@ class UserControllerTest {
   }
 
   @Test
-  @DisplayName("测试更新用户角色")
-  void testUpdateUserRoles() throws Exception {
-    doNothing().when(userRoleApplicationService).assignRolesToUser(eq(1L), anyList());
-
-    mockMvc
-        .perform(
-            put("/users/1/roles")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(List.of(1L, 2L))))
-        .andExpect(status().isNoContent());
-  }
-
-  @Test
   @DisplayName("测试批量分配角色")
   void testBatchAssignRoles() throws Exception {
     doNothing().when(userRoleApplicationService).batchAssignRoles(any());

@@ -68,6 +68,18 @@ class MenuControllerTest {
   }
 
   @Test
+  @DisplayName("根据 ID 获取菜单")
+  void testGetMenuById() {
+    MenuDto dto = new MenuDto();
+    dto.setMenuName("Detail");
+    when(menuApplicationService.getMenuById(1L)).thenReturn(dto);
+
+    Result<MenuDto> result = controller.getMenuById(1L);
+    assertEquals("00000", result.code());
+    assertEquals("Detail", result.data().getMenuName());
+  }
+
+  @Test
   @DisplayName("获取菜单树")
   void testGetMenuTree() {
     MenuDto dto = new MenuDto();
