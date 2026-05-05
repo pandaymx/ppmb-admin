@@ -42,8 +42,69 @@ class PpmbRedisAutoConfigurationTest {
               ObjectMapper mapper = context.getBean("redisObjectMapper", ObjectMapper.class);
               assertThat(mapper).isNotNull();
               // Jackson 3 默认支持 JSR310，无需单独验证模块
-
             });
+  }
+
+  @Test
+  @DisplayName("测试 RedisMessageListenerContainer 加载")
+  void testRedisMessageListenerContainer() {
+    new ApplicationContextRunner()
+        .withConfiguration(AutoConfigurations.of(PpmbRedisAutoConfiguration.class))
+        .withUserConfiguration(
+            TestConfig.class, ExtraMockConfig.class, DisableAutoStartupConfig.class)
+        .withPropertyValues("ppmb.redis.two-level-cache.enabled=true")
+        .run(
+            context -> {
+              assertThat(context).hasBean("redisMessageListenerContainer");
+            });
+
+    new ApplicationContextRunner()
+        .withConfiguration(AutoConfigurations.of(PpmbRedisAutoConfiguration.class))
+        .withUserConfiguration(
+            TestConfig.class, ExtraMockConfig.class, DisableAutoStartupConfig.class)
+        .withPropertyValues("ppmb.redis.two-level-cache.enabled=false")
+        .run(
+            context -> {
+              assertThat(context).doesNotHaveBean("redisMessageListenerContainer");
+            });
+  }
+
+  @Test
+  @DisplayName("测试 RedisCacheManager 加载")
+  void testRedisCacheManager() {
+    new ApplicationContextRunner()
+        .withConfiguration(AutoConfigurations.of(PpmbRedisAutoConfiguration.class))
+        .withUserConfiguration(TestConfig.class)
+        .run(
+            context -> {
+              assertThat(context).hasBean("redisCacheManager");
+            });
+  }
+
+  @Configuration
+  static class ExtraMockConfig {
+    @Bean
+    top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener listener() {
+      return mock(top.ppmblszdp.common.redis.util.TwoLevelCacheMessageListener.class);
+    }
+  }
+
+  @Configuration
+  static class DisableAutoStartupConfig {
+    @Bean
+    static org.springframework.beans.factory.config.BeanPostProcessor disableAutoStartup() {
+      return new org.springframework.beans.factory.config.BeanPostProcessor() {
+        @Override
+        public Object postProcessBeforeInitialization(Object bean, String beanName) {
+          if (bean
+              instanceof org.springframework.data.redis.listener.RedisMessageListenerContainer) {
+            ((org.springframework.data.redis.listener.RedisMessageListenerContainer) bean)
+                .setAutoStartup(false);
+          }
+          return bean;
+        }
+      };
+    }
   }
 
   @Configuration

@@ -55,4 +55,65 @@ class RedisRateLimiterTest {
 
     Assertions.assertFalse(rateLimiter.isAllowed(key, count, period));
   }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testIsAllowedWithNullResult() {
+    String key = "testKey";
+    int count = 5;
+    int period = 60;
+
+    Mockito.when(
+            stringRedisTemplate.execute(
+                ArgumentMatchers.any(DefaultRedisScript.class),
+                ArgumentMatchers.eq(Collections.singletonList(key)),
+                ArgumentMatchers.eq(String.valueOf(count)),
+                ArgumentMatchers.eq(String.valueOf(period))))
+        .thenReturn(null);
+
+    Assertions.assertFalse(rateLimiter.isAllowed(key, count, period));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testIsAllowedWithUnexpectedResult() {
+    String key = "testKey";
+    int count = 5;
+    int period = 60;
+
+    Mockito.when(
+            stringRedisTemplate.execute(
+                ArgumentMatchers.any(DefaultRedisScript.class),
+                ArgumentMatchers.eq(Collections.singletonList(key)),
+                ArgumentMatchers.eq(String.valueOf(count)),
+                ArgumentMatchers.eq(String.valueOf(period))))
+        .thenReturn(2L); // Unexpected result
+
+    Assertions.assertFalse(rateLimiter.isAllowed(key, count, period));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void testLimitScriptInitialization() {
+    String key = "initKey";
+    Mockito.when(
+            stringRedisTemplate.execute(
+                ArgumentMatchers.any(DefaultRedisScript.class),
+                ArgumentMatchers.anyList(),
+                ArgumentMatchers.anyString(),
+                ArgumentMatchers.anyString()))
+        .thenReturn(1L);
+
+    // 第一次调用，初始化 limitScript
+    rateLimiter.isAllowed(key, 5, 60);
+    // 第二次调用，重用 limitScript
+    rateLimiter.isAllowed(key, 5, 60);
+
+    Mockito.verify(stringRedisTemplate, Mockito.times(2))
+        .execute(
+            ArgumentMatchers.any(DefaultRedisScript.class),
+            ArgumentMatchers.anyList(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyString());
+  }
 }

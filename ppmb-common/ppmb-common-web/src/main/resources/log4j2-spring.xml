@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!-- 定义路径，建议在本地开发环境使用相对路径 -->
+        <Property name="LOG_PATH">./logs</Property>
+        <Property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5p} [%t] %style{%c{1.}}{cyan} : %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- 控制台输出：本地开发必选 -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${PATTERN}" disableAnsi="false" noConsoleNoAnsi="false"/>
+        </Console>
+
+        <!-- 随机访问文件：性能极高，适合高性能场景 -->
+        <RollingRandomAccessFile name="FileAppender"
+                                 fileName="${LOG_PATH}/ppmb-admin.log"
+                                 filePattern="${LOG_PATH}/ppmb-admin-%d{yyyy-MM-dd}-%i.log.gz"
+                                 immediateFlush="false" 
+                                 append="true">
+            <PatternLayout pattern="${PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- 本地开发：减少框架层日志输出，仅关注业务日志以提升视觉和处理速度 -->
+        <logger name="top.ppmblszdp" level="DEBUG" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

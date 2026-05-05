@@ -102,4 +102,51 @@ class SecurityUtilsTest {
 
     assertEquals(1L, SecurityUtils.getUserId());
   }
+
+  @Test
+  @DisplayName("Principal 非字符串时返回默认用户 ID 1")
+  void shouldReturnDefaultUserIdWhenPrincipalNotString() {
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getPrincipal()).thenReturn(123); // Integer principal
+
+    SecurityContext securityContext = mock(SecurityContext.class);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    SecurityContextHolder.setContext(securityContext);
+
+    assertEquals(1L, SecurityUtils.getUserId());
+  }
+
+  @Test
+  @DisplayName("Authentication 为 null 时返回默认 ID")
+  void shouldReturnDefaultWhenAuthenticationIsNull() {
+    SecurityContext securityContext = mock(SecurityContext.class);
+    when(securityContext.getAuthentication()).thenReturn(null);
+    SecurityContextHolder.setContext(securityContext);
+
+    assertEquals(1L, SecurityUtils.getUserId());
+  }
+
+  @Test
+  @DisplayName("用户 ID 响应头为 null 时返回默认 ID")
+  void shouldReturnDefaultWhenHeaderIsNull() {
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getHeader("X-User-Id")).thenReturn(null);
+    ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+    RequestContextHolder.setRequestAttributes(attributes);
+
+    assertEquals(1L, SecurityUtils.getUserId());
+  }
+
+  @Test
+  @DisplayName("Principal 为 null 时返回默认 ID")
+  void shouldReturnDefaultWhenPrincipalIsNull() {
+    Authentication authentication = mock(Authentication.class);
+    when(authentication.getPrincipal()).thenReturn(null);
+
+    SecurityContext securityContext = mock(SecurityContext.class);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    SecurityContextHolder.setContext(securityContext);
+
+    assertEquals(1L, SecurityUtils.getUserId());
+  }
 }

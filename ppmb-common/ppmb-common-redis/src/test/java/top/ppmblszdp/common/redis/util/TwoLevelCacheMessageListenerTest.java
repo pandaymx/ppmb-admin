@@ -67,4 +67,60 @@ class TwoLevelCacheMessageListenerTest {
 
     verify(cacheManager, never()).clearLocal(anyString(), anyString());
   }
+
+  @Test
+  @DisplayName("消息内容不是 TwoLevelCacheMessage 时不应处理")
+  void shouldNotHandleWhenNotCacheMessage() {
+    TwoLevelCacheManager cacheManager = mock(TwoLevelCacheManager.class);
+    PolymorphicTypeValidator ptv =
+        BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build();
+    ObjectMapper objectMapper =
+        JsonMapper.builder()
+            .activateDefaultTyping(ptv, tools.jackson.databind.DefaultTyping.NON_FINAL)
+            .build();
+
+    TwoLevelCacheMessageListener listener =
+        new TwoLevelCacheMessageListener(cacheManager, objectMapper);
+
+    Jackson3JsonRedisSerializer<Object> serializer =
+        new Jackson3JsonRedisSerializer<>(objectMapper, Object.class);
+    byte[] body = serializer.serialize("some other string");
+
+    Message message = mock(Message.class);
+    when(message.getBody()).thenReturn(body);
+
+    listener.onMessage(message, null);
+
+    verify(cacheManager, never()).clearLocal(anyString(), anyString());
+  }
+
+  @Test
+  @DisplayName("应能重用已初始化的序列化器")
+  void shouldReuseSerializer() {
+    TwoLevelCacheManager cacheManager = mock(TwoLevelCacheManager.class);
+    PolymorphicTypeValidator ptv =
+        BasicPolymorphicTypeValidator.builder().allowIfBaseType(Object.class).build();
+    ObjectMapper objectMapper =
+        JsonMapper.builder()
+            .activateDefaultTyping(ptv, tools.jackson.databind.DefaultTyping.NON_FINAL)
+            .build();
+
+    TwoLevelCacheMessageListener listener =
+        new TwoLevelCacheMessageListener(cacheManager, objectMapper);
+
+    TwoLevelCacheMessage cacheMessage = new TwoLevelCacheMessage("name", "key");
+    Jackson3JsonRedisSerializer<Object> serializer =
+        new Jackson3JsonRedisSerializer<>(objectMapper, Object.class);
+    byte[] body = serializer.serialize(cacheMessage);
+
+    Message message = mock(Message.class);
+    when(message.getBody()).thenReturn(body);
+
+    // 第一次调用，初始化 serializer
+    listener.onMessage(message, null);
+    // 第二次调用，重用 serializer
+    listener.onMessage(message, null);
+
+    verify(cacheManager, times(2)).clearLocal("name", "key");
+  }
 }

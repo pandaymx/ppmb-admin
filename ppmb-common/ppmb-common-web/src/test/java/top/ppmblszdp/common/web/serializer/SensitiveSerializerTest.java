@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import top.ppmblszdp.common.web.annotation.Sensitive;
@@ -48,6 +49,9 @@ class SensitiveSerializerTest {
 
     serializer.serialize("", gen, prov);
     verify(gen).writeString("");
+
+    serializer.serialize("   ", gen, prov);
+    verify(gen).writeString("   ");
   }
 
   @Test
@@ -129,5 +133,115 @@ class SensitiveSerializerTest {
     when(noAnnoProperty.getType()).thenReturn(stringType);
     serializer.createContextual(prov, noAnnoProperty);
     verify(prov).findValueSerializer(stringType, noAnnoProperty);
+  }
+
+  @Test
+  void testGetContextAnnotation() throws Exception {
+    BeanProperty property = mock(BeanProperty.class);
+    Sensitive sensitive = mock(Sensitive.class);
+    when(sensitive.strategy()).thenReturn(SensitiveStrategy.PHONE);
+
+    com.fasterxml.jackson.databind.JavaType javaType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(javaType).getRawClass();
+
+    when(property.getType()).thenReturn(javaType);
+    when(property.getAnnotation(Sensitive.class)).thenReturn(null);
+    when(property.getContextAnnotation(Sensitive.class)).thenReturn(sensitive);
+
+    JsonSerializer<?> contextualSerializer = serializer.createContextual(prov, property);
+    assertNotNull(contextualSerializer);
+  }
+
+  @Test
+  void testCreateContextual_StringNoAnnotation() throws Exception {
+    BeanProperty property = mock(BeanProperty.class);
+    com.fasterxml.jackson.databind.JavaType stringType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(stringType).getRawClass();
+    when(property.getType()).thenReturn(stringType);
+    when(property.getAnnotation(Sensitive.class)).thenReturn(null);
+    when(property.getContextAnnotation(Sensitive.class)).thenReturn(null);
+
+    serializer.createContextual(prov, property);
+    verify(prov).findValueSerializer(stringType, property);
+  }
+
+  @Test
+  void testHasPermission_NotMatch() throws Exception {
+    SecurityContextHolder.getContext()
+        .setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                "user",
+                "pass",
+                Collections.singleton(new SimpleGrantedAuthority("other:permission"))));
+
+    BeanProperty property = mock(BeanProperty.class);
+    Sensitive sensitive = mock(Sensitive.class);
+    when(sensitive.strategy()).thenReturn(SensitiveStrategy.PHONE);
+    when(sensitive.permission()).thenReturn("sys:user:view");
+
+    com.fasterxml.jackson.databind.JavaType javaType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(javaType).getRawClass();
+
+    when(property.getType()).thenReturn(javaType);
+    when(property.getAnnotation(Sensitive.class)).thenReturn(sensitive);
+
+    JsonSerializer<?> contextualSerializer = serializer.createContextual(prov, property);
+
+    ((SensitiveSerializer) contextualSerializer).serialize("13812345678", gen, prov);
+    verify(gen).writeString("138****5678");
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(strings = {"", "   "})
+  @org.junit.jupiter.params.provider.NullSource
+  void testPermissionMasksData(String permission) throws Exception {
+    BeanProperty property = mock(BeanProperty.class);
+    Sensitive sensitive = mock(Sensitive.class);
+    when(sensitive.strategy()).thenReturn(SensitiveStrategy.PHONE);
+    when(sensitive.permission()).thenReturn(permission);
+
+    com.fasterxml.jackson.databind.JavaType javaType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(javaType).getRawClass();
+
+    when(property.getType()).thenReturn(javaType);
+    when(property.getAnnotation(Sensitive.class)).thenReturn(sensitive);
+
+    JsonSerializer<?> contextualSerializer = serializer.createContextual(prov, property);
+
+    ((SensitiveSerializer) contextualSerializer).serialize("13812345678", gen, prov);
+    verify(gen).writeString("138****5678");
+  }
+
+  @Test
+  void testHasPermission_AuthorityWithNullValue() throws Exception {
+    GrantedAuthority mockAuthority = mock(GrantedAuthority.class);
+    when(mockAuthority.getAuthority()).thenReturn(null);
+
+    SecurityContextHolder.getContext()
+        .setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                "user", "pass", Collections.singleton(mockAuthority)));
+
+    BeanProperty property = mock(BeanProperty.class);
+
+    Sensitive sensitive = mock(Sensitive.class);
+    when(sensitive.strategy()).thenReturn(SensitiveStrategy.PHONE);
+    when(sensitive.permission()).thenReturn("sys:user:view");
+
+    com.fasterxml.jackson.databind.JavaType javaType =
+        mock(com.fasterxml.jackson.databind.JavaType.class);
+    doReturn(String.class).when(javaType).getRawClass();
+
+    when(property.getType()).thenReturn(javaType);
+    when(property.getAnnotation(Sensitive.class)).thenReturn(sensitive);
+
+    JsonSerializer<?> contextualSerializer = serializer.createContextual(prov, property);
+
+    ((SensitiveSerializer) contextualSerializer).serialize("13812345678", gen, prov);
+    verify(gen).writeString("138****5678");
   }
 }

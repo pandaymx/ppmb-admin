@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import feign.codec.Decoder;
+import feign.codec.Encoder;
 import feign.codec.ErrorDecoder;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Vector;
@@ -22,6 +24,20 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 class FeignConfigTest {
 
   @InjectMocks private FeignConfig feignConfig;
+
+  @Test
+  @DisplayName("测试 Encoder Bean 注册")
+  void testFeignEncoder() {
+    Encoder encoder = feignConfig.feignEncoder();
+    assertNotNull(encoder);
+  }
+
+  @Test
+  @DisplayName("测试 Decoder Bean 注册")
+  void testFeignDecoder() {
+    Decoder decoder = feignConfig.feignDecoder();
+    assertNotNull(decoder);
+  }
 
   @Test
   @DisplayName("测试 ErrorDecoder Bean 注册")
@@ -90,5 +106,17 @@ class FeignConfigTest {
     assertTrue(template.headers().isEmpty());
 
     RequestContextHolder.resetRequestAttributes();
+  }
+
+  @Test
+  @DisplayName("测试 RequestInterceptor 当不在 Servlet 上下文时")
+  void testRequestInterceptorNonServlet() {
+    RequestContextHolder.resetRequestAttributes();
+    RequestInterceptor interceptor = feignConfig.requestInterceptor();
+    RequestTemplate template = new RequestTemplate();
+
+    interceptor.apply(template);
+
+    assertTrue(template.headers().isEmpty());
   }
 }

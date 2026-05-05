@@ -75,4 +75,25 @@ class FeignErrorDecoderTest {
     assertEquals(HttpStatus.BAD_REQUEST, bizEx.getStatus());
     assertEquals("C0001", bizEx.getResultCode().getCode());
   }
+
+  @Test
+  @DisplayName("测试当响应为非 JSON 格式（如负载均衡错误）时")
+  void testDecodeLoadBalancerError() {
+    String body = "Load balancer does not contain an instance for the service ppmb-system";
+    Response response =
+        Response.builder()
+            .status(503)
+            .reason("Service Unavailable")
+            .request(mock(feign.Request.class))
+            .body(body, StandardCharsets.UTF_8)
+            .build();
+
+    Exception exception = decoder.decode("testMethod", response);
+
+    assertTrue(exception instanceof BusinessException);
+    BusinessException bizEx = (BusinessException) exception;
+    assertEquals(HttpStatus.SERVICE_UNAVAILABLE, bizEx.getStatus());
+    assertEquals("C0001", bizEx.getResultCode().getCode());
+    assertTrue(bizEx.getDetail().contains(body));
+  }
 }

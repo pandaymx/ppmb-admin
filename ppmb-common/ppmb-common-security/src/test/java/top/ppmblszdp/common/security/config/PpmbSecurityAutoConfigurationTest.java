@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import tools.jackson.databind.ObjectMapper;
@@ -31,6 +32,9 @@ class PpmbSecurityAutoConfigurationTest {
           assertThat(context).hasSingleBean(JwtUtils.class);
           assertThat(context).hasSingleBean(SecurityFilterChain.class);
           assertThat(context).hasSingleBean(PpmbSecurityProperties.class);
+          assertThat(context).hasSingleBean(AuditorAware.class);
+          assertThat(context).hasSingleBean(ProblemDetailAuthenticationEntryPoint.class);
+          assertThat(context).hasSingleBean(ProblemDetailAccessDeniedHandler.class);
         });
   }
 
@@ -58,11 +62,59 @@ class PpmbSecurityAutoConfigurationTest {
         .run(
             context -> {
               assertThat(context).hasSingleBean(SecurityFilterChain.class);
-              // 验证默认注入的 Bean
+              SecurityFilterChain filterChain = context.getBean(SecurityFilterChain.class);
+              // 验证包含 HeaderAuthenticationFilter
+              assertThat(
+                      filterChain.getFilters().stream()
+                          .anyMatch(
+                              f ->
+                                  f
+                                      instanceof
+                                      top.ppmblszdp.common.security.filter
+                                          .HeaderAuthenticationFilter))
+                  .isTrue();
+
               assertThat(context).hasSingleBean(PasswordEncoder.class);
               assertThat(context).hasSingleBean(ProblemDetailAuthenticationEntryPoint.class);
               assertThat(context).hasSingleBean(ProblemDetailAccessDeniedHandler.class);
             });
+  }
+
+  @Test
+  @DisplayName("网关模式应注入 JwtAuthenticationFilter")
+  void gatewayMode() {
+    contextRunner
+        .withPropertyValues("ppmb.security.gateway-mode=true")
+        .run(
+            context -> {
+              assertThat(context).hasSingleBean(SecurityFilterChain.class);
+              SecurityFilterChain filterChain = context.getBean(SecurityFilterChain.class);
+              // 验证包含 JwtAuthenticationFilter
+              assertThat(
+                      filterChain.getFilters().stream()
+                          .anyMatch(
+                              f ->
+                                  f
+                                      instanceof
+                                      top.ppmblszdp.common.security.filter.JwtAuthenticationFilter))
+                  .isTrue();
+            });
+  }
+
+  @Test
+  @DisplayName("SecurityFilterChain 应排除 /actuator 路径")
+  void securityFilterChainActuatorExclusion() {
+    contextRunner.run(
+        context -> {
+          SecurityFilterChain filterChain = context.getBean(SecurityFilterChain.class);
+          org.springframework.mock.web.MockHttpServletRequest actuatorRequest =
+              new org.springframework.mock.web.MockHttpServletRequest("GET", "/actuator/health");
+          assertThat(filterChain.matches(actuatorRequest)).isFalse();
+
+          org.springframework.mock.web.MockHttpServletRequest apiRequest =
+              new org.springframework.mock.web.MockHttpServletRequest("GET", "/api/user");
+          assertThat(filterChain.matches(apiRequest)).isTrue();
+        });
   }
 
   @Test
@@ -75,6 +127,10 @@ class PpmbSecurityAutoConfigurationTest {
               assertThat(context).hasSingleBean(PasswordEncoder.class);
               assertThat(context.getBean(PasswordEncoder.class))
                   .isInstanceOf(TestPasswordEncoder.class);
+
+              assertThat(context).hasSingleBean(AuditorAware.class);
+              assertThat(context.getBean(AuditorAware.class))
+                  .isNotInstanceOf(PpmbAuditorAware.class);
             });
   }
 
@@ -83,6 +139,11 @@ class PpmbSecurityAutoConfigurationTest {
     @Bean
     public PasswordEncoder passwordEncoder() {
       return new TestPasswordEncoder();
+    }
+
+    @Bean
+    public AuditorAware<Long> auditorAware() {
+      return java.util.Optional::empty;
     }
   }
 
