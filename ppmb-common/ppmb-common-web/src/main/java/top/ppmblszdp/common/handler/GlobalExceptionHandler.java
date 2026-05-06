@@ -49,6 +49,14 @@ public class GlobalExceptionHandler {
         yield createProblemDetail(
             HttpStatus.BAD_REQUEST, CommonResultCode.PARAM_ERROR, i.getMessage(), null);
       }
+      case org.springframework.web.HttpMediaTypeNotSupportedException h -> {
+        log.warn("不支持的媒体类型: {}", h.getMessage());
+        yield createProblemDetail(
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+            CommonResultCode.PARAM_ERROR,
+            "不支持的媒体类型",
+            h.getMessage());
+      }
       default -> {
         log.error("系统严重异常: ", ex);
         sendExceptionLog(ex, request);

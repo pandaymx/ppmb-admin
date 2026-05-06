@@ -18,6 +18,6 @@ public interface RemoteUserService {
   @GetMapping("/info/{username}")
   Result<SysUserDto> getUserInfo(@PathVariable("username") String username);
 
-  @PostMapping("/register")
+  @PostMapping(value = "/register", consumes = "application/json")
   Result<SysUserDto> registerUser(@RequestBody UserRegisterDto userRegisterDto);
 }
