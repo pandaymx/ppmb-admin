@@ -336,10 +336,7 @@ class RedisUtilTest {
   void testSetIfAbsentNullWithDuration() {
     String key = "setIfAbsentNullWithDur";
     Duration duration = Duration.ofMinutes(1);
-    Mockito.when(
-            valueOperations.setIfAbsent(
-                key, "NULL_CACHE", duration))
-        .thenReturn(true);
+    Mockito.when(valueOperations.setIfAbsent(key, "NULL_CACHE", duration)).thenReturn(true);
     boolean result = redisUtil.setIfAbsent(key, null, duration);
     Assertions.assertTrue(result);
   }
