@@ -6,6 +6,9 @@ import { useAuthStore } from "../store/useAuthStore";
 import { routes } from "../router/routes";
 import { AppRouteObject } from "../router/routes";
 import type { MenuProps } from "antd";
+import { getRouters } from "../api/menu";
+import { RouterVo } from "../api/types/menu";
+import * as Icons from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -16,8 +19,23 @@ const BasicLayout: React.FC = () => {
   const logout = useAuthStore((state) => state.logout);
   const user = useAuthStore((state) => state.user);
   const permissions = useAuthStore((state) => state.permissions);
+  const menus = useAuthStore((state) => state.menus);
+  const setMenus = useAuthStore((state) => state.setMenus);
+  const token = useAuthStore((state) => state.token);
   const navigate = useNavigate();
   const location = useLocation();
+
+  React.useEffect(() => {
+    if (token && (!menus || menus.length === 0)) {
+      getRouters()
+        .then((res) => {
+          setMenus(res as any);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch menus in layout:", err);
+        });
+    }
+  }, [token, menus, setMenus]);
 
   const {
     token: { colorBgContainer },
@@ -93,13 +111,44 @@ const BasicLayout: React.FC = () => {
     return items;
   };
 
+  // Map RouterVo from backend to Ant Design MenuItems
+  const mapRoutersToMenuItems = (routerList: RouterVo[]): MenuItem[] => {
+    return routerList
+      .filter((item) => !item.hidden)
+      .map((item) => {
+        const IconComponent =
+          item.meta?.icon && (Icons as any)[item.meta.icon]
+            ? (Icons as any)[item.meta.icon]
+            : undefined;
+
+        return {
+          key: item.path,
+          icon: IconComponent ? React.createElement(IconComponent) : undefined,
+          label: item.meta?.title || item.name,
+          children:
+            item.children && item.children.length > 0
+              ? mapRoutersToMenuItems(item.children)
+              : undefined,
+          onClick:
+            !item.children || item.children.length === 0
+              ? () => navigate(item.path)
+              : undefined,
+        };
+      });
+  };
+
   // We find the main routes section (usually children of the '/' route)
   const rootRoute = routes.find((r) => r.path === "/") as
     | AppRouteObject
     | undefined;
-  const menuItems = rootRoute?.children
-    ? generateMenuItems(rootRoute.children, "/")
-    : [];
+
+  // Priority: 1. Dynamic menus from backend, 2. Static routes (fallback)
+  const menuItems =
+    menus && menus.length > 0
+      ? mapRoutersToMenuItems(menus)
+      : rootRoute?.children
+        ? generateMenuItems(rootRoute.children, "/")
+        : [];
 
   // Default to selecting the current path
   const selectedKeys = [location.pathname];

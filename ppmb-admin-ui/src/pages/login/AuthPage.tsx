@@ -24,6 +24,7 @@ import bgImage from "../../assets/login-bg.png";
 import { useAuthStore } from "../../store/useAuthStore";
 
 import { login, register } from "../../api/auth";
+import { getRouters } from "../../api/menu";
 
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
@@ -32,6 +33,7 @@ const AuthPage: React.FC = () => {
   const setToken = useAuthStore((state) => state.setToken);
   const setUser = useAuthStore((state) => state.setUser);
   const setPermissions = useAuthStore((state) => state.setPermissions);
+  const setMenus = useAuthStore((state) => state.setMenus);
 
   const onLogin = async (values: any) => {
     setLoading(true);
@@ -51,6 +53,14 @@ const AuthPage: React.FC = () => {
       // 注意：目前后端可能还没实现获取用户详情/权限的接口
       // 我们暂时保留这里的模拟权限，或者从 Token 中解析（如果有的话）
       setPermissions(["sys:user:list", "sys:role:list"]);
+
+      // 获取菜单权限
+      try {
+        const menus = await getRouters();
+        setMenus(menus as any);
+      } catch (err) {
+        console.error("Failed to fetch menus:", err);
+      }
 
       message.success("登录成功");
       navigate("/");
