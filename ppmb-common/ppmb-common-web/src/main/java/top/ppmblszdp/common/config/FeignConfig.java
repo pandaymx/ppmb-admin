@@ -1,5 +1,6 @@
 package top.ppmblszdp.common.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.codec.Decoder;
@@ -18,37 +19,20 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Configuration
 public class FeignConfig {
 
-  /**
-   * 配置 Feign 编码器.
-   *
-   * @return Encoder
-   */
   @Bean
   public Encoder feignEncoder() {
-    com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-        new com.fasterxml.jackson.databind.ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
     return new JacksonEncoder(objectMapper);
   }
 
-  /**
-   * 配置 Feign 解码器.
-   *
-   * @return Decoder
-   */
   @Bean
   public Decoder feignDecoder() {
-    com.fasterxml.jackson.databind.ObjectMapper objectMapper =
-        new com.fasterxml.jackson.databind.ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
     return new JacksonDecoder(objectMapper);
   }
 
-  /**
-   * 注册 Feign 异常解码器.
-   *
-   * @return ErrorDecoder
-   */
   @Bean
   public ErrorDecoder errorDecoder() {
     return new FeignErrorDecoder();
