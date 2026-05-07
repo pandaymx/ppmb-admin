@@ -37,8 +37,8 @@ class MenuAssemblerTest {
     MenuDto dto = assembler.toDto(entity);
 
     assertNotNull(dto);
-    assertEquals(1L, dto.getId());
-    assertEquals("测试", dto.getMenuName());
+    assertEquals(1L, dto.id());
+    assertEquals("测试", dto.menuName());
   }
 
   @Test

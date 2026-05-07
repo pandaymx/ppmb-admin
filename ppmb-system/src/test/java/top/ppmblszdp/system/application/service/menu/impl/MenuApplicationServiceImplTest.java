@@ -49,10 +49,20 @@ class MenuApplicationServiceImplTest {
     menu.setVisible(true);
     menu.setParentId(0L);
 
-    dto = new MenuDto();
-    dto.setId(1L);
-    dto.setMenuName("System");
-    dto.setParentId(0L);
+    dto =
+        new MenuDto(
+            1L,
+            "System",
+            0L,
+            "M",
+            "system",
+            "Layout",
+            null,
+            null,
+            1,
+            true,
+            null,
+            new java.util.ArrayList<>());
   }
 
   @Test
@@ -65,7 +75,7 @@ class MenuApplicationServiceImplTest {
 
     MenuDto res = service.createMenu(cmd);
     assertNotNull(res);
-    assertEquals("System", res.getMenuName());
+    assertEquals("System", res.menuName());
   }
 
   @Test
@@ -142,9 +152,20 @@ class MenuApplicationServiceImplTest {
     child.setParentId(1L);
     child.setOrderNum(1);
 
-    MenuDto childDto = new MenuDto();
-    childDto.setId(2L);
-    childDto.setParentId(1L);
+    MenuDto childDto =
+        new MenuDto(
+            2L,
+            "Child",
+            1L,
+            "C",
+            "child",
+            "",
+            null,
+            null,
+            1,
+            true,
+            null,
+            new java.util.ArrayList<>());
 
     when(menuRepository.findAllByOrderByOrderNumAsc()).thenReturn(List.of(menu, child));
     when(menuAssembler.toDto(menu)).thenReturn(dto);
@@ -153,8 +174,8 @@ class MenuApplicationServiceImplTest {
     List<MenuDto> tree = service.getMenuTree();
 
     assertEquals(1, tree.size());
-    assertEquals(1, tree.get(0).getChildren().size());
-    assertEquals(2L, tree.get(0).getChildren().get(0).getId());
+    assertEquals(1, tree.get(0).children().size());
+    assertEquals(2L, tree.get(0).children().get(0).id());
   }
 
   @Test

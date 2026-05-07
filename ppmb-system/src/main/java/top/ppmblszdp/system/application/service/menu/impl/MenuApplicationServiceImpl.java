@@ -92,14 +92,24 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
   }
 
   private List<MenuDto> buildMenuTree(List<MenuDto> menus, Long parentId) {
-    List<MenuDto> tree = new ArrayList<>();
-    for (MenuDto menu : menus) {
-      if (Objects.equals(menu.getParentId(), parentId)) {
-        menu.setChildren(buildMenuTree(menus, menu.getId()));
-        tree.add(menu);
-      }
-    }
-    return tree;
+    return menus.stream()
+        .filter(m -> Objects.equals(m.parentId(), parentId))
+        .map(
+            m ->
+                new MenuDto(
+                    m.id(),
+                    m.menuName(),
+                    m.parentId(),
+                    m.menuType(),
+                    m.path(),
+                    m.component(),
+                    m.perms(),
+                    m.icon(),
+                    m.orderNum(),
+                    m.visible(),
+                    m.createTime(),
+                    buildMenuTree(menus, m.id())))
+        .toList();
   }
 
   private List<SysMenu> buildMenuEntityTree(List<SysMenu> menus, Long parentId) {

@@ -34,14 +34,15 @@ class MenuControllerTest {
   void testCreateMenu() {
     CreateMenuCommand command =
         new CreateMenuCommand("Test", 0L, "M", "/path", "Comp", "perm", "icon", 1, true);
-    MenuDto dto = new MenuDto();
-    dto.setMenuName("Test");
+    MenuDto dto =
+        new MenuDto(
+            1L, "Test", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
 
     when(menuApplicationService.createMenu(any())).thenReturn(dto);
 
     Result<MenuDto> result = controller.createMenu(command);
     assertEquals("00000", result.code());
-    assertEquals("Test", result.data().getMenuName());
+    assertEquals("Test", result.data().menuName());
   }
 
   @Test
@@ -49,14 +50,15 @@ class MenuControllerTest {
   void testUpdateMenu() {
     UpdateMenuCommand command =
         new UpdateMenuCommand("Update", 0L, "M", "/path", "Comp", "perm", "icon", 1, true);
-    MenuDto dto = new MenuDto();
-    dto.setMenuName("Update");
+    MenuDto dto =
+        new MenuDto(
+            1L, "Update", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
 
     when(menuApplicationService.updateMenu(anyLong(), any())).thenReturn(dto);
 
     Result<MenuDto> result = controller.updateMenu(1L, command);
     assertEquals("00000", result.code());
-    assertEquals("Update", result.data().getMenuName());
+    assertEquals("Update", result.data().menuName());
   }
 
   @Test
@@ -70,20 +72,22 @@ class MenuControllerTest {
   @Test
   @DisplayName("根据 ID 获取菜单")
   void testGetMenuById() {
-    MenuDto dto = new MenuDto();
-    dto.setMenuName("Detail");
+    MenuDto dto =
+        new MenuDto(
+            1L, "Detail", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
     when(menuApplicationService.getMenuById(1L)).thenReturn(dto);
 
     Result<MenuDto> result = controller.getMenuById(1L);
     assertEquals("00000", result.code());
-    assertEquals("Detail", result.data().getMenuName());
+    assertEquals("Detail", result.data().menuName());
   }
 
   @Test
   @DisplayName("获取菜单树")
   void testGetMenuTree() {
-    MenuDto dto = new MenuDto();
-    dto.setMenuName("Tree");
+    MenuDto dto =
+        new MenuDto(
+            1L, "Tree", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
     when(menuApplicationService.getMenuTree()).thenReturn(List.of(dto));
 
     Result<List<MenuDto>> result = controller.getMenuTree();
