@@ -13,9 +13,7 @@ import org.hibernate.annotations.SQLRestriction;
 import top.ppmblszdp.common.domain.entity.BaseMainEntity;
 import top.ppmblszdp.common.mq.domain.enums.OutboxStatus;
 
-/**
- * Outbox Message Entity for Reliable Message Delivery.
- */
+/** Outbox Message Entity for Reliable Message Delivery. */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -24,60 +22,42 @@ import top.ppmblszdp.common.mq.domain.enums.OutboxStatus;
 @SQLRestriction("del_flag = 0")
 public class MqMessageOutbox extends BaseMainEntity {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /**
-     * Type of event to provide context to the consumer.
-     */
-    @Column(name = "event_type", length = 100)
-    private String eventType;
+  /** Type of event to provide context to the consumer. */
+  @Column(name = "event_type", length = 100)
+  private String eventType;
 
-    /**
-     * The routing key or topic the message was originally sent to.
-     */
-    @Column(name = "topic", length = 100)
-    private String topic;
+  /** The routing key or topic the message was originally sent to. */
+  @Column(name = "topic", length = 100)
+  private String topic;
 
-    /**
-     * Exchange name.
-     */
-    @Column(name = "exchange", length = 100)
-    private String exchange;
+  /** Exchange name. */
+  @Column(name = "exchange", length = 100)
+  private String exchange;
 
-    /**
-     * Routing key.
-     */
-    @Column(name = "routing_key", length = 100)
-    private String routingKey;
+  /** Routing key. */
+  @Column(name = "routing_key", length = 100)
+  private String routingKey;
 
-    /**
-     * The actual business data payload stored as JSON.
-     */
-    @Column(name = "payload", columnDefinition = "TEXT")
-    private String payload;
+  /** The actual business data payload stored as JSON. */
+  @Column(name = "payload", columnDefinition = "TEXT")
+  private String payload;
 
-    /**
-     * Status of the message.
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 20, nullable = false)
-    private OutboxStatus status = OutboxStatus.PENDING;
+  /** Status of the message. */
+  @Enumerated(EnumType.STRING)
+  @Column(name = "status", length = 20, nullable = false)
+  private OutboxStatus status = OutboxStatus.PENDING;
 
-    /**
-     * Number of times the message has been retried.
-     */
-    @Column(name = "retry_count", nullable = false)
-    private Integer retryCount = 0;
+  /** Number of times the message has been retried. */
+  @Column(name = "retry_count", nullable = false)
+  private Integer retryCount = 0;
 
-    /**
-     * Next scheduled time to retry sending the message.
-     */
-    @Column(name = "next_retry_time")
-    private LocalDateTime nextRetryTime;
+  /** Next scheduled time to retry sending the message. */
+  @Column(name = "next_retry_time")
+  private LocalDateTime nextRetryTime;
 
-    /**
-     * Last error message encountered during publishing.
-     */
-    @Column(name = "last_error_message", columnDefinition = "TEXT")
-    private String lastErrorMessage;
+  /** Last error message encountered during publishing. */
+  @Column(name = "last_error_message", columnDefinition = "TEXT")
+  private String lastErrorMessage;
 }

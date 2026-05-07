@@ -1,7 +1,6 @@
 package top.ppmblszdp.common.mq.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
@@ -48,8 +47,7 @@ class MqExceptionLogServiceImplTest {
     service.send(message);
 
     verify(rabbitTemplate)
-        .convertAndSend(
-            eq(MqConstants.EXCEPTION_EXCHANGE), eq(MqConstants.EXCEPTION_ROUTING_KEY), eq(message));
+        .convertAndSend(MqConstants.EXCEPTION_EXCHANGE, MqConstants.EXCEPTION_ROUTING_KEY, message);
   }
 
   @Test
@@ -76,7 +74,6 @@ class MqExceptionLogServiceImplTest {
     service.send(message);
 
     verify(rabbitTemplate)
-        .convertAndSend(
-            eq(MqConstants.EXCEPTION_EXCHANGE), eq(MqConstants.EXCEPTION_ROUTING_KEY), eq(message));
+        .convertAndSend(MqConstants.EXCEPTION_EXCHANGE, MqConstants.EXCEPTION_ROUTING_KEY, message);
   }
 }

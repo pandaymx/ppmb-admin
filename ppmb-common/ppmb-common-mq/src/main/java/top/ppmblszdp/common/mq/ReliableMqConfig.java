@@ -14,8 +14,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = {"top.ppmblszdp.common.mq.service", "top.ppmblszdp.common.mq.job"})
 public class ReliableMqConfig {
 
-    @Bean
-    public ExecutorService outboxRetryExecutor() {
-        return Executors.newVirtualThreadPerTaskExecutor();
-    }
+  @Bean
+  public ExecutorService outboxRetryExecutor() {
+    return Executors.newVirtualThreadPerTaskExecutor();
+  }
 }
