@@ -48,4 +48,49 @@ public class SysMenu extends BaseMainEntity {
   private Boolean visible = true;
 
   @Transient private List<SysMenu> children = new ArrayList<>();
+
+  /**
+   * 获取路由名称.
+   *
+   * @return 路由名称
+   */
+  public String getRouteName() {
+    if (org.springframework.util.StringUtils.hasText(path)) {
+      return org.springframework.util.StringUtils.capitalize(path);
+    }
+    return "";
+  }
+
+  /**
+   * 获取组件信息.
+   *
+   * @return 组件路径或名称
+   */
+  public String getComponentForRouter() {
+    if (org.springframework.util.StringUtils.hasText(component)) {
+      return component;
+    }
+    if (parentId == 0L && "M".equals(menuType)) {
+      return "Layout";
+    }
+    return "ParentView";
+  }
+
+  /**
+   * 是否为根菜单且类型为目录.
+   *
+   * @return true 如果是根菜单且为目录
+   */
+  public boolean isRootDirectory() {
+    return parentId == 0L && "M".equals(menuType);
+  }
+
+  /**
+   * 是否为目录.
+   *
+   * @return true 如果是目录
+   */
+  public boolean isDirectory() {
+    return "M".equals(menuType);
+  }
 }
