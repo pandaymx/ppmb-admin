@@ -33,7 +33,10 @@ public class RemoteUserClient {
 
   @SuppressWarnings("unused")
   private Result<SysUserDto> getUserInfoFallback(String username, Throwable ex) {
-    log.warn("remoteUserService.getUserInfo degraded for username={}, reason={}", username, ex.toString());
+    log.warn(
+        "remoteUserService.getUserInfo degraded for username={}, reason={}",
+        username,
+        ex.toString());
     return Result.failure(CommonResultCode.REMOTE_ERROR.getCode(), "用户服务暂不可用，请稍后重试");
   }
 
@@ -45,8 +48,10 @@ public class RemoteUserClient {
 
   @SuppressWarnings("unused")
   private Result<SysUserDto> registerUserFallback(UserRegisterDto dto, Throwable ex) {
-    log.warn("remoteUserService.registerUser degraded for username={}, reason={}", dto.username(), ex.toString());
+    log.warn(
+        "remoteUserService.registerUser degraded for username={}, reason={}",
+        dto.username(),
+        ex.toString());
     return Result.failure(CommonResultCode.REMOTE_ERROR.getCode(), "用户服务繁忙，请稍后重试");
   }
 }
-
