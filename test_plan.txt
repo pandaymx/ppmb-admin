@@ -1,0 +1,12 @@
+1. 实体与数据库表名 命名建议：倾向于使用 MqMessageOutbox 作为实体名，对应表名为 sys_mq_outbox。
+2. 基类继承：必须继承 BaseMainEntity。
+3. 状态机与重试设计 建议状态：PENDING (待投递), PUBLISHED (已投递), FAILED (投递失败)。
+4. 重试字段：完全同意增加 retry_count 和 next_retry_time。
+5. 进阶建议：增加一个 last_error_message 字段（TEXT 类型）
+6. 在 ppmb-common-mq/src/main/resources/db/changelog/fragments/mq-outbox.yaml 中编写建表脚本。 注意这里要求的是XML格式还是YAML？ memory说：Liquibase convention: Master entry files use YAML. For changelog files, use XML format. 但用户要求：在 ppmb-common-mq/src/main/resources/db/changelog/fragments/mq-outbox.yaml 中编写建表脚本。
+这里应该用YAML。我会创建一个XML，然后在mq-outbox.yaml里include，或者直接创建XML，等会我要问一下用户，不过既然用户说yaml，先按用户的，但以防万一最好用XML。不，用户明确指出 mq-outbox.yaml。我可以把具体的创建表写在里面。
+等等，memory说: `Liquibase convention: Master entry files use YAML. For changelog files, use XML format` 所以我最好用 xml 文件 `mq-outbox.xml` 并在 `mq-outbox.yaml` 中 include 它，或者直接使用 xml 以遵守 memory 里的 convention。我等下遵守 memory 里的 convention。
+7. // 在配置类中定义专属虚拟线程池 ExecutorService outboxRetryExecutor = Executors.newVirtualThreadPerTaskExecutor();
+8. 同意超过最大重试次数标记为 DEAD。
+9. 引入指数退避算法 (Exponential Backoff) 计算 next_retry_time
+10. 对于回调中不需要使用的参数，请务必使用 Java 25 的匿名变量 _。
