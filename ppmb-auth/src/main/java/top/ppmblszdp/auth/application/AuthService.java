@@ -7,9 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import top.ppmblszdp.api.system.dto.SysUserDto;
-import top.ppmblszdp.api.system.feign.RemoteUserService;
 import top.ppmblszdp.auth.domain.exception.AccountDisabledException;
 import top.ppmblszdp.auth.domain.exception.InvalidCredentialsException;
+import top.ppmblszdp.auth.infrastructure.remote.RemoteUserClient;
 import top.ppmblszdp.auth.interfaces.web.dto.LoginCommand;
 import top.ppmblszdp.auth.interfaces.web.dto.TokenDto;
 import top.ppmblszdp.common.api.CommonResultCode;
@@ -22,14 +22,14 @@ import top.ppmblszdp.common.security.util.JwtUtils;
 @RequiredArgsConstructor
 public class AuthService {
 
-  private final RemoteUserService remoteUserService;
+  private final RemoteUserClient remoteUserClient;
   private final PasswordEncoder passwordEncoder;
   private final JwtUtils jwtUtils;
   private final PpmbSecurityProperties securityProperties;
 
   public TokenDto login(LoginCommand command) {
     SysUserDto user =
-        Optional.of(remoteUserService.getUserInfo(command.username()))
+        Optional.of(remoteUserClient.getUserInfo(command.username()))
             .filter(res -> CommonResultCode.SUCCESS.getCode().equals(res.code()))
             .map(Result::data)
             .orElseThrow(
@@ -69,7 +69,7 @@ public class AuthService {
     top.ppmblszdp.api.system.dto.UserRegisterDto dto =
         new top.ppmblszdp.api.system.dto.UserRegisterDto(
             command.username(), command.password(), command.email(), command.nickname());
-    Result<top.ppmblszdp.api.system.dto.SysUserDto> result = remoteUserService.registerUser(dto);
+    Result<top.ppmblszdp.api.system.dto.SysUserDto> result = remoteUserClient.registerUser(dto);
     if (!CommonResultCode.SUCCESS.getCode().equals(result.code())) {
       throw new top.ppmblszdp.common.exception.BusinessException(
           org.springframework.http.HttpStatus.BAD_REQUEST,

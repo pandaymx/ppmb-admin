@@ -11,9 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import top.ppmblszdp.api.system.dto.SysUserDto;
-import top.ppmblszdp.api.system.feign.RemoteUserService;
 import top.ppmblszdp.auth.domain.exception.AccountDisabledException;
 import top.ppmblszdp.auth.domain.exception.InvalidCredentialsException;
+import top.ppmblszdp.auth.infrastructure.remote.RemoteUserClient;
 import top.ppmblszdp.auth.interfaces.web.dto.LoginCommand;
 import top.ppmblszdp.auth.interfaces.web.dto.TokenDto;
 import top.ppmblszdp.common.api.CommonResultCode;
@@ -25,7 +25,7 @@ import top.ppmblszdp.common.security.util.JwtUtils;
 @DisplayName("认证服务测试")
 class AuthServiceTest {
 
-  @Mock private RemoteUserService remoteUserService;
+  @Mock private RemoteUserClient remoteUserClient;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private JwtUtils jwtUtils;
   @Mock private PpmbSecurityProperties securityProperties;
@@ -42,7 +42,7 @@ class AuthServiceTest {
             1L, "testuser", "encryptedPassword", "Test User", "test@example.com", "13800000000", 0);
     Result<SysUserDto> result = Result.success(user);
 
-    when(remoteUserService.getUserInfo("testuser")).thenReturn(result);
+    when(remoteUserClient.getUserInfo("testuser")).thenReturn(result);
     when(passwordEncoder.matches("password123", "encryptedPassword")).thenReturn(true);
     when(jwtUtils.createToken(eq("testuser"), anyMap())).thenReturn("test-token");
 
@@ -66,7 +66,7 @@ class AuthServiceTest {
     final LoginCommand command = new LoginCommand("testuser", "password123");
     Result<SysUserDto> result = Result.failure(CommonResultCode.USER_ERROR);
 
-    when(remoteUserService.getUserInfo("testuser")).thenReturn(result);
+    when(remoteUserClient.getUserInfo("testuser")).thenReturn(result);
 
     // Act & Assert
     assertThrows(InvalidCredentialsException.class, () -> authService.login(command));
@@ -82,7 +82,7 @@ class AuthServiceTest {
             1L, "testuser", "encryptedPassword", "Test User", "test@example.com", "13800000000", 0);
     Result<SysUserDto> result = Result.success(user);
 
-    when(remoteUserService.getUserInfo("testuser")).thenReturn(result);
+    when(remoteUserClient.getUserInfo("testuser")).thenReturn(result);
     when(passwordEncoder.matches("password123", "encryptedPassword")).thenReturn(false);
 
     // Act & Assert
@@ -99,7 +99,7 @@ class AuthServiceTest {
             1L, "testuser", "encryptedPassword", "Test User", "test@example.com", "13800000000", 1);
     Result<SysUserDto> result = Result.success(user);
 
-    when(remoteUserService.getUserInfo("testuser")).thenReturn(result);
+    when(remoteUserClient.getUserInfo("testuser")).thenReturn(result);
     when(passwordEncoder.matches("password123", "encryptedPassword")).thenReturn(true);
 
     // Act & Assert
@@ -115,13 +115,13 @@ class AuthServiceTest {
             "testuser", "password123", "test@example.com", "Tester");
     SysUserDto userDto =
         new SysUserDto(1L, "testuser", null, "Tester", "test@example.com", null, 0);
-    when(remoteUserService.registerUser(any())).thenReturn(Result.success(userDto));
+    when(remoteUserClient.registerUser(any())).thenReturn(Result.success(userDto));
 
     // Act
     assertDoesNotThrow(() -> authService.register(command));
 
     // Assert
-    verify(remoteUserService, times(1)).registerUser(any());
+    verify(remoteUserClient, times(1)).registerUser(any());
   }
 
   @Test
@@ -131,7 +131,7 @@ class AuthServiceTest {
     top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand command =
         new top.ppmblszdp.auth.interfaces.web.dto.UserRegisterCommand(
             "testuser", "password123", "test@example.com", "Tester");
-    when(remoteUserService.registerUser(any()))
+    when(remoteUserClient.registerUser(any()))
         .thenReturn(Result.failure("ERROR", "User already exists"));
 
     // Act & Assert
