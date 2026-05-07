@@ -1,5 +1,7 @@
 package top.ppmblszdp.system.interfaces.web.user;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.CreateUserCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
 
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class UserController {
   private final UserRoleApplicationService userRoleApplicationService;
   private final MenuApplicationService menuApplicationService;
 
+  @Operation(summary = "创建用户")
   @PostMapping
   @org.springframework.web.bind.annotation.ResponseStatus(
       org.springframework.http.HttpStatus.CREATED)
@@ -35,6 +39,7 @@ public class UserController {
     return userApplicationService.createUser(command);
   }
 
+  @Operation(summary = "根据ID获取用户")
   @GetMapping("/{id}")
   public UserDto getUserById(@PathVariable Long id) {
     return userApplicationService
@@ -48,6 +53,7 @@ public class UserController {
                     null));
   }
 
+  @Operation(summary = "删除用户")
   @DeleteMapping("/{id}")
   @org.springframework.web.bind.annotation.ResponseStatus(
       org.springframework.http.HttpStatus.NO_CONTENT)
@@ -55,11 +61,13 @@ public class UserController {
     userApplicationService.deleteUser(id);
   }
 
+  @Operation(summary = "获取用户角色ID列表")
   @GetMapping("/{id}/roles")
   public List<Long> getUserRoles(@PathVariable Long id) {
     return userRoleApplicationService.getUserRoles(id);
   }
 
+  @Operation(summary = "分配角色给用户")
   @PutMapping("/{id}/roles")
   @org.springframework.web.bind.annotation.ResponseStatus(
       org.springframework.http.HttpStatus.NO_CONTENT)
@@ -67,6 +75,7 @@ public class UserController {
     userRoleApplicationService.assignRolesToUser(id, roleIds);
   }
 
+  @Operation(summary = "批量分配角色给用户")
   @PostMapping("/batch/roles")
   @org.springframework.web.bind.annotation.ResponseStatus(
       org.springframework.http.HttpStatus.NO_CONTENT)
@@ -74,6 +83,7 @@ public class UserController {
     userRoleApplicationService.batchAssignRoles(command);
   }
 
+  @Operation(summary = "获取当前用户权限列表")
   @GetMapping("/permissions")
   public List<String> getPermissions() {
     Long userId = SecurityUtils.getUserId();
