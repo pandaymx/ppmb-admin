@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":ppmb-common:ppmb-common-web"))
     implementation(project(":ppmb-common:ppmb-common-api"))
     implementation(project(":ppmb-common:ppmb-common-security"))
+    implementation(project(":ppmb-common:ppmb-common-doc"))
     implementation(project(":ppmb-api:ppmb-api-system"))
 
     implementation(libs.spring.boot.starter.web)
