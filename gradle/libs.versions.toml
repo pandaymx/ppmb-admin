@@ -91,6 +91,10 @@ disruptor = { group = "com.lmax", name = "disruptor", version.ref = "disruptor" 
 
 
 
+micrometer-tracing-bridge-otel = { group = "io.micrometer", name = "micrometer-tracing-bridge-otel" }
+opentelemetry-exporter-otlp = { group = "io.opentelemetry", name = "opentelemetry-exporter-otlp" }
+feign-micrometer = { group = "io.github.openfeign", name = "feign-micrometer" }
+
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

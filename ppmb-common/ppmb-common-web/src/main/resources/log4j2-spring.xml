@@ -3,7 +3,7 @@
     <Properties>
         <!-- 定义路径，建议在本地开发环境使用相对路径 -->
         <Property name="LOG_PATH">./logs</Property>
-        <Property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5p} [%t] %style{%c{1.}}{cyan} : %m%n</Property>
+        <Property name="PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5p} [%t] %clr{[%X{traceId}, %X{spanId}]}{yellow} %style{%c{1.}}{cyan} : %m%n</Property>
     </Properties>
 
     <Appenders>

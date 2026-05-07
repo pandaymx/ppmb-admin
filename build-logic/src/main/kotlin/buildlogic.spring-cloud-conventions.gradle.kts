@@ -14,4 +14,7 @@ dependencies {
     implementation(libs.findLibrary("spring-cloud-starter-openfeign").get())
     implementation(libs.findLibrary("spring-cloud-starter-circuitbreaker-resilience4j").get())
     implementation(libs.findLibrary("spring-boot-starter-actuator").get())
+    implementation(libs.findLibrary("micrometer-tracing-bridge-otel").get())
+    implementation(libs.findLibrary("opentelemetry-exporter-otlp").get())
+    implementation(libs.findLibrary("feign-micrometer").get())
 }
