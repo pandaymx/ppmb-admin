@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import top.ppmblszdp.system.domain.model.menu.entity.SysMenu;
@@ -12,7 +13,11 @@ import top.ppmblszdp.system.domain.model.menu.entity.SysRoleMenu;
 import top.ppmblszdp.system.domain.model.menu.repository.MenuRepository;
 import top.ppmblszdp.system.domain.model.menu.repository.RoleMenuRepository;
 import top.ppmblszdp.system.domain.model.role.entity.Role;
+import top.ppmblszdp.system.domain.model.role.entity.UserRole;
 import top.ppmblszdp.system.domain.model.role.repository.RoleRepository;
+import top.ppmblszdp.system.domain.model.role.repository.UserRoleRepository;
+import top.ppmblszdp.system.domain.model.user.entity.User;
+import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
 
 /** 菜单与基础权限数据初始化器. */
 @Slf4j
@@ -23,6 +28,9 @@ public class MenuDataInitializer implements CommandLineRunner {
   private final MenuRepository menuRepository;
   private final RoleRepository roleRepository;
   private final RoleMenuRepository roleMenuRepository;
+  private final UserRepository userRepository;
+  private final UserRoleRepository userRoleRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -88,6 +96,18 @@ public class MenuDataInitializer implements CommandLineRunner {
         }
         roleMenuRepository.saveAll(roleMenus);
         log.info("Admin role and role-menu mappings initialized.");
+
+        // 5. 初始化管理员用户
+        if (userRepository.findByUsername("admin").isEmpty()) {
+          User adminUser = User.create("admin", passwordEncoder.encode("admin123"), "超级管理员");
+          adminUser.updateInfo("超级管理员", "admin@ppmb.com", "13800138000");
+          adminUser = userRepository.save(adminUser);
+
+          // 6. 关联用户与角色
+          userRoleRepository.saveAll(
+              List.of(UserRole.create(adminUser.getId(), adminRole.getId())));
+          log.info("Admin user 'admin' created with password 'admin123' and linked to Admin role.");
+        }
       }
 
       log.info("Default menu data initialized.");
