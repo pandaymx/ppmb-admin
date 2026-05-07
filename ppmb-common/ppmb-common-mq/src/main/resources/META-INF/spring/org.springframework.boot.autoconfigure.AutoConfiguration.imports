@@ -1,2 +1,3 @@
 top.ppmblszdp.common.mq.RabbitMqConfig
 top.ppmblszdp.common.mq.ExceptionMqConfig
+top.ppmblszdp.common.mq.ReliableMqConfig

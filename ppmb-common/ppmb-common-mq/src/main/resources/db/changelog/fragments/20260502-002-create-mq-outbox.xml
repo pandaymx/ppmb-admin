@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="20260502-002" author="jules">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="sys_mq_outbox"/>
+            </not>
+        </preConditions>
+        <createTable tableName="sys_mq_outbox">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_by" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dept_id" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_scope" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_by" type="BIGINT"/>
+            <column name="update_time" type="TIMESTAMP"/>
+            <column name="del_flag" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_type" type="VARCHAR(100)"/>
+            <column name="topic" type="VARCHAR(100)"/>
+            <column name="exchange" type="VARCHAR(100)"/>
+            <column name="routing_key" type="VARCHAR(100)"/>
+            <column name="payload" type="TEXT"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retry_count" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="next_retry_time" type="TIMESTAMP"/>
+            <column name="last_error_message" type="TEXT"/>
+        </createTable>
+
+        <createIndex indexName="idx_sys_mq_outbox_status_retry" tableName="sys_mq_outbox">
+            <column name="status"/>
+            <column name="next_retry_time"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
