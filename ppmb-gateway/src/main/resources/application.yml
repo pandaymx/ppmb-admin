@@ -78,3 +78,5 @@ springdoc:
     urls:
       - name: ppmb-system
         url: /api/system/v3/api-docs
+      - name: ppmb-auth
+        url: /api/auth/v3/api-docs
