@@ -1,7 +1,6 @@
 package top.ppmblszdp.system.application.service.menu.impl;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +11,8 @@ import top.ppmblszdp.common.exception.BusinessException;
 import top.ppmblszdp.system.application.assembler.MenuAssembler;
 import top.ppmblszdp.system.application.service.menu.MenuApplicationService;
 import top.ppmblszdp.system.domain.model.menu.entity.SysMenu;
-import top.ppmblszdp.system.domain.model.menu.entity.SysRoleMenu;
 import top.ppmblszdp.system.domain.model.menu.repository.MenuRepository;
 import top.ppmblszdp.system.domain.model.menu.repository.RoleMenuRepository;
-import top.ppmblszdp.system.domain.model.role.entity.UserRole;
 import top.ppmblszdp.system.domain.model.role.repository.UserRoleRepository;
 import top.ppmblszdp.system.interfaces.web.menu.dto.CreateMenuCommand;
 import top.ppmblszdp.system.interfaces.web.menu.dto.MenuDto;
@@ -61,10 +58,7 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
 
   @Override
   public List<MenuDto> getMenuList() {
-    return menuRepository.findAll().stream()
-        .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
-        .map(menuAssembler::toDto)
-        .toList();
+    return menuRepository.findAllByOrderByOrderNumAsc().stream().map(menuAssembler::toDto).toList();
   }
 
   @Override
@@ -89,27 +83,12 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
   }
 
   private List<SysMenu> getMenusByUserId(Long userId) {
-    // Here we could implement admin bypassing
-    List<Long> roleIds =
-        userRoleRepository.findByUserId(userId).stream().map(UserRole::getRoleId).toList();
-
-    if (roleIds.isEmpty()) {
-      return new ArrayList<>();
+    // Super Admin Fast Track (ID = 1)
+    if (userId != null && userId == 1L) {
+      return menuRepository.findAllByOrderByOrderNumAsc();
     }
 
-    List<Long> menuIds =
-        roleMenuRepository.findByRoleIdIn(roleIds).stream()
-            .map(SysRoleMenu::getMenuId)
-            .distinct()
-            .toList();
-
-    if (menuIds.isEmpty()) {
-      return new ArrayList<>();
-    }
-
-    return menuRepository.findByIdIn(menuIds).stream()
-        .sorted(Comparator.comparingInt(SysMenu::getOrderNum))
-        .toList();
+    return menuRepository.findByUserIdWithJoin(userId);
   }
 
   private List<MenuDto> buildMenuTree(List<MenuDto> menus, Long parentId) {
@@ -139,15 +118,15 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
     for (SysMenu menu : menus) {
       RouterVo router = new RouterVo();
       router.setHidden(!menu.getVisible());
-      router.setName(getRouteName(menu));
-      router.setPath(getRouterPath(menu));
-      router.setComponent(getComponent(menu));
+      router.setName(menu.getRouteName());
+      router.setPath(menu.getPath());
+      router.setComponent(menu.getComponentForRouter());
       router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), false, null));
 
       List<SysMenu> childMenus = menu.getChildren();
-      if (childMenus != null && !childMenus.isEmpty() && "M".equals(menu.getMenuType())) {
+      if (childMenus != null && !childMenus.isEmpty() && menu.isDirectory()) {
         router.setChildren(buildRouters(childMenus));
-      } else if ("M".equals(menu.getMenuType()) && menu.getParentId() == 0L) {
+      } else if (menu.isRootDirectory()) {
         // To allow single level parent route rendering
         RouterVo children = new RouterVo();
         children.setPath("index");
@@ -164,27 +143,5 @@ public class MenuApplicationServiceImpl implements MenuApplicationService {
       routers.add(router);
     }
     return routers;
-  }
-
-  private String getRouteName(SysMenu menu) {
-    String path = menu.getPath();
-    if (StringUtils.hasText(path)) {
-      return StringUtils.capitalize(path);
-    }
-    return "";
-  }
-
-  private String getRouterPath(SysMenu menu) {
-    return menu.getPath();
-  }
-
-  private String getComponent(SysMenu menu) {
-    if (StringUtils.hasText(menu.getComponent())) {
-      return menu.getComponent();
-    }
-    if (menu.getParentId() == 0L && "M".equals(menu.getMenuType())) {
-      return "Layout";
-    }
-    return "ParentView";
   }
 }
