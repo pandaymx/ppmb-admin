@@ -14,7 +14,6 @@ dependencies {
     implementation(libs.jacksonAnnotations)
     implementation(libs.spotless.plugin.gradle)
     implementation(libs.graalvm.native.plugin)
-    implementation(libs.spring.boot.starter.amqp)
     implementation(libs.spring.cloud.starter.openfeign)
     implementation(libs.jacksonDatatypeJsr310)
     implementation(libs.feign.jackson)

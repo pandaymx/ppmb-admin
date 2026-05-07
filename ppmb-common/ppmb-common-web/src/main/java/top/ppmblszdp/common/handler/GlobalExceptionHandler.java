@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.IResultCode;
-import top.ppmblszdp.common.api.constant.MqConstants;
 import top.ppmblszdp.common.api.dto.ExceptionLogMessage;
+import top.ppmblszdp.common.api.service.ExceptionLogService;
 import top.ppmblszdp.common.exception.BusinessException;
 
 /** 全局异常处理器，结合 Java 25 特性和阿里业务码规范. */
@@ -23,11 +22,11 @@ import top.ppmblszdp.common.exception.BusinessException;
 @Slf4j
 public class GlobalExceptionHandler {
 
-  private RabbitTemplate rabbitTemplate;
+  private ExceptionLogService exceptionLogService;
 
   @org.springframework.beans.factory.annotation.Autowired(required = false)
-  public void setRabbitTemplate(RabbitTemplate rabbitTemplate) {
-    this.rabbitTemplate = rabbitTemplate;
+  public void setExceptionLogService(ExceptionLogService exceptionLogService) {
+    this.exceptionLogService = exceptionLogService;
   }
 
   @Value("${spring.application.name:unknown-service}")
@@ -67,6 +66,9 @@ public class GlobalExceptionHandler {
   }
 
   private void sendExceptionLog(Exception ex, HttpServletRequest request) {
+    if (exceptionLogService == null) {
+      return;
+    }
     try {
       String userIdStr = request.getHeader("X-User-Id");
       Long userId = (userIdStr != null && !userIdStr.isEmpty()) ? Long.parseLong(userIdStr) : null;
@@ -84,10 +86,9 @@ public class GlobalExceptionHandler {
               userId,
               LocalDateTime.now());
 
-      rabbitTemplate.convertAndSend(
-          MqConstants.EXCEPTION_EXCHANGE, MqConstants.EXCEPTION_ROUTING_KEY, message);
+      exceptionLogService.send(message);
     } catch (Exception e) {
-      log.error("发送异常日志到 MQ 失败", e);
+      log.error("发送异常日志失败", e);
     }
   }
 

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,21 +19,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.ppmblszdp.common.api.CommonResultCode;
-import top.ppmblszdp.common.api.constant.MqConstants;
 import top.ppmblszdp.common.api.dto.ExceptionLogMessage;
+import top.ppmblszdp.common.api.service.ExceptionLogService;
 import top.ppmblszdp.common.exception.BusinessException;
 
 @DisplayName("全局异常处理器测试")
 class GlobalExceptionHandlerTest {
 
   private MockMvc mockMvc;
-  private RabbitTemplate rabbitTemplate;
+  private ExceptionLogService exceptionLogService;
 
   @BeforeEach
   void setUp() {
-    rabbitTemplate = Mockito.mock(RabbitTemplate.class);
+    exceptionLogService = Mockito.mock(ExceptionLogService.class);
     GlobalExceptionHandler handler = new GlobalExceptionHandler();
-    handler.setRabbitTemplate(rabbitTemplate);
+    handler.setExceptionLogService(exceptionLogService);
     mockMvc =
         MockMvcBuilders.standaloneSetup(new TestController()).setControllerAdvice(handler).build();
   }
@@ -50,15 +49,12 @@ class GlobalExceptionHandlerTest {
   }
 
   @Test
-  @DisplayName("处理通用 Exception 时应异步发送日志到 MQ")
+  @DisplayName("处理通用 Exception 时应异步发送日志")
   void testHandleGeneralExceptionAndSendLog() throws Exception {
     mockMvc.perform(get("/test/general-exception")).andExpect(status().isInternalServerError());
 
-    Mockito.verify(rabbitTemplate, Mockito.timeout(1000).atLeastOnce())
-        .convertAndSend(
-            Mockito.eq(MqConstants.EXCEPTION_EXCHANGE),
-            Mockito.eq(MqConstants.EXCEPTION_ROUTING_KEY),
-            Mockito.any(ExceptionLogMessage.class));
+    Mockito.verify(exceptionLogService, Mockito.timeout(1000).atLeastOnce())
+        .send(Mockito.any(ExceptionLogMessage.class));
   }
 
   @Test
@@ -94,12 +90,11 @@ class GlobalExceptionHandlerTest {
   }
 
   @Test
-  @DisplayName("处理通用 Exception 时如果发送 MQ 失败不应影响异常返回")
-  void testHandleGeneralExceptionMqFailure() throws Exception {
-    Mockito.doThrow(new RuntimeException("MQ Down"))
-        .when(rabbitTemplate)
-        .convertAndSend(
-            Mockito.anyString(), Mockito.anyString(), Mockito.any(ExceptionLogMessage.class));
+  @DisplayName("处理通用 Exception 时如果日志服务失败不应影响异常返回")
+  void testHandleGeneralExceptionServiceFailure() throws Exception {
+    Mockito.doThrow(new RuntimeException("Service Down"))
+        .when(exceptionLogService)
+        .send(Mockito.any(ExceptionLogMessage.class));
 
     mockMvc
         .perform(get("/test/general-exception"))
@@ -123,9 +118,8 @@ class GlobalExceptionHandlerTest {
         .perform(get("/test/general-exception").header("X-User-Id", "123"))
         .andExpect(status().isInternalServerError());
 
-    Mockito.verify(rabbitTemplate, Mockito.atLeastOnce())
-        .convertAndSend(
-            Mockito.anyString(), Mockito.anyString(), Mockito.any(ExceptionLogMessage.class));
+    Mockito.verify(exceptionLogService, Mockito.atLeastOnce())
+        .send(Mockito.any(ExceptionLogMessage.class));
   }
 
   @Test
@@ -133,19 +127,13 @@ class GlobalExceptionHandlerTest {
   void testSanitizeStackTraceWithLargeStack() throws Exception {
     mockMvc.perform(get("/test/large-stack-exception")).andExpect(status().isInternalServerError());
 
-    Mockito.verify(rabbitTemplate)
-        .convertAndSend(
-            Mockito.anyString(),
-            Mockito.anyString(),
-            (Object)
-                Mockito.argThat(
-                    msg -> {
-                      if (msg instanceof ExceptionLogMessage logMsg) {
-                        String stack = logMsg.stackTrace();
-                        return stack.contains("以及") && stack.contains("个堆栈帧被隐藏");
-                      }
-                      return false;
-                    }));
+    Mockito.verify(exceptionLogService)
+        .send(
+            Mockito.argThat(
+                msg -> {
+                  String stack = msg.stackTrace();
+                  return stack.contains("以及") && stack.contains("个堆栈帧被隐藏");
+                }));
   }
 
   @Test
@@ -153,19 +141,13 @@ class GlobalExceptionHandlerTest {
   void testSanitizeStackTraceWithEmptyStack() throws Exception {
     mockMvc.perform(get("/test/empty-stack-exception")).andExpect(status().isInternalServerError());
 
-    Mockito.verify(rabbitTemplate)
-        .convertAndSend(
-            Mockito.anyString(),
-            Mockito.anyString(),
-            (Object)
-                Mockito.argThat(
-                    msg -> {
-                      if (msg instanceof ExceptionLogMessage logMsg) {
-                        String stack = logMsg.stackTrace();
-                        return !stack.contains("[堆栈摘要]");
-                      }
-                      return false;
-                    }));
+    Mockito.verify(exceptionLogService)
+        .send(
+            Mockito.argThat(
+                msg -> {
+                  String stack = msg.stackTrace();
+                  return !stack.contains("[堆栈摘要]");
+                }));
   }
 
   @Test
@@ -173,26 +155,20 @@ class GlobalExceptionHandlerTest {
   void testSanitizeStackTraceWithDefaultPackage() throws Exception {
     mockMvc.perform(get("/test/default-package-stack")).andExpect(status().isInternalServerError());
 
-    Mockito.verify(rabbitTemplate)
-        .convertAndSend(
-            Mockito.anyString(),
-            Mockito.anyString(),
-            (Object)
-                Mockito.argThat(
-                    msg -> {
-                      if (msg instanceof ExceptionLogMessage logMsg) {
-                        String stack = logMsg.stackTrace();
-                        return stack.contains("default:");
-                      }
-                      return false;
-                    }));
+    Mockito.verify(exceptionLogService)
+        .send(
+            Mockito.argThat(
+                msg -> {
+                  String stack = msg.stackTrace();
+                  return stack.contains("default:");
+                }));
   }
 
   @Test
-  @DisplayName("当 RabbitTemplate 为 null 时发送日志不应抛出异常")
-  void testSendExceptionLogWithNullRabbitTemplate() throws Exception {
+  @DisplayName("当 ExceptionLogService 为 null 时发送日志不应抛出异常")
+  void testSendExceptionLogWithNullService() throws Exception {
     GlobalExceptionHandler handler = new GlobalExceptionHandler();
-    handler.setRabbitTemplate(null);
+    handler.setExceptionLogService(null);
     MockMvc customMockMvc =
         MockMvcBuilders.standaloneSetup(new TestController()).setControllerAdvice(handler).build();
 
