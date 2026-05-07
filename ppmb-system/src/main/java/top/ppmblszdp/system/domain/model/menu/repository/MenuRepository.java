@@ -13,5 +13,9 @@ public interface MenuRepository {
 
   List<SysMenu> findAll();
 
+  List<SysMenu> findAllByOrderByOrderNumAsc();
+
   List<SysMenu> findByIdIn(List<Long> ids);
+
+  List<SysMenu> findByUserIdWithJoin(Long userId);
 }
