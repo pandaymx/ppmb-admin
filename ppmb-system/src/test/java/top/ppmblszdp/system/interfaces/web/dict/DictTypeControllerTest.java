@@ -43,8 +43,7 @@ class DictTypeControllerTest {
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(dictTypeController).build();
 
-    dictTypeDto =
-        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "用户状态字典", null, null);
+    dictTypeDto = new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "用户状态字典", null, null);
   }
 
   @Test

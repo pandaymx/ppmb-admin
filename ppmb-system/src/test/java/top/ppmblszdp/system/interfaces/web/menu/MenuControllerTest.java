@@ -35,8 +35,7 @@ class MenuControllerTest {
     CreateMenuCommand command =
         new CreateMenuCommand("Test", 0L, "M", "/path", "Comp", "perm", "icon", 1, true);
     MenuDto dto =
-        new MenuDto(
-            1L, "Test", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
+        new MenuDto(1L, "Test", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
 
     when(menuApplicationService.createMenu(any())).thenReturn(dto);
 
@@ -86,8 +85,7 @@ class MenuControllerTest {
   @DisplayName("获取菜单树")
   void testGetMenuTree() {
     MenuDto dto =
-        new MenuDto(
-            1L, "Tree", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
+        new MenuDto(1L, "Tree", 0L, "M", "/path", "Comp", "perm", "icon", 1, true, null, List.of());
     when(menuApplicationService.getMenuTree()).thenReturn(List.of(dto));
 
     Result<List<MenuDto>> result = controller.getMenuTree();

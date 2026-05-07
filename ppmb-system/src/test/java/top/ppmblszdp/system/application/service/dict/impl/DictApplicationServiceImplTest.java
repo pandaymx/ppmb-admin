@@ -76,8 +76,7 @@ class DictApplicationServiceImplTest {
 
     when(dictTypeRepository.findByDictType("user_status")).thenReturn(Optional.empty());
     when(dictTypeRepository.save(any(DictType.class))).thenReturn(dictType);
-    DictTypeDto dummyDto =
-        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
+    DictTypeDto dummyDto = new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     DictTypeDto result = dictService.createDictType(command);
@@ -210,8 +209,7 @@ class DictApplicationServiceImplTest {
   @DisplayName("根据ID获取字典类型成功")
   void getDictTypeById_success() {
     when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
-    DictTypeDto dummyDto =
-        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
+    DictTypeDto dummyDto = new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     Optional<DictTypeDto> result = dictService.getDictTypeById(1L);
@@ -237,8 +235,7 @@ class DictApplicationServiceImplTest {
     Page<DictType> page = new PageImpl<>(Arrays.asList(dictType));
 
     when(dictTypeRepository.findAll(any(Pageable.class))).thenReturn(page);
-    DictTypeDto dummyDto =
-        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
+    DictTypeDto dummyDto = new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     PageResult<DictTypeDto> result = dictService.pageDictTypes(pageQuery);
