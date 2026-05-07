@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,9 @@ public class MenuDataInitializer implements CommandLineRunner {
   private final UserRepository userRepository;
   private final UserRoleRepository userRoleRepository;
   private final PasswordEncoder passwordEncoder;
+
+  @Value("${ppmb.admin.init.password:Ppmb@2026}")
+  private String adminPassword;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -99,14 +103,14 @@ public class MenuDataInitializer implements CommandLineRunner {
 
         // 5. 初始化管理员用户
         if (userRepository.findByUsername("admin").isEmpty()) {
-          User adminUser = User.create("admin", passwordEncoder.encode("admin123"), "超级管理员");
+          User adminUser = User.create("admin", passwordEncoder.encode(adminPassword), "超级管理员");
           adminUser.updateInfo("超级管理员", "admin@ppmb.com", "13800138000");
           adminUser = userRepository.save(adminUser);
 
           // 6. 关联用户与角色
           userRoleRepository.saveAll(
               List.of(UserRole.create(adminUser.getId(), adminRole.getId())));
-          log.info("Admin user 'admin' created with password 'admin123' and linked to Admin role.");
+          log.info("Admin user 'admin' created and linked to Admin role.");
         }
       }
 

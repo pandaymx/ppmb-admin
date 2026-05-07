@@ -1,6 +1,12 @@
 server:
   port: 8081
 
+ppmb:
+  admin:
+    init:
+      password: "Ppmb@2026"
+
+
 spring:
   profiles:
     active: dev
