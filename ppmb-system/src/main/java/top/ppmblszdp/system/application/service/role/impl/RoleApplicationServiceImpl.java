@@ -32,9 +32,9 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
   public RoleDto createRole(CreateRoleCommand command) {
     Role role = Role.create(command.roleName(), command.roleCode(), command.description());
     Role savedRole = roleRepository.save(role);
-    if (command.menuIds() != null && !command.menuIds().isEmpty()) {
-      roleMenuApplicationService.assignMenusToRole(savedRole.getId(), command.menuIds());
-    }
+    java.util.Optional.ofNullable(command.menuIds())
+        .filter(ids -> !ids.isEmpty())
+        .ifPresent(ids -> roleMenuApplicationService.assignMenusToRole(savedRole.getId(), ids));
     return roleAssembler.toDto(savedRole);
   }
 
@@ -46,9 +46,8 @@ public class RoleApplicationServiceImpl implements RoleApplicationService {
         !role.getIsReadonly(), CommonResultCode.PARAM_ERROR); // Built-in roles are read-only
     role.updateInfo(command.roleName(), command.description());
     Role savedRole = roleRepository.save(role);
-    if (command.menuIds() != null) {
-      roleMenuApplicationService.assignMenusToRole(savedRole.getId(), command.menuIds());
-    }
+    java.util.Optional.ofNullable(command.menuIds())
+        .ifPresent(ids -> roleMenuApplicationService.assignMenusToRole(savedRole.getId(), ids));
     return roleAssembler.toDto(savedRole);
   }
 

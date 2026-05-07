@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.common.api.dto.PostDto;
@@ -66,15 +65,16 @@ public class PostApplicationServiceImpl implements PostApplicationService {
         (root, _, cb) -> {
           List<Predicate> predicates = new ArrayList<>();
 
-          if (StringUtils.hasText(query.postCode())) {
-            predicates.add(cb.equal(root.get("postCode"), query.postCode()));
-          }
-          if (StringUtils.hasText(query.postName())) {
-            predicates.add(cb.like(root.get("postName"), "%" + query.postName() + "%"));
-          }
-          if (query.status() != null) {
-            predicates.add(cb.equal(root.get("status"), query.status()));
-          }
+          java.util.Optional.ofNullable(query.postCode())
+              .filter(org.springframework.util.StringUtils::hasText)
+              .ifPresent(v -> predicates.add(cb.equal(root.get("postCode"), v)));
+
+          java.util.Optional.ofNullable(query.postName())
+              .filter(org.springframework.util.StringUtils::hasText)
+              .ifPresent(v -> predicates.add(cb.like(root.get("postName"), "%" + v + "%")));
+
+          java.util.Optional.ofNullable(query.status())
+              .ifPresent(v -> predicates.add(cb.equal(root.get("status"), v)));
 
           // ignore soft deleted
           predicates.add(cb.equal(root.get("delFlag"), 0));
