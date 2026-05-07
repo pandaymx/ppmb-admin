@@ -76,16 +76,15 @@ class DictApplicationServiceImplTest {
 
     when(dictTypeRepository.findByDictType("user_status")).thenReturn(Optional.empty());
     when(dictTypeRepository.save(any(DictType.class))).thenReturn(dictType);
-    DictTypeDto dummyDto = new DictTypeDto();
-    dummyDto.setDictName("用户状态");
-    dummyDto.setDictType("user_status");
+    DictTypeDto dummyDto =
+        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     DictTypeDto result = dictService.createDictType(command);
 
     assertNotNull(result);
-    assertEquals("用户状态", result.getDictName());
-    assertEquals("user_status", result.getDictType());
+    assertEquals("用户状态", result.dictName());
+    assertEquals("user_status", result.dictType());
     verify(dictTypeRepository).save(any(DictType.class));
   }
 
@@ -211,14 +210,14 @@ class DictApplicationServiceImplTest {
   @DisplayName("根据ID获取字典类型成功")
   void getDictTypeById_success() {
     when(dictTypeRepository.findById(1L)).thenReturn(Optional.of(dictType));
-    DictTypeDto dummyDto = new DictTypeDto();
-    dummyDto.setDictType("user_status");
+    DictTypeDto dummyDto =
+        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDto(any(DictType.class))).thenReturn(dummyDto);
 
     Optional<DictTypeDto> result = dictService.getDictTypeById(1L);
 
     assertTrue(result.isPresent());
-    assertEquals("user_status", result.get().getDictType());
+    assertEquals("user_status", result.get().dictType());
   }
 
   @Test
@@ -238,8 +237,8 @@ class DictApplicationServiceImplTest {
     Page<DictType> page = new PageImpl<>(Arrays.asList(dictType));
 
     when(dictTypeRepository.findAll(any(Pageable.class))).thenReturn(page);
-    DictTypeDto dummyDto = new DictTypeDto();
-    dummyDto.setDictType("user_status");
+    DictTypeDto dummyDto =
+        new DictTypeDto(1L, "用户状态", "user_status", "N", 0, "备注", null, null);
     when(dictAssembler.toTypeDtoList(any())).thenReturn(Arrays.asList(dummyDto));
 
     PageResult<DictTypeDto> result = dictService.pageDictTypes(pageQuery);
@@ -266,16 +265,15 @@ class DictApplicationServiceImplTest {
     when(dictDataRepository.findByDictTypeAndDictValue("user_status", "1"))
         .thenReturn(Optional.empty());
     when(dictDataRepository.save(any(DictData.class))).thenReturn(dictData);
-    DictDataDto dummyDto = new DictDataDto();
-    dummyDto.setDictLabel("启用");
-    dummyDto.setDictValue("1");
+    DictDataDto dummyDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "备注", null);
     when(dictAssembler.toDataDto(any(DictData.class))).thenReturn(dummyDto);
 
     DictDataDto result = dictService.createDictData(command);
 
     assertNotNull(result);
-    assertEquals("启用", result.getDictLabel());
-    assertEquals("1", result.getDictValue());
+    assertEquals("启用", result.dictLabel());
+    assertEquals("1", result.dictValue());
     verify(dictDataRepository).save(any(DictData.class));
   }
 
@@ -402,14 +400,14 @@ class DictApplicationServiceImplTest {
   @DisplayName("根据ID获取字典数据成功")
   void getDictDataById_success() {
     when(dictDataRepository.findById(1L)).thenReturn(Optional.of(dictData));
-    DictDataDto dummyDto = new DictDataDto();
-    dummyDto.setDictLabel("启用");
+    DictDataDto dummyDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "备注", null);
     when(dictAssembler.toDataDto(any(DictData.class))).thenReturn(dummyDto);
 
     Optional<DictDataDto> result = dictService.getDictDataById(1L);
 
     assertTrue(result.isPresent());
-    assertEquals("启用", result.get().getDictLabel());
+    assertEquals("启用", result.get().dictLabel());
   }
 
   @Test
@@ -430,9 +428,9 @@ class DictApplicationServiceImplTest {
 
     when(dictDataRepository.findByDictType(eq("user_status"), any(Pageable.class)))
         .thenReturn(page);
-    DictDataDto dummyDto = new DictDataDto();
-    dummyDto.setDictLabel("启用");
-    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
+    DictDataDto dummyDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "备注", null);
+    when(dictAssembler.toDataDtoList(any())).thenReturn(java.util.Arrays.asList(dummyDto));
 
     PageResult<DictDataDto> result = dictService.pageDictData("user_status", pageQuery);
 
@@ -446,15 +444,15 @@ class DictApplicationServiceImplTest {
   void getAvailableDictDataByType_fromDb() {
     when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
         .thenReturn(Arrays.asList(dictData));
-    DictDataDto dummyDto = new DictDataDto();
-    dummyDto.setDictLabel("启用");
-    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
+    DictDataDto dummyDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "备注", null);
+    when(dictAssembler.toDataDtoList(any())).thenReturn(java.util.Arrays.asList(dummyDto));
 
     List<DictDataDto> result = dictService.getAvailableDictDataByType("user_status");
 
     assertNotNull(result);
     assertEquals(1, result.size());
-    assertEquals("启用", result.get(0).getDictLabel());
+    assertEquals("启用", result.get(0).dictLabel());
   }
 
   @Test
@@ -462,9 +460,9 @@ class DictApplicationServiceImplTest {
   void getAvailableDictDataByType_fromCache() {
     when(dictDataRepository.findByDictTypeAndStatusOrderByDictSortAsc("user_status", 0))
         .thenReturn(Arrays.asList(dictData));
-    DictDataDto dummyDto = new DictDataDto();
-    dummyDto.setDictLabel("启用");
-    when(dictAssembler.toDataDtoList(any())).thenReturn(Arrays.asList(dummyDto));
+    DictDataDto dummyDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "备注", null);
+    when(dictAssembler.toDataDtoList(any())).thenReturn(java.util.Arrays.asList(dummyDto));
 
     List<DictDataDto> result1 = dictService.getAvailableDictDataByType("user_status");
     assertNotNull(result1);

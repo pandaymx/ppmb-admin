@@ -44,17 +44,8 @@ class DictDataControllerTest {
   void setUp() {
     mockMvc = MockMvcBuilders.standaloneSetup(dictDataController).build();
 
-    dictDataDto = new DictDataDto();
-    dictDataDto.setId(1L);
-    dictDataDto.setParentId(1L);
-    dictDataDto.setDictSort(1);
-    dictDataDto.setDictLabel("启用");
-    dictDataDto.setDictValue("1");
-    dictDataDto.setDictType("user_status");
-    dictDataDto.setIsDefault("N");
-    dictDataDto.setListClass("success");
-    dictDataDto.setStatus(0);
-    dictDataDto.setRemark("启用状态");
+    dictDataDto =
+        new DictDataDto(1L, 1L, 1, "启用", "1", "user_status", "N", "success", 0, "启用状态", null);
   }
 
   @Test

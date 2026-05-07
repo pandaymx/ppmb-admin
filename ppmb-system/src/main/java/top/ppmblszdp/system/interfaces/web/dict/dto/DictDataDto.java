@@ -1,19 +1,17 @@
 package top.ppmblszdp.system.interfaces.web.dict.dto;
 
 import java.time.LocalDateTime;
-import lombok.Data;
 
-@Data
-public class DictDataDto {
-  private Long id;
-  private Long parentId;
-  private Integer dictSort;
-  private String dictLabel;
-  private String dictValue;
-  private String dictType;
-  private String isDefault;
-  private String listClass;
-  private Integer status;
-  private String remark;
-  private LocalDateTime createTime;
-}
+/** 字典数据 DTO. */
+public record DictDataDto(
+    Long id,
+    Long parentId,
+    Integer dictSort,
+    String dictLabel,
+    String dictValue,
+    String dictType,
+    String isDefault,
+    String listClass,
+    Integer status,
+    String remark,
+    LocalDateTime createTime) {}

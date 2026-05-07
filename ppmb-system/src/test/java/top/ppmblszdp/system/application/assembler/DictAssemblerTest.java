@@ -23,11 +23,11 @@ class DictAssemblerTest {
     DictTypeDto dto = assembler.toTypeDto(type);
 
     assertNotNull(dto);
-    assertEquals("用户性别", dto.getDictName());
-    assertEquals("sys_user_sex", dto.getDictType());
-    assertEquals("Y", dto.getSystemFlag());
-    assertEquals(0, dto.getStatus());
-    assertEquals("备注", dto.getRemark());
+    assertEquals("用户性别", dto.dictName());
+    assertEquals("sys_user_sex", dto.dictType());
+    assertEquals("Y", dto.systemFlag());
+    assertEquals(0, dto.status());
+    assertEquals("备注", dto.remark());
   }
 
   @Test
@@ -49,15 +49,15 @@ class DictAssemblerTest {
     DictDataDto dto = assembler.toDataDto(data);
 
     assertNotNull(dto);
-    assertEquals(1L, dto.getParentId());
-    assertEquals(1, dto.getDictSort());
-    assertEquals("男", dto.getDictLabel());
-    assertEquals("0", dto.getDictValue());
-    assertEquals("sys_user_sex", dto.getDictType());
-    assertEquals("Y", dto.getIsDefault());
-    assertEquals("primary", dto.getListClass());
-    assertEquals(0, dto.getStatus());
-    assertEquals("备注", dto.getRemark());
+    assertEquals(1L, dto.parentId());
+    assertEquals(1, dto.dictSort());
+    assertEquals("男", dto.dictLabel());
+    assertEquals("0", dto.dictValue());
+    assertEquals("sys_user_sex", dto.dictType());
+    assertEquals("Y", dto.isDefault());
+    assertEquals("primary", dto.listClass());
+    assertEquals(0, dto.status());
+    assertEquals("备注", dto.remark());
   }
 
   @Test
