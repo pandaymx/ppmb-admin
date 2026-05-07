@@ -119,6 +119,17 @@ services:
     networks:
       - ppmb-admin
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    restart: always
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - ppmb-admin
+
 networks:
   ppmb-admin:
     driver: bridge
