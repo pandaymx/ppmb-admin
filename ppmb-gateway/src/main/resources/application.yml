@@ -4,6 +4,9 @@ server:
 spring:
   profiles:
     active: dev # 默认激活开发环境
+  threads:
+    virtual:
+      enabled: true
   application:
     name: ppmb-gateway
   config:
