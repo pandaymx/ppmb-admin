@@ -29,7 +29,7 @@ class SysMenuTest {
   @DisplayName("测试组件路径选择逻辑")
   void testGetComponentForRouter() {
     SysMenu menu = new SysMenu();
-    
+
     // Explicit component
     menu.setComponent("system/user/index");
     assertEquals("system/user/index", menu.getComponentForRouter());
