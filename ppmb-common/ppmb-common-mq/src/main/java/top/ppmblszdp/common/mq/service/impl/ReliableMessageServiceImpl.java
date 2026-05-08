@@ -14,6 +14,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import top.ppmblszdp.common.mq.CommonMessage;
 import top.ppmblszdp.common.mq.domain.entity.MqMessageOutbox;
 import top.ppmblszdp.common.mq.domain.enums.OutboxStatus;
+import top.ppmblszdp.common.mq.exception.MqException;
 import top.ppmblszdp.common.mq.repository.MqMessageOutboxRepository;
 import top.ppmblszdp.common.mq.service.ReliableMessageService;
 
@@ -35,7 +36,7 @@ public class ReliableMessageServiceImpl implements ReliableMessageService {
       payloadJson = objectMapper.writeValueAsString(message.getPayload());
     } catch (JsonProcessingException e) {
       log.error("Failed to serialize message payload", e);
-      throw new RuntimeException("Message serialization failed", e);
+      throw new MqException("Message serialization failed", e);
     }
 
     // 2. Save Outbox record in the current transaction
