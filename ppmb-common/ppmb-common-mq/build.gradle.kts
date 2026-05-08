@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation(platform(libs.spring.boot.dependencies))
     implementation(project(":ppmb-common:ppmb-common-api"))
+    implementation(project(":ppmb-common:ppmb-common-security"))
 
     implementation(libs.spring.boot.starter.amqp)
     implementation(libs.spring.retry)
