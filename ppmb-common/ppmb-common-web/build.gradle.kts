@@ -9,7 +9,7 @@ dependencies {
     implementation(project(":ppmb-common:ppmb-common-api"))
     implementation(project(":ppmb-common:ppmb-common-security"))
     implementation(libs.spring.boot.starter.web)
-    implementation("org.aspectj:aspectjweaver:1.9.22")
+    implementation("org.aspectj:aspectjweaver:1.9.25.1")
     implementation(libs.spring.boot.starter.security)
     implementation(libs.jacksonDatabind)
     implementation(libs.jacksonCore)
