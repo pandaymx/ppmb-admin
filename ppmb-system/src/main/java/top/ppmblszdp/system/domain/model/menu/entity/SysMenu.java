@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLRestriction;
 import top.ppmblszdp.common.domain.entity.BaseMainEntity;
+import top.ppmblszdp.common.tenant.GlobalTable;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ import top.ppmblszdp.common.domain.entity.BaseMainEntity;
 @Entity
 @Table(name = "sys_menu")
 @SQLRestriction("del_flag = 0")
+@GlobalTable
 public class SysMenu extends BaseMainEntity {
 
   @Column(name = "menu_name", nullable = false, length = 50)

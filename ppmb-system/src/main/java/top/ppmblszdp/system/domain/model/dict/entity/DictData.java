@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.domain.entity.BaseChildEntity;
+import top.ppmblszdp.common.tenant.GlobalTable;
 import top.ppmblszdp.common.util.AssertUtils;
 
 /** 字典数据领域实体. */
@@ -20,6 +21,7 @@ import top.ppmblszdp.common.util.AssertUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "sys_dict_data")
+@GlobalTable
 public class DictData extends BaseChildEntity {
 
   @Column(name = "dict_sort", nullable = false)

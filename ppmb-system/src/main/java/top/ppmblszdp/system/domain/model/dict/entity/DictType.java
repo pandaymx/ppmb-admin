@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import top.ppmblszdp.common.api.CommonResultCode;
 import top.ppmblszdp.common.domain.entity.BaseMainEntity;
+import top.ppmblszdp.common.tenant.GlobalTable;
 import top.ppmblszdp.common.util.AssertUtils;
 
 /** 字典类型领域实体. */
@@ -24,6 +25,7 @@ import top.ppmblszdp.common.util.AssertUtils;
 @SQLDelete(sql = "UPDATE sys_dict_type SET del_flag = 1 WHERE id = ? and version = ?")
 @org.hibernate.annotations.SQLRestriction("del_flag = 0")
 @SuppressWarnings("java:S1700")
+@GlobalTable
 public class DictType extends BaseMainEntity {
 
   @Column(name = "dict_name", nullable = false, length = 100)

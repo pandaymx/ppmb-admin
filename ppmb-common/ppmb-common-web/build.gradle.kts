@@ -17,6 +17,7 @@ dependencies {
     implementation(libs.spring.cloud.starter.openfeign)
     implementation(libs.jacksonDatatypeJsr310)
     implementation(libs.feign.jackson)
+    implementation("org.aspectj:aspectjweaver")
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.spring.boot.starter.validation)
