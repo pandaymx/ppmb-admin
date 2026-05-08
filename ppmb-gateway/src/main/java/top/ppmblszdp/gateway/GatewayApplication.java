@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * <p>Gateway 的职责是路由转发，不应该作为 Feign 客户端调用其他服务。 因此不启用 @EnableFeignClients。
  */
 @SpringBootApplication
+@org.springframework.boot.context.properties.ConfigurationPropertiesScan
 public class GatewayApplication {
 
   public static void main(String[] args) {
