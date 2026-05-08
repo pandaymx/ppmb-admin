@@ -6,7 +6,7 @@ plugins {
 dependencies {
     implementation(platform(libs.spring.boot.dependencies))
     implementation(platform(libs.spring.cloud.dependencies))
-    api("org.springframework:spring-web")
+    implementation("org.springframework:spring-web")
     implementation(libs.jacksonDatabind)
     implementation(libs.jacksonCore)
     implementation(libs.jacksonAnnotations)
