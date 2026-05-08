@@ -12,7 +12,11 @@ import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecu
 @EnableAsync
 public class AsyncConfig {
 
-  /** 审计日志专用线程池. 使用 DelegatingSecurityContextAsyncTaskExecutor 以确保 SecurityContext 能透传到异步线程. */
+  /**
+   * 审计日志专用线程池. 使用 DelegatingSecurityContextAsyncTaskExecutor 以确保 SecurityContext 能透传到异步线程.
+   *
+   * @return 审计日志异步执行器.
+   */
   @Bean(name = "auditAsyncExecutor")
   public Executor auditAsyncExecutor() {
     ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

@@ -10,7 +10,7 @@ import top.ppmblszdp.common.api.dto.AuditLogMessage;
 import top.ppmblszdp.common.api.dto.ExceptionLogMessage;
 import top.ppmblszdp.common.api.service.ExceptionLogService;
 
-/** MQ 审计日志服务实现类。 */
+/** MQ 审计日志服务实现类. */
 @Service
 @RequiredArgsConstructor
 @Slf4j
