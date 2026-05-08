@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import top.ppmblszdp.common.api.constant.MqConstants;
 import top.ppmblszdp.common.api.dto.AuditLogMessage;
 import top.ppmblszdp.common.api.dto.ExceptionLogMessage;
-import top.ppmblszdp.common.api.service.AuditLogService;
 import top.ppmblszdp.common.api.service.ExceptionLogService;
 
 /** MQ 审计日志服务实现类。 */
