@@ -48,7 +48,8 @@ public class MenuDataInitializer implements CommandLineRunner {
 
       // 1. 系统管理
       SysMenu systemMenu =
-          createMenu(new MenuDefinition("系统管理", 0L, 1, "system", "M", "SettingOutlined", null, "Layout"));
+          createMenu(
+              new MenuDefinition("系统管理", 0L, 1, "system", "M", "SettingOutlined", null, "Layout"));
       systemMenu = menuRepository.save(systemMenu);
       menus.add(systemMenu);
 
