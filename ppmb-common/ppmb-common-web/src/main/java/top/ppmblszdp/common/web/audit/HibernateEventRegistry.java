@@ -17,13 +17,15 @@ public class HibernateEventRegistry {
 
   @PostConstruct
   public void registerListeners() {
-    SessionFactoryImplementor sessionFactory = entityManagerFactory.unwrap(SessionFactoryImplementor.class);
-    EventListenerRegistry registry = sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
+    SessionFactoryImplementor sessionFactory =
+        entityManagerFactory.unwrap(SessionFactoryImplementor.class);
+    EventListenerRegistry registry =
+        sessionFactory.getServiceRegistry().getService(EventListenerRegistry.class);
 
     if (registry != null) {
-        registry.appendListeners(EventType.POST_INSERT, auditEntityListener);
-        registry.appendListeners(EventType.POST_UPDATE, auditEntityListener);
-        registry.appendListeners(EventType.POST_DELETE, auditEntityListener);
+      registry.appendListeners(EventType.POST_INSERT, auditEntityListener);
+      registry.appendListeners(EventType.POST_UPDATE, auditEntityListener);
+      registry.appendListeners(EventType.POST_DELETE, auditEntityListener);
     }
   }
 }

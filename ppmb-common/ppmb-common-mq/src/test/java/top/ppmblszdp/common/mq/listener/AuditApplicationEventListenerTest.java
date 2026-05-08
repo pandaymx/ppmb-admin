@@ -30,8 +30,20 @@ class AuditApplicationEventListenerTest {
   @Test
   @DisplayName("接收到审计日志事件时应调用 MQ 服务发送")
   void testHandleAuditLogEvent() {
-    AuditLogMessage message = new AuditLogMessage(
-        UUID.randomUUID().toString(), "INSERT", "User", "1", null, "{}", "/users", "POST", "{}", "127.0.0.1", 1L, LocalDateTime.now());
+    AuditLogMessage message =
+        new AuditLogMessage(
+            UUID.randomUUID().toString(),
+            "INSERT",
+            "User",
+            "1",
+            null,
+            "{}",
+            "/users",
+            "POST",
+            "{}",
+            "127.0.0.1",
+            1L,
+            LocalDateTime.now());
     AuditLogEvent event = new AuditLogEvent(this, message);
 
     listener.handleAuditLogEvent(event);

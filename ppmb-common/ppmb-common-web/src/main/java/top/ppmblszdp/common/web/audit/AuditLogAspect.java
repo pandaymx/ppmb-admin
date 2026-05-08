@@ -1,5 +1,6 @@
 package top.ppmblszdp.common.web.audit;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -17,7 +18,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import top.ppmblszdp.common.api.annotation.AuditLog;
 import top.ppmblszdp.common.api.annotation.Sensitive;
 import top.ppmblszdp.common.api.dto.AuditLogMessage;
@@ -52,7 +52,8 @@ public class AuditLogAspect {
     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     Method method = signature.getMethod();
     AuditLog auditLogAnnotation = method.getAnnotation(AuditLog.class);
-    String operationName = auditLogAnnotation != null ? auditLogAnnotation.value() : method.getName();
+    String operationName =
+        auditLogAnnotation != null ? auditLogAnnotation.value() : method.getName();
 
     ServletRequestAttributes attributes =
         (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -78,29 +79,32 @@ public class AuditLogAspect {
 
         boolean isSensitive = parameters[i].isAnnotationPresent(Sensitive.class);
 
-        if (isSensitive || paramName.toLowerCase().contains("password") || paramName.toLowerCase().contains("secret") || paramName.toLowerCase().contains("token")) {
-           paramMap.put(paramName, "***");
+        if (isSensitive
+            || paramName.toLowerCase().contains("password")
+            || paramName.toLowerCase().contains("secret")
+            || paramName.toLowerCase().contains("token")) {
+          paramMap.put(paramName, "***");
         } else {
-           paramMap.put(paramName, arg);
+          paramMap.put(paramName, arg);
         }
       }
     }
     String requestParams = jsonMapper.writeValueAsString(paramMap);
 
-    AuditLogMessage message = new AuditLogMessage(
-        UUID.randomUUID().toString(),
-        operationName,
-        null,
-        null,
-        null,
-        null,
-        requestUri,
-        requestMethod,
-        requestParams,
-        ip,
-        SecurityUtils.getUserId(),
-        LocalDateTime.now()
-    );
+    AuditLogMessage message =
+        new AuditLogMessage(
+            UUID.randomUUID().toString(),
+            operationName,
+            null,
+            null,
+            null,
+            null,
+            requestUri,
+            requestMethod,
+            requestParams,
+            ip,
+            SecurityUtils.getUserId(),
+            LocalDateTime.now());
 
     eventPublisher.publishEvent(new AuditLogEvent(this, message));
   }

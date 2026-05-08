@@ -1,7 +1,6 @@
 package top.ppmblszdp.system.infrastructure.mq;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,8 +35,20 @@ class AuditLogListenerTest {
   @DisplayName("接收到新消息时应正确保存到数据库")
   void testOnAuditLogMessage_New() {
     String traceId = UUID.randomUUID().toString();
-    AuditLogMessage message = new AuditLogMessage(
-        traceId, "INSERT", "User", "1", null, "{}", "/users", "POST", "{}", "127.0.0.1", 1L, LocalDateTime.now());
+    AuditLogMessage message =
+        new AuditLogMessage(
+            traceId,
+            "INSERT",
+            "User",
+            "1",
+            null,
+            "{}",
+            "/users",
+            "POST",
+            "{}",
+            "127.0.0.1",
+            1L,
+            LocalDateTime.now());
 
     when(auditLogRepository.existsByTraceId(traceId)).thenReturn(false);
 
@@ -50,8 +61,20 @@ class AuditLogListenerTest {
   @DisplayName("接收到重复消息时应忽略")
   void testOnAuditLogMessage_Duplicate() {
     String traceId = UUID.randomUUID().toString();
-    AuditLogMessage message = new AuditLogMessage(
-        traceId, "INSERT", "User", "1", null, "{}", "/users", "POST", "{}", "127.0.0.1", 1L, LocalDateTime.now());
+    AuditLogMessage message =
+        new AuditLogMessage(
+            traceId,
+            "INSERT",
+            "User",
+            "1",
+            null,
+            "{}",
+            "/users",
+            "POST",
+            "{}",
+            "127.0.0.1",
+            1L,
+            LocalDateTime.now());
 
     when(auditLogRepository.existsByTraceId(traceId)).thenReturn(true);
 

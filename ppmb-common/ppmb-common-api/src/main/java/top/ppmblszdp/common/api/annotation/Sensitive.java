@@ -6,11 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Annotation to mark a field or parameter as sensitive to avoid logging its real value.
- */
+/** Annotation to mark a field or parameter as sensitive to avoid logging its real value. */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Sensitive {
-}
+public @interface Sensitive {}

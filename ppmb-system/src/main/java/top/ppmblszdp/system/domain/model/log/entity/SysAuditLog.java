@@ -16,9 +16,7 @@ import org.hibernate.type.SqlTypes;
 @Table(name = "sys_audit_log")
 public class SysAuditLog {
 
-  @Id
-  @top.ppmblszdp.common.domain.generator.SnowflakeId
-  private Long id;
+  @Id @top.ppmblszdp.common.domain.generator.SnowflakeId private Long id;
 
   @Column(name = "trace_id", unique = true, length = 64)
   private String traceId;
