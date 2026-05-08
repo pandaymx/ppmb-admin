@@ -51,7 +51,7 @@ class OutboxRetryJobTest {
 
   @Test
   @DisplayName("处理重试成功时应更新状态为已发布")
-  void shouldProcessRetrySuccessfully() throws Exception {
+  void shouldProcessRetrySuccessfully() {
 
     MqMessageOutbox outbox = new MqMessageOutbox();
     outbox.setPayload("{\"data\":\"test\"}");
