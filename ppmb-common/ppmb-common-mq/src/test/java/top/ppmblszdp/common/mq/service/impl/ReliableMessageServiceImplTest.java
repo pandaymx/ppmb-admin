@@ -1,7 +1,9 @@
 package top.ppmblszdp.common.mq.service.impl;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import top.ppmblszdp.common.mq.CommonMessage;
 import top.ppmblszdp.common.mq.domain.entity.MqMessageOutbox;
@@ -31,7 +34,7 @@ class ReliableMessageServiceImplTest {
   @InjectMocks private ReliableMessageServiceImpl reliableMessageService;
 
   @Test
-  @DisplayName("发送消息时应序列化并保存到 Outbox")
+  @DisplayName("发送消息时应序列化并保存到 Outbox，并在事务提交后发送")
   void shouldSaveToOutboxWhenSend() throws JsonProcessingException {
     CommonMessage<String> message =
         CommonMessage.<String>builder()
@@ -48,7 +51,19 @@ class ReliableMessageServiceImplTest {
 
       verify(objectMapper).writeValueAsString("test-payload");
       verify(outboxRepository).save(any(MqMessageOutbox.class));
-      mockedStatic.verify(() -> TransactionSynchronizationManager.registerSynchronization(any()));
+
+      // Capture synchronization
+      org.mockito.ArgumentCaptor<TransactionSynchronization> syncCaptor =
+          org.mockito.ArgumentCaptor.forClass(TransactionSynchronization.class);
+      mockedStatic.verify(
+          () -> TransactionSynchronizationManager.registerSynchronization(syncCaptor.capture()));
+
+      // Trigger afterCommit
+      syncCaptor.getValue().afterCommit();
+
+      // Verify MQ send and status update
+      verify(rabbitTemplate).convertAndSend(eq("test-exchange"), eq("test-routing"), eq(message));
+      verify(outboxRepository, times(2)).save(any(MqMessageOutbox.class));
     }
   }
 }

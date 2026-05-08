@@ -52,6 +52,7 @@ class OutboxRetryJobTest {
   @Test
   @DisplayName("处理重试成功时应更新状态为已发布")
   void shouldProcessRetrySuccessfully() throws Exception {
+
     MqMessageOutbox outbox = new MqMessageOutbox();
     outbox.setPayload("{\"data\":\"test\"}");
     outbox.setExchange("ex");
@@ -95,6 +96,7 @@ class OutboxRetryJobTest {
   @Test
   @DisplayName("测试 processRetry 逻辑")
   void testProcessRetry() throws Exception {
+
     MqMessageOutbox outbox = new MqMessageOutbox();
     outbox.setPayload("{\"data\":\"test\"}");
     outbox.setExchange("ex");
