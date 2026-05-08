@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+  <changeSet id="20260505-003-create-sys-audit-log" author="jules">
+    <createTable tableName="sys_audit_log" remarks="审计日志表">
+      <column name="id" type="BIGINT" remarks="主键 ID">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="trace_id" type="VARCHAR(64)" remarks="幂等性追踪 ID">
+        <constraints unique="true" nullable="false"/>
+      </column>
+      <column name="operation_name" type="VARCHAR(255)" remarks="操作名称"/>
+      <column name="entity_name" type="VARCHAR(255)" remarks="受影响的实体名称"/>
+      <column name="entity_id" type="VARCHAR(64)" remarks="受影响的实体ID"/>
+      <column name="old_value" type="jsonb" remarks="变更前数据"/>
+      <column name="new_value" type="jsonb" remarks="变更后数据"/>
+      <column name="request_uri" type="VARCHAR(255)" remarks="请求 URI"/>
+      <column name="request_method" type="VARCHAR(20)" remarks="请求方法"/>
+      <column name="request_params" type="TEXT" remarks="请求参数"/>
+      <column name="ip" type="VARCHAR(64)" remarks="操作 IP"/>
+      <column name="user_id" type="BIGINT" remarks="操作人 ID"/>
+      <column name="create_time" type="TIMESTAMP" remarks="创建时间"/>
+    </createTable>
+
+    <createIndex tableName="sys_audit_log" indexName="idx_sys_audit_log_user_id">
+      <column name="user_id"/>
+    </createIndex>
+
+    <createIndex tableName="sys_audit_log" indexName="idx_sys_audit_log_entity">
+      <column name="entity_name"/>
+      <column name="entity_id"/>
+    </createIndex>
+  </changeSet>
+
+</databaseChangeLog>

@@ -108,7 +108,7 @@ class DictApplicationServiceImplTest {
     "new_user_status, true, 修改类型编码"
   })
   @DisplayName("更新字典类型成功")
-  void updateDictType_success(String newType, boolean expectDataUpdate, String unusedScenario) {
+  void updateDictType_success(String newType, boolean expectDataUpdate, String scenario) {
     UpdateDictTypeCommand command = new UpdateDictTypeCommand();
     command.setDictName("用户状态");
     command.setDictType("null".equals(newType) ? null : newType);
@@ -325,8 +325,7 @@ class DictApplicationServiceImplTest {
     "1, new_type, 仅修改类型"
   })
   @DisplayName("更新字典数据成功-修改键值或类型")
-  void updateDictData_success_parameterized(
-      String newValue, String newType, String unusedScenario) {
+  void updateDictData_success_parameterized(String newValue, String newType, String scenario) {
     UpdateDictDataCommand command = new UpdateDictDataCommand();
     command.setDictValue(newValue);
     command.setDictType(newType);
