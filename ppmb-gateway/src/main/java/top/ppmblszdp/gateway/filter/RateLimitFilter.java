@@ -92,8 +92,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
               try {
                 Claims claims = jwtUtils.parseToken(token);
                 return Optional.ofNullable(claims.getSubject()).filter(s -> !s.isEmpty());
-              } catch (Exception e) {
-                log.debug("Failed to parse token for rate limiting", e);
+              } catch (Exception _) {
+                log.debug("Failed to parse token for rate limiting");
                 return Optional.empty();
               }
             })
