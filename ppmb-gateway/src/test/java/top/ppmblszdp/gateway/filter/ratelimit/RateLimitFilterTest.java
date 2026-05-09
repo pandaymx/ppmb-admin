@@ -20,6 +20,7 @@ import org.springframework.web.servlet.function.HandlerFunction;
 import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 import top.ppmblszdp.common.redis.util.RedisRateLimiter;
+import top.ppmblszdp.common.redis.util.RedisUtil;
 import top.ppmblszdp.gateway.GatewayApplication;
 import top.ppmblszdp.gateway.exception.RateLimitExceededException;
 
@@ -37,6 +38,7 @@ import top.ppmblszdp.gateway.exception.RateLimitExceededException;
 public class RateLimitFilterTest {
 
   @MockitoBean private RedisRateLimiter redisRateLimiter;
+  @MockitoBean private RedisUtil redisUtil;
 
   @Autowired private ApplicationContext context;
 
