@@ -27,6 +27,7 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.jacksonDatabind)
+    testImplementation("org.mockito:mockito-inline:5.2.0")
 
     testCompileOnly(libs.lombok)
 
@@ -44,4 +45,14 @@ graalvmNative {
             mainClass.set("top.ppmblszdp.system.SystemApplication")
         }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs(
+        "--enable-preview",
+        "-XX:+EnableDynamicAgentLoading",
+        "-Djdk.instrument.traceUsage=false"
+    )
+    systemProperty("java.awt.headless", "true")
+    useJUnitPlatform()
 }
