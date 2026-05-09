@@ -59,8 +59,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     String rateLimitKey = "rate_limit:" + routeId + ":" + identity.type() + ":" + identity.value();
     RateLimitRule rule = resolveRule(routeId, identity);
 
-    boolean allowed =
-        redisRateLimiter.isAllowed(rateLimitKey, rule.count(), rule.period());
+    boolean allowed = redisRateLimiter.isAllowed(rateLimitKey, rule.count(), rule.period());
 
     if (!allowed) {
       log.warn("Rate limit exceeded for key: {}", rateLimitKey);

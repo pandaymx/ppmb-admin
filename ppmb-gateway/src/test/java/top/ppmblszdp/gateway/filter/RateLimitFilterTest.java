@@ -52,7 +52,8 @@ class RateLimitFilterTest {
   @BeforeEach
   void setUp() {
     securityProperties = new PpmbSecurityProperties();
-    RateLimitProperties rateLimitProperties = new RateLimitProperties(true, 10, 1, "rate_limit:config");
+    RateLimitProperties rateLimitProperties =
+        new RateLimitProperties(true, 10, 1, "rate_limit:config");
     ObjectMapper objectMapper = new ObjectMapper();
 
     rateLimitFilter =
@@ -154,7 +155,8 @@ class RateLimitFilterTest {
     when(redisUtil.get("rate_limit:config:route:default:ip:" + ip, String.class))
         .thenReturn(Optional.empty());
     when(redisUtil.get("rate_limit:config:ip:" + ip, String.class)).thenReturn(Optional.empty());
-    when(redisUtil.get("rate_limit:config:route:default", String.class)).thenReturn(Optional.empty());
+    when(redisUtil.get("rate_limit:config:route:default", String.class))
+        .thenReturn(Optional.empty());
     when(redisUtil.get("rate_limit:config:default", String.class)).thenReturn(Optional.of("5:2"));
     when(redisRateLimiter.isAllowed(eq("rate_limit:default:ip:" + ip), eq(5), eq(2)))
         .thenReturn(true);
@@ -171,7 +173,8 @@ class RateLimitFilterTest {
     when(redisUtil.get("rate_limit:config:route:default:ip:" + ip, String.class))
         .thenReturn(Optional.of("bad_value"));
     when(redisUtil.get("rate_limit:config:ip:" + ip, String.class)).thenReturn(Optional.empty());
-    when(redisUtil.get("rate_limit:config:route:default", String.class)).thenReturn(Optional.empty());
+    when(redisUtil.get("rate_limit:config:route:default", String.class))
+        .thenReturn(Optional.empty());
     when(redisUtil.get("rate_limit:config:default", String.class)).thenReturn(Optional.empty());
     when(redisRateLimiter.isAllowed(eq("rate_limit:default:ip:" + ip), eq(10), eq(1)))
         .thenReturn(true);
