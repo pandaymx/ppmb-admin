@@ -90,6 +90,18 @@ public class MenuDataInitializer implements CommandLineRunner {
                       "MenuOutlined",
                       "sys:menu:list",
                       "system/menu/index"))));
+      menus.add(
+          menuRepository.save(
+              createMenu(
+                  new MenuDefinition(
+                      "审计日志",
+                      systemMenu.getId(),
+                      4,
+                      "audit",
+                      "C",
+                      "FileSearchOutlined",
+                      "sys:audit:list",
+                      "system/audit/index"))));
 
       // 3. 创建超级管理员角色
       if (roleRepository.findAll().isEmpty()) {
