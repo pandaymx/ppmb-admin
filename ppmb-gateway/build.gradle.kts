@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.jackson3.core)
 
     implementation(libs.spring.cloud.starter.gateway.server.webmvc)
+    implementation(libs.spring.cloud.starter.circuitbreaker.reactor.resilience4j)
     implementation(libs.springdoc.openapi.starter.webmvc.ui)
 
     developmentOnly(libs.spring.boot.devtools)

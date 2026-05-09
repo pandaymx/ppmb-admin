@@ -27,28 +27,28 @@ spring:
                 - Path=/api/system/**
               filters:
                 - StripPrefix=2
-                - RateLimit=1,20
+                - CircuitBreaker=systemCircuitBreaker,forward:/fallback
             - id: auth-service-route
               uri: lb://ppmb-auth
               predicates:
                 - Path=/api/auth/**
               filters:
                 - StripPrefix=1
-                - RateLimit=1,10
+                - CircuitBreaker=authCircuitBreaker,forward:/fallback
             - id: user-service-route
               uri: lb://ppmb-system
               predicates:
                 - Path=/api/user/**
               filters:
                 - StripPrefix=2
-                - RateLimit=1,20
+                - CircuitBreaker=systemCircuitBreaker,forward:/fallback
             - id: ai-service-route
               uri: lb://ppmb-ai
               predicates:
                 - Path=/api/ai/**
               filters:
                 - StripPrefix=1
-                - RateLimit=1,20
+                - CircuitBreaker=systemCircuitBreaker,forward:/fallback
           cors:
             configurations:
               '[/**]':
@@ -64,6 +64,48 @@ ppmb:
     gateway-mode: true
     jwt:
       secret: "dGhpcy1pcy1hLXZlcnktc2VjcmV0LWtleS1mb3ItZGV2ZWxvcG1lbnQtcHVycG9zZXM=" # 32 bytes Base64
+
+resilience4j:
+  metrics:
+    enabled: true
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 200
+        minimumNumberOfCalls: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+    instances:
+      authCircuitBreaker:
+        baseConfig: default
+        slidingWindowSize: 1000
+      systemCircuitBreaker:
+        baseConfig: default
+        slidingWindowSize: 200
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 5000
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+    instances:
+      authRateLimiter:
+        baseConfig: default
+      systemRateLimiter:
+        baseConfig: default
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 200
+        maxWaitDuration: 0s
+    instances:
+      authBulkhead:
+        baseConfig: default
+      systemBulkhead:
+        baseConfig: default
 
 management:
   endpoints:

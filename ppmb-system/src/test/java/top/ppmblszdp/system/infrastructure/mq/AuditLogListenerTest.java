@@ -75,7 +75,7 @@ class AuditLogListenerTest {
             "{}",
             "127.0.0.1",
             1L,
-            100L,
+            1L,
             LocalDateTime.now());
 
     when(auditLogRepository.existsByTraceId(traceId)).thenReturn(true);
