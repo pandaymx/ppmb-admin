@@ -32,18 +32,18 @@ public class TenantAuthenticationFilter extends OncePerRequestFilter {
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    String requestURI = request.getRequestURI();
+    String requestUri = request.getRequestURI();
 
     // Skip if it's an ignored URL
     if (properties.getIgnoreUrls() != null
         && properties.getIgnoreUrls().stream()
-            .anyMatch(pattern -> pathMatcher.match(pattern, requestURI))) {
+            .anyMatch(pattern -> pathMatcher.match(pattern, requestUri))) {
       filterChain.doFilter(request, response);
       return;
     }
 
     // Also skip actuator
-    if (requestURI.startsWith("/actuator")) {
+    if (requestUri.startsWith("/actuator")) {
       filterChain.doFilter(request, response);
       return;
     }
