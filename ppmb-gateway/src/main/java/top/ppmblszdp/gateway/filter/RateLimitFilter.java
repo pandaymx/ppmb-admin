@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import top.ppmblszdp.common.redis.util.RedisRateLimiter;
 import top.ppmblszdp.common.security.config.PpmbSecurityProperties;
 import top.ppmblszdp.common.security.util.JwtUtils;

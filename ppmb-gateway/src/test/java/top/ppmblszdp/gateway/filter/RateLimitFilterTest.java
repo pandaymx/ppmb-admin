@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import top.ppmblszdp.common.redis.util.RedisRateLimiter;
 import top.ppmblszdp.common.security.config.PpmbSecurityProperties;
 import top.ppmblszdp.common.security.util.JwtUtils;
