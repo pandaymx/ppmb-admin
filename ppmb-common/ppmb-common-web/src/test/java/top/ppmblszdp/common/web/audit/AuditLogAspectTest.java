@@ -39,7 +39,7 @@ class AuditLogAspectTest {
   @Test
   @DisplayName("应记录请求信息并脱敏敏感参数")
   void shouldRecordAuditLogWithMaskedSensitiveParams() throws Throwable {
-    AuditLogAspect aspect = new AuditLogAspect(eventPublisher);
+    final AuditLogAspect aspect = new AuditLogAspect(eventPublisher);
     Method method = TestController.class.getDeclaredMethod("create", String.class, String.class);
 
     when(joinPoint.proceed()).thenReturn("ok");
