@@ -11,6 +11,9 @@ import BasicLayout from "../layouts/BasicLayout";
 import UserLayout from "../layouts/UserLayout";
 import AuthPage from "../pages/login/AuthPage";
 import DashboardPage from "../pages/dashboard/index";
+import ChatPage from "../pages/ai/Chat";
+import { RobotOutlined } from "@ant-design/icons";
+
 import ProtectedRoute from "../components/ProtectedRoute";
 
 // Extended RouteObject type for custom metadata
@@ -50,6 +53,14 @@ export const routes: AppRouteObject[] = [
         meta: {
           title: "Dashboard",
           icon: <PieChartOutlined />,
+        },
+      },
+      {
+        path: "ai",
+        element: <ChatPage />,
+        meta: {
+          title: "AI Assistant",
+          icon: <RobotOutlined />,
         },
       },
       {

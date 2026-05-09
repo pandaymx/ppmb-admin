@@ -32,7 +32,7 @@ class AuditEntityListenerTest {
   @Test
   @DisplayName("审计实体插入时应发布审计事件")
   void shouldPublishAuditEventOnInsertForAuditableEntity() {
-    AuditEntityListener listener = new AuditEntityListener(eventPublisher);
+    final AuditEntityListener listener = new AuditEntityListener(eventPublisher);
     AuditableEntity entity = new AuditableEntity();
 
     when(postInsertEvent.getEntity()).thenReturn(entity);
@@ -57,7 +57,7 @@ class AuditEntityListenerTest {
   @Test
   @DisplayName("非审计实体插入时不应发布事件")
   void shouldNotPublishEventForNonAuditableEntity() {
-    AuditEntityListener listener = new AuditEntityListener(eventPublisher);
+    final AuditEntityListener listener = new AuditEntityListener(eventPublisher);
     NonAuditableEntity entity = new NonAuditableEntity();
     when(postInsertEvent.getEntity()).thenReturn(entity);
 
@@ -69,7 +69,7 @@ class AuditEntityListenerTest {
   @Test
   @DisplayName("requiresPostCommitHandling 应返回 false")
   void shouldReturnFalseForPostCommitHandling() {
-    AuditEntityListener listener = new AuditEntityListener(eventPublisher);
+    final AuditEntityListener listener = new AuditEntityListener(eventPublisher);
     assertFalse(listener.requiresPostCommitHandling(persister));
   }
 
