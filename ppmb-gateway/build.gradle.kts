@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(project(":ppmb-common:ppmb-common-web"))
     implementation(project(":ppmb-common:ppmb-common-api"))
+    implementation(project(":ppmb-common:ppmb-common-redis"))
     implementation(project(":ppmb-common:ppmb-common-security"))
     implementation(project(":ppmb-common:ppmb-common-redis"))
     implementation(libs.jjwt.api)
