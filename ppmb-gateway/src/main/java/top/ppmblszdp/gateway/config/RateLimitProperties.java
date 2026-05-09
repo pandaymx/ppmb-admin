@@ -14,4 +14,5 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public record RateLimitProperties(
     @DefaultValue("true") boolean enabled,
     @DefaultValue("10") int count,
-    @DefaultValue("1") int period) {}
+    @DefaultValue("1") int period,
+    @DefaultValue("rate_limit:config") String ruleKeyPrefix) {}

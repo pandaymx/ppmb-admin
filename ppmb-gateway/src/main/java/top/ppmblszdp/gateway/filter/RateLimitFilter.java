@@ -7,17 +7,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.gateway.server.mvc.common.MvcUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import tools.jackson.databind.ObjectMapper;
 import top.ppmblszdp.common.redis.util.RedisRateLimiter;
+import top.ppmblszdp.common.redis.util.RedisUtil;
 import top.ppmblszdp.common.security.config.PpmbSecurityProperties;
 import top.ppmblszdp.common.security.util.JwtUtils;
 import top.ppmblszdp.gateway.config.RateLimitProperties;
@@ -37,6 +41,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
   private final JwtUtils jwtUtils;
   private final PpmbSecurityProperties securityProperties;
   private final RateLimitProperties rateLimitProperties;
+  private final RedisUtil redisUtil;
   private final ObjectMapper objectMapper;
 
   @Override
@@ -49,11 +54,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
       return;
     }
 
-    String rateLimitKey = resolveRateLimitKey(request);
+    String routeId = resolveRouteId(request);
+    RateLimitIdentity identity = resolveIdentity(request);
+    String rateLimitKey = "rate_limit:" + routeId + ":" + identity.type() + ":" + identity.value();
+    RateLimitRule rule = resolveRule(routeId, identity);
 
     boolean allowed =
-        redisRateLimiter.isAllowed(
-            rateLimitKey, rateLimitProperties.count(), rateLimitProperties.period());
+        redisRateLimiter.isAllowed(rateLimitKey, rule.count(), rule.period());
 
     if (!allowed) {
       log.warn("Rate limit exceeded for key: {}", rateLimitKey);
@@ -80,7 +87,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
     objectMapper.writeValue(response.getWriter(), problemDetail);
   }
 
-  private String resolveRateLimitKey(HttpServletRequest request) {
+  private RateLimitIdentity resolveIdentity(HttpServletRequest request) {
     String headerName = securityProperties.getJwt().getHeaderName();
     String headerValue = request.getHeader(headerName);
 
@@ -97,8 +104,37 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 return Optional.empty();
               }
             })
-        .map(subject -> "rate_limit:user:" + subject)
-        .orElseGet(() -> "rate_limit:ip:" + getClientIp(request));
+        .map(subject -> new RateLimitIdentity("user", subject))
+        .orElseGet(() -> new RateLimitIdentity("ip", getClientIp(request)));
+  }
+
+  private String resolveRouteId(HttpServletRequest request) {
+    Object routeIdAttr = request.getAttribute(MvcUtils.GATEWAY_ROUTE_ID_ATTR);
+    if (routeIdAttr == null) {
+      return "default";
+    }
+    String routeId = routeIdAttr.toString();
+    return StringUtils.hasText(routeId) ? routeId : "default";
+  }
+
+  private RateLimitRule resolveRule(String routeId, RateLimitIdentity identity) {
+    String prefix = rateLimitProperties.ruleKeyPrefix();
+    List<String> candidateKeys =
+        List.of(
+            prefix + ":route:" + routeId + ":" + identity.type() + ":" + identity.value(),
+            prefix + ":" + identity.type() + ":" + identity.value(),
+            prefix + ":route:" + routeId,
+            prefix + ":default");
+
+    for (String key : candidateKeys) {
+      String value = redisUtil.get(key, String.class).orElse(null);
+      RateLimitRule parsedRule = RateLimitRule.parse(value);
+      if (parsedRule != null) {
+        return parsedRule;
+      }
+    }
+
+    return new RateLimitRule(rateLimitProperties.count(), rateLimitProperties.period());
   }
 
   private String getClientIp(HttpServletRequest request) {
@@ -110,5 +146,31 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 Optional.ofNullable(request.getHeader("X-Real-IP"))
                     .filter(h -> !h.isBlank() && !"unknown".equalsIgnoreCase(h)))
         .orElseGet(request::getRemoteAddr);
+  }
+
+  private record RateLimitIdentity(String type, String value) {}
+
+  private record RateLimitRule(int count, int period) {
+    private static RateLimitRule parse(String value) {
+      if (!StringUtils.hasText(value)) {
+        return null;
+      }
+
+      String[] parts = value.trim().split("[:,]");
+      if (parts.length != 2) {
+        return null;
+      }
+
+      try {
+        int count = Integer.parseInt(parts[0].trim());
+        int period = Integer.parseInt(parts[1].trim());
+        if (count <= 0 || period <= 0) {
+          return null;
+        }
+        return new RateLimitRule(count, period);
+      } catch (NumberFormatException _) {
+        return null;
+      }
+    }
   }
 }
