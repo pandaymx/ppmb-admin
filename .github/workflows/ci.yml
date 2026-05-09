@@ -42,3 +42,50 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: ./gradlew build sonar --info
+
+  native-build:
+    runs-on: ubuntu-latest
+    services:
+      consul:
+        image: consul:1.15.4
+        ports:
+          - 8500:8500
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+    - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      with:
+        fetch-depth: 0
+
+    - name: Set up GraalVM JDK 25
+      uses: graalvm/setup-graalvm@v1
+      with:
+        java-version: '25'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        cache: 'gradle'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@d9c87d481d55275bb5441eef3fe0e46805f9ef70
+
+    - name: Build Native Images
+      run: ./gradlew nativeCompile --info
+
+    - name: Run Native Image and Verify Startup Time
+      run: |
+        ./ppmb-gateway/build/native/nativeCompile/ppmb-gateway --spring.profiles.active=test > native-startup.log 2>&1 &
+        PID=$!
+
+        # Wait for the application to start or fail
+        timeout 30s bash -c 'until grep -q "Started Application in" native-startup.log || grep -q "Started PpmbGatewayApplication in" native-startup.log || grep -q "Started .* in" native-startup.log; do sleep 1; done' || true
+
+        # Print the log for debugging
+        cat native-startup.log
+
+        # Grep the startup time
+        grep -E "Started .* in [0-9.]+ seconds" native-startup.log
+
+        # Kill the process
+        kill $PID || true
