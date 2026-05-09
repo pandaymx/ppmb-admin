@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import top.ppmblszdp.common.api.constant.MqConstants;
 import top.ppmblszdp.common.api.dto.AuditLogMessage;
+import top.ppmblszdp.common.tenant.TenantContextHolder;
 import top.ppmblszdp.system.domain.model.log.entity.SysAuditLog;
 import top.ppmblszdp.system.domain.model.log.repository.AuditLogRepository;
 
@@ -25,21 +26,32 @@ public class AuditLogListener {
         log.warn("收到重复的审计日志消息, traceId: {}", message.traceId());
         return;
       }
-      SysAuditLog logEntity = new SysAuditLog();
-      logEntity.setTraceId(message.traceId());
-      logEntity.setOperationName(message.operationName());
-      logEntity.setEntityName(message.entityName());
-      logEntity.setEntityId(message.entityId());
-      logEntity.setOldValue(message.oldValue());
-      logEntity.setNewValue(message.newValue());
-      logEntity.setRequestUri(message.requestUri());
-      logEntity.setRequestMethod(message.requestMethod());
-      logEntity.setRequestParams(message.requestParams());
-      logEntity.setIp(message.ip());
-      logEntity.setUserId(message.userId());
-      logEntity.setCreateTime(message.createTime());
 
-      auditLogRepository.save(logEntity);
+      // Set tenant context for BaseEntity's populateTenantId
+      TenantContextHolder.set(message.tenantId());
+
+      try {
+        SysAuditLog logEntity = new SysAuditLog();
+        logEntity.setTraceId(message.traceId());
+        logEntity.setOperationName(message.operationName());
+        logEntity.setEntityName(message.entityName());
+        logEntity.setEntityId(message.entityId());
+        logEntity.setOldValue(message.oldValue());
+        logEntity.setNewValue(message.newValue());
+        logEntity.setRequestUri(message.requestUri());
+        logEntity.setRequestMethod(message.requestMethod());
+        logEntity.setRequestParams(message.requestParams());
+        logEntity.setIp(message.ip());
+        logEntity.setUserId(message.userId());
+        logEntity.setCreateTime(message.createTime());
+
+        // Ensure tenantId is set even if populateTenantId fails to find context (as a fallback)
+        logEntity.setTenantId(message.tenantId() != null ? message.tenantId() : 0L);
+
+        auditLogRepository.save(logEntity);
+      } finally {
+        TenantContextHolder.clear();
+      }
     } catch (Exception e) {
       log.error("保存审计日志失败: {}", message, e);
       // Let it throw so MQ can retry based on configured policy

@@ -16,5 +16,6 @@ public record AuditLogMessage(
     String requestParams,
     String ip,
     Long userId,
+    Long tenantId,
     LocalDateTime createTime)
     implements Serializable {}

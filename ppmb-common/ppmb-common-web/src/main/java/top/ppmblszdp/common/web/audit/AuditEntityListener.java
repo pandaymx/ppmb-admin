@@ -116,6 +116,7 @@ public class AuditEntityListener
               null,
               null,
               SecurityUtils.getUserId(),
+              top.ppmblszdp.common.tenant.TenantContextHolder.get().orElse(null),
               LocalDateTime.now());
 
       eventPublisher.publishEvent(new AuditLogEvent(this, message));

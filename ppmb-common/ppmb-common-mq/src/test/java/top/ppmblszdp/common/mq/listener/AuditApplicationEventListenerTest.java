@@ -43,6 +43,7 @@ class AuditApplicationEventListenerTest {
             "{}",
             "127.0.0.1",
             1L,
+            100L,
             LocalDateTime.now());
     AuditLogEvent event = new AuditLogEvent(this, message);
 

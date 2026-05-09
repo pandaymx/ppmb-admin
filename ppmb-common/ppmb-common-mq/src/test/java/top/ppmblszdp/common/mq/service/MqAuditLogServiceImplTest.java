@@ -50,6 +50,7 @@ class MqAuditLogServiceImplTest {
             "{\"name\":\"new\"}",
             "127.0.0.1",
             1L,
+            100L,
             LocalDateTime.now());
 
     service.send(message);
@@ -74,6 +75,7 @@ class MqAuditLogServiceImplTest {
             "{\"id\":2}",
             "10.0.0.1",
             2L,
+            100L,
             LocalDateTime.now());
     RuntimeException exception = new RuntimeException("MQ down");
     doThrow(exception)
