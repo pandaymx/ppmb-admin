@@ -12,7 +12,7 @@ interface ThemeConfigProviderProps {
 export const ThemeConfigProvider: React.FC<ThemeConfigProviderProps> = ({
   children,
 }) => {
-  const { theme, locale } = useAppStore();
+  const { theme, locale, primaryColor } = useAppStore();
 
   // Handle Tailwind dark mode class on HTML root
   useEffect(() => {
@@ -37,7 +37,7 @@ export const ThemeConfigProvider: React.FC<ThemeConfigProviderProps> = ({
             ? antdTheme.darkAlgorithm
             : antdTheme.defaultAlgorithm,
         token: {
-          colorPrimary: "#1677ff",
+          colorPrimary: primaryColor,
           borderRadius: 6,
         },
       }}

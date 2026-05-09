@@ -1,8 +1,9 @@
 import React from "react";
-import { Layout, Menu, theme, Dropdown, Space, Avatar } from "antd";
-import { UserOutlined, LogoutOutlined } from "@ant-design/icons";
+import { Layout, Menu, theme, Dropdown, Space, Avatar, ColorPicker } from "antd";
+import { UserOutlined, LogoutOutlined, BgColorsOutlined } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
+import { useAppStore } from "../store/appStore";
 import { routes } from "../router/routes";
 import { AppRouteObject } from "../router/routes";
 import type { MenuProps } from "antd";
@@ -22,6 +23,10 @@ const BasicLayout: React.FC = () => {
   const menus = useAuthStore((state) => state.menus);
   const setMenus = useAuthStore((state) => state.setMenus);
   const token = useAuthStore((state) => state.token);
+
+  const primaryColor = useAppStore((state) => state.primaryColor);
+  const setPrimaryColor = useAppStore((state) => state.setPrimaryColor);
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -189,14 +194,23 @@ const BasicLayout: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <Dropdown menu={{ items: userMenuItems }}>
-            <Space className="cursor-pointer">
-              <Avatar icon={<UserOutlined />} />
-              <span className="font-medium text-gray-700">
-                {user?.username || "Admin"}
-              </span>
-            </Space>
-          </Dropdown>
+          <Space size="middle">
+            <ColorPicker
+              value={primaryColor}
+              onChange={(color) => setPrimaryColor(color.toHexString())}
+            >
+              <BgColorsOutlined style={{ fontSize: '18px', cursor: 'pointer', padding: '0 8px' }} />
+            </ColorPicker>
+
+            <Dropdown menu={{ items: userMenuItems }}>
+              <Space className="cursor-pointer">
+                <Avatar icon={<UserOutlined />} />
+                <span className="font-medium text-gray-700">
+                  {user?.username || "Admin"}
+                </span>
+              </Space>
+            </Dropdown>
+          </Space>
         </Header>
         <Content style={{ margin: "16px" }}>
           {/* Outlet renders the child route components */}
