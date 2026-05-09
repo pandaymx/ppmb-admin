@@ -27,7 +27,7 @@ dependencies {
 
     testImplementation(libs.spring.boot.starter.test)
     testImplementation(libs.jacksonDatabind)
-    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation(libs.mockito.inline)
 
     testCompileOnly(libs.lombok)
 

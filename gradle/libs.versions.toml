@@ -79,6 +79,7 @@ mapstruct-core = { group = "org.mapstruct", name = "mapstruct", version.ref = "m
 mapstruct-processor = { group = "org.mapstruct", name = "mapstruct-processor", version.ref = "mapstruct" }
 lombok-mapstruct-binding = { group = "org.projectlombok", name = "lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito" }
 micrometer-registry-prometheus = { group = "io.micrometer", name = "micrometer-registry-prometheus", version.ref = "micrometer" }
 feign-jackson = { group = "io.github.openfeign", name = "feign-jackson", version.ref = "feignJackson" }
 commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commonsText" }
