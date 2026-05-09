@@ -1,0 +1,40 @@
+---
+id: deployment
+title: 部署
+sidebar_position: 4
+---
+
+# 部署指南
+
+本部分内容指导如何将系统安全、稳定地发布并运行在生产环境中。由于 PPMB 属于典型的微服务体系，我们推荐采取容器化与编排的方案。
+
+## 生产环境依赖
+
+生产级别的部署除了基础设施，还需要保障服务的注册发现以及可靠的网络层转发：
+
+*   **数据库引擎**: 推荐部署主从高可用的 PostgreSQL 17 集群。
+*   **注册与发现**: 使用生产级的 Consul 集群，同时可通过 Consul 来集中管理（如应用级 yml）与下发配置。
+*   **网关转发**: `ppmb-gateway` 将作为请求入口承担外部流量网关职责。
+
+## 部署模式
+
+### Docker 容器化
+
+每个后端模块（如 `ppmb-gateway`, `ppmb-system`）均能依托强大的 Java 25 构建成为高效运行的 Docker 镜像。
+
+```bash
+# 示例：构建 Spring Boot Docker 镜像
+./gradlew :ppmb-system:bootBuildImage
+```
+
+### GraalVM Native Image (原生镜像)
+
+基于 Java 25 和 Spring Boot 4.0，系统默认集成了 `buildlogic.native-image-conventions` 插件用于原生镜像构建。
+编译为原生镜像后，系统将展现出极致的冷启动速度，同时内存占用大幅降低，十分适合在 Kubernetes 下作为微服务部署。
+
+> **提示**: 本地执行原生镜像编译极耗资源。我们强烈建议把该过程移交至 CI/CD Pipeline 处理。
+
+## 环境变量配置
+
+请务必针对不同环境（Dev/Test/Prod）提取出独立配置文件：
+例如在 `application-prod.yml` 中设定安全的数据库访问凭证和内网网段环境下的 Consul 访问地址等敏感配置信息。系统采用注解级别的脱敏策略保障日志落地安全，但在部署运维层面仍需避免配置文件泄露。

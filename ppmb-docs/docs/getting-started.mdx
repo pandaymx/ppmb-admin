@@ -1,0 +1,69 @@
+---
+id: getting-started
+title: 起步
+sidebar_position: 1
+---
+
+# 起步
+
+欢迎来到 PPMB (Professional Project Management Backbone) 官方文档。本指南将帮助你快速在本地搭建开发环境并启动项目。
+
+## 核心特性
+
+PPMB 是一个现代化的企业级高阶后台系统，采用以下核心技术构建，保证了系统的稳定性和开发的高效性：
+
+*   **Java 25**: 采用最新版 Java，利用其长期的 LTS 特性、改进的模式匹配和更完善的协程（Virtual Threads）能力，为系统提供更卓越的并发和高吞吐量性能。支持 GraalVM 编译为原生镜像，显著降低内存占用和冷启动时间。
+*   **Spring Boot 4.0**: 全面拥抱最新的 Spring Boot，利用 Jakarta EE 11 提供企业级 Web 基础设施标准。带来极致的开发体验与自动化配置能力，同时改进了对 AOT 编译的支持，原生集成 ProblemDetails 异常处理。
+*   **PostgreSQL 17**: 核心持久化存储，支持更多高级 JSONB 运算操作与优化。相比旧版本提供更好的查询优化与高并发场景下的性能表现。
+
+## 环境准备
+
+在开始之前，请确保本地已安装以下必要组件：
+
+*   **Java 25**: 项目最低的 JDK 要求，请确保配置好 `JAVA_HOME`。
+*   **Docker & Docker Compose**: 用于一键拉起包括 PostgreSQL, Redis, RabbitMQ, Consul 和监控体系在内的基础设施容器。
+*   **Bun**: 用于前端及相关工具链（如本项目文档）的依赖管理，速度比传统的 npm/yarn 更快。
+
+## 快速开始
+
+本项目提供了一个便捷的 `Makefile` 以支持一键启动：
+
+### 1. 启动基础设施
+
+使用 Docker Compose 在后台拉起所有的依赖组件：
+
+```bash
+make infra
+```
+这将会启动包括数据库、中间件、监控组件、服务注册与发现中心 (Consul) 在内的全部基础服务。
+
+### 2. 启动后端微服务
+
+通过 Gradle 启动后端的应用模块：
+
+```bash
+make backend
+```
+
+> **注意**: 如果你的环境不支持 `make` 命令，可以手动通过如下方式运行：
+> `./gradlew :ppmb-gateway:bootRun :ppmb-system:bootRun --parallel`
+
+### 3. 一键拉起全栈（包含前端）
+
+若需要同时启动基础服务、所有微服务及前端：
+
+```bash
+make all
+```
+
+## 基础设施面板
+
+各基础服务启动后，你可以在浏览器中访问对应的控制台面板：
+
+| 服务            | 地址                                             | 默认账号/密码     |
+| :-------------- | :----------------------------------------------- | :---------------- |
+| **Consul UI**   | [http://localhost:8500](http://localhost:8500)   | -                 |
+| **Grafana**     | [http://localhost:3000](http://localhost:3000)   | `admin` / `admin` |
+| **Prometheus**  | [http://localhost:9090](http://localhost:9090)   | -                 |
+| **RabbitMQ UI** | [http://localhost:15672](http://localhost:15672) | `guest` / `guest` |
+| **SonarQube**   | [http://localhost:9000](http://localhost:9000)   | `admin` / `admin` |

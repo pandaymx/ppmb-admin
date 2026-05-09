@@ -1,0 +1,50 @@
+---
+id: architecture
+title: 架构
+sidebar_position: 2
+---
+
+# 架构设计
+
+PPMB 项目严格遵循 **领域驱动设计 (DDD)** 原则，采用清晰的多层架构，显式区分各层职责，实现了业务逻辑与基础设施的解耦。
+
+## 模块结构
+
+本项目的后端核心模块之一 `ppmb-system` 清晰地体现了 DDD 的核心设计：
+
+```
+ppmb-system/src/main/java/top/ppmblszdp/system/
+├── application    // 应用层 (Application Layer)
+├── domain         // 领域层 (Domain Layer)
+├── infrastructure // 基础设施层 (Infrastructure Layer)
+└── interfaces     // 用户接口层 (User Interface Layer)
+```
+
+## 技术栈在 DDD 架构中的协作
+
+通过结合最新的现代技术栈，PPMB 确保了各个架构层次的卓越表现：
+
+### 领域层 (Domain Layer)
+
+*   **职责**: 包含核心的 Domain Model (实体 Entity、聚合根 Aggregate Root、值对象 Value Object) 以及 Domain Service。
+*   **设计标准**:
+    *   **实体 (Entity) 与聚合根 (Aggregate Root)**: `Entity` 包含了唯一标识 (ID) 以及随时间可变的状态；而 `Aggregate Root` 则是保护内部实体的一致性边界，外部对象只能通过持有聚合根的引用进行交互。项目中主实体（继承 `BaseMainEntity`）通过聚合根设计管理下级详情（继承 `BaseChildEntity`），并借助 Java 21+ 的 Record 类型用于不可变值的封装。
+    *   **技术应用**: Java 25 的高级模式匹配、不可变集合极大地增强了领域模型的健壮性；确保业务规则纯粹不污染。
+
+### 应用层 (Application Layer)
+
+*   **职责**: 负责业务编排、事务处理，通过 Application Service 协调多个领域对象，向外提供粗粒度的服务能力。
+*   **技术应用**: 借助 Spring Boot 4.0 提供的增强事务管理 (`@Transactional`) 进行本地事务控制；协调异步服务编排时，得益于 Java 25 的虚拟线程 (Virtual Threads)，能够在极低资源占用下实现高并发的任务调度与 Outbox 补偿。在服务返回值上，通过 MapStruct (Assembler 概念) 转化为 DTO 输出给前端，彻底避免底层模型泄露。
+
+### 基础设施层 (Infrastructure Layer)
+
+*   **职责**: 提供技术实现细节，包括持久化数据库操作、消息队列通讯、三方服务集成和缓存层操作。
+*   **技术应用**:
+    *   使用 Spring Data JPA 作为 ORM 层。
+    *   利用高版本 **PostgreSQL 17** 提供的高级 JSONB 和性能优化支持系统复杂的业务字段扩展（如审核日志）。
+    *   基于 Liquibase 独立控制每个微服务的表结构版本管理。
+
+### 用户接口层 (User Interface Layer)
+
+*   **职责**: 主要指控制层（Controllers），处理 HTTP 请求，进行权限认证、日志打点并返回规范统一的结果响应。
+*   **技术应用**: 基于 Spring Web MVC，依赖于 Spring Boot 4.0 的 ProblemDetails 实现全局的错误统一标准响应；数据脱敏策略及接口鉴权机制（Spring Security 集成）。
