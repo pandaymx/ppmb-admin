@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -46,7 +47,7 @@ class OutboxRetryJobTest {
 
     outboxRetryJob.retryFailedMessages();
 
-    verify(outboxRetryExecutor).submit(any(Runnable.class));
+    verify(outboxRetryExecutor, times(1)).submit(any(Runnable.class));
   }
 
   @Test

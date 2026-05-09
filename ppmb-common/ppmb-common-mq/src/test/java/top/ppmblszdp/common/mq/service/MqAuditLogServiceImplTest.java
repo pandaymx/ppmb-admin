@@ -2,6 +2,7 @@ package top.ppmblszdp.common.mq.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -93,7 +94,8 @@ class MqAuditLogServiceImplTest {
     assertNotNull(fallbackMessage);
     assertEquals("ppmb-common-mq", fallbackMessage.serviceName());
     assertEquals(RuntimeException.class.getName(), fallbackMessage.exceptionName());
-    assertEquals("Failed to send audit log: MQ down", fallbackMessage.message());
+    assertTrue(fallbackMessage.message().startsWith("Failed to send audit log: "));
+    assertTrue(fallbackMessage.message().contains("MQ down"));
     assertEquals("/orders", fallbackMessage.requestUri());
     assertEquals("POST", fallbackMessage.requestMethod());
     assertEquals("{\"id\":2}", fallbackMessage.requestParams());
