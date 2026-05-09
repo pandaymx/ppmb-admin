@@ -4,11 +4,16 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -72,8 +77,67 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
+
+      // Extract tenantId from JWT claims and inject it into the request header for downstream
+      // filters (or routing)
+      Long tenantId = claims.get("tenantId", Long.class);
+      if (tenantId == null) {
+        Number tidNum = claims.get("tid", Number.class);
+        if (tidNum != null) {
+          tenantId = tidNum.longValue();
+        }
+      }
+
+      if (tenantId != null) {
+        HeaderMapRequestWrapper requestWrapper = new HeaderMapRequestWrapper(request);
+        requestWrapper.addHeader(properties.getHeader().getTenantId(), String.valueOf(tenantId));
+        requestWrapper.addHeader(properties.getHeader().getUserId(), subject);
+        if (StringUtils.hasText(rolesStr)) {
+          requestWrapper.addHeader(properties.getHeader().getRoles(), rolesStr);
+        }
+        filterChain.doFilter(requestWrapper, response);
+        return;
+      }
     }
 
     filterChain.doFilter(request, response);
+  }
+
+  /** Wrapper to allow modifying HTTP headers. */
+  public static class HeaderMapRequestWrapper extends HttpServletRequestWrapper {
+    private final Map<String, String> headerMap = new HashMap<>();
+
+    public HeaderMapRequestWrapper(HttpServletRequest request) {
+      super(request);
+    }
+
+    public void addHeader(String name, String value) {
+      headerMap.put(name, value);
+    }
+
+    @Override
+    public String getHeader(String name) {
+      String headerValue = super.getHeader(name);
+      if (headerMap.containsKey(name)) {
+        headerValue = headerMap.get(name);
+      }
+      return headerValue;
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+      List<String> names = Collections.list(super.getHeaderNames());
+      names.addAll(headerMap.keySet());
+      return Collections.enumeration(names);
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+      List<String> values = Collections.list(super.getHeaders(name));
+      if (headerMap.containsKey(name)) {
+        values.add(headerMap.get(name));
+      }
+      return Collections.enumeration(values);
+    }
   }
 }

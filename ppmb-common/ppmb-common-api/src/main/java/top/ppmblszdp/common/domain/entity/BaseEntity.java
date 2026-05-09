@@ -4,12 +4,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import top.ppmblszdp.common.tenant.GlobalTable;
+import top.ppmblszdp.common.tenant.TenantContextHolder;
 
 /**
  * Base entity with common fields: id, tenant_id, create_by, create_time, dept_id, role_id,
@@ -18,6 +25,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@FilterDef(
+    name = "tenantFilter",
+    parameters = {@ParamDef(name = "tenantId", type = Long.class)})
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 public abstract class BaseEntity implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -60,5 +71,13 @@ public abstract class BaseEntity implements Serializable {
    */
   protected void setId(Long id) {
     this.id = id;
+  }
+
+  @PrePersist
+  @PreUpdate
+  public void populateTenantId() {
+    if (!this.getClass().isAnnotationPresent(GlobalTable.class)) {
+      TenantContextHolder.get().ifPresent(id -> this.tenantId = id);
+    }
   }
 }

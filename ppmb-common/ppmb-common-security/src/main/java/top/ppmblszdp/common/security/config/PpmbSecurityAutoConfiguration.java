@@ -18,6 +18,7 @@ import top.ppmblszdp.common.security.exception.ProblemDetailAccessDeniedHandler;
 import top.ppmblszdp.common.security.exception.ProblemDetailAuthenticationEntryPoint;
 import top.ppmblszdp.common.security.filter.HeaderAuthenticationFilter;
 import top.ppmblszdp.common.security.filter.JwtAuthenticationFilter;
+import top.ppmblszdp.common.security.filter.TenantAuthenticationFilter;
 import top.ppmblszdp.common.security.util.JwtUtils;
 
 @AutoConfiguration
@@ -115,6 +116,11 @@ public class PpmbSecurityAutoConfiguration {
           new JwtAuthenticationFilter(properties, jwtUtils),
           UsernamePasswordAuthenticationFilter.class);
     }
+
+    // Add TenantAuthenticationFilter after the authentication filters
+    http.addFilterAfter(
+        new TenantAuthenticationFilter(properties, authenticationEntryPoint),
+        UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

@@ -20,6 +20,9 @@ public class PpmbSecurityProperties {
   /** Configuration for HTTP Headers used in passthrough mode. */
   private Header header = new Header();
 
+  /** URLs to bypass tenant authentication. */
+  private java.util.List<String> ignoreUrls = new java.util.ArrayList<>();
+
   @Data
   public static class Jwt {
     /** Secret key for parsing JWTs. Must be Base64 encoded. */
@@ -45,5 +48,8 @@ public class PpmbSecurityProperties {
 
     /** Header name for passing user roles. */
     private String roles = "X-User-Roles";
+
+    /** Header name for passing tenant ID. */
+    private String tenantId = "X-Tenant-Id";
   }
 }
