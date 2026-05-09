@@ -32,7 +32,6 @@ class AuditEntityListenerTest {
   @Test
   @DisplayName("审计实体插入时应发布审计事件")
   void shouldPublishAuditEventOnInsertForAuditableEntity() {
-    AuditEntityListener listener = new AuditEntityListener(eventPublisher);
     AuditableEntity entity = new AuditableEntity();
 
     when(postInsertEvent.getEntity()).thenReturn(entity);
@@ -43,6 +42,7 @@ class AuditEntityListenerTest {
     when(persister.getPropertyTypes()).thenReturn(new Type[] {basicType});
     when(basicType.isAssociationType()).thenReturn(false);
 
+    final AuditEntityListener listener = new AuditEntityListener(eventPublisher);
     listener.onPostInsert(postInsertEvent);
 
     ArgumentCaptor<AuditLogEvent> eventCaptor = ArgumentCaptor.forClass(AuditLogEvent.class);

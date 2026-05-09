@@ -26,22 +26,39 @@ spring:
         enabled: true
 
 resilience4j:
+  metrics:
+    enabled: true
   circuitbreaker:
-    instances:
-      remoteUserService:
+    configs:
+      default:
         slidingWindowType: COUNT_BASED
-        slidingWindowSize: 50
-        minimumNumberOfCalls: 10
+        slidingWindowSize: 200
+        minimumNumberOfCalls: 100
         failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
-  ratelimiter:
     instances:
       remoteUserService:
-        limitForPeriod: 50
+        baseConfig: default
+        slidingWindowSize: 1000
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 5000
         limitRefreshPeriod: 1s
-        timeoutDuration: 0
+        timeoutDuration: 0s
+    instances:
+      remoteUserService:
+        baseConfig: default
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 200
+        maxWaitDuration: 0s
+    instances:
+      remoteUserService:
+        baseConfig: default
 
 management:
   endpoints:

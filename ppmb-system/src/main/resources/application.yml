@@ -40,6 +40,31 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
 
+resilience4j:
+  metrics:
+    enabled: true
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 200
+        minimumNumberOfCalls: 100
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 10
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 5000
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0s
+  bulkhead:
+    configs:
+      default:
+        maxConcurrentCalls: 200
+        maxWaitDuration: 0s
+
 management:
   endpoints:
     web:

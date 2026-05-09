@@ -85,7 +85,7 @@ class MenuDataInitializerTest {
     menuDataInitializer.run();
 
     // Verify
-    verify(menuRepository, times(4)).save(any(SysMenu.class)); // 1 system + 3 submenus
+    verify(menuRepository, times(5)).save(any(SysMenu.class)); // 1 system + 4 submenus
     verify(roleRepository).save(any(Role.class));
     verify(roleMenuRepository).saveAll(anyList());
     verify(userRepository).save(any(User.class));
@@ -107,7 +107,7 @@ class MenuDataInitializerTest {
     menuDataInitializer.run();
 
     // Verify
-    verify(menuRepository, times(4)).save(any(SysMenu.class));
+    verify(menuRepository, times(5)).save(any(SysMenu.class));
     verify(roleRepository, never()).save(any(Role.class));
     verify(userRepository, never()).save(any(User.class));
   }
