@@ -24,4 +24,13 @@ dependencies {
 
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     archiveFileName.set("app.jar")
+    mainClass.set("top.ppmblszdp.auth.AuthApplication")
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            mainClass.set("top.ppmblszdp.auth.AuthApplication")
+        }
+    }
 }
