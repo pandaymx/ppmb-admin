@@ -5,7 +5,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'PPMB Admin',
+  title: 'PPMB (Professional Project Management Backbone) 官方文档',
   tagline: 'Professional Project Management Backbone',
   favicon: 'img/favicon.ico',
 
@@ -75,7 +75,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'PPMB Admin',
+      title: 'PPMB 官方文档',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -85,9 +85,9 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: '文档',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/blog', label: '博客', position: 'left'},
         {
           href: 'https://github.com/pandaymx/ppmb-admin',
           label: 'GitHub',
@@ -99,11 +99,11 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: '文档',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: '起步',
+              to: '/docs/getting-started',
             },
           ],
         },
@@ -138,7 +138,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} PPMB Admin. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} PPMB 官方文档. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
