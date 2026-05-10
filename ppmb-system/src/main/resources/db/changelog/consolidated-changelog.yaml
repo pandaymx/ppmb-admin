@@ -1,0 +1,1182 @@
+databaseChangeLog:
+  # ===== TABLE: sys_user =====
+  - changeSet:
+      id: "consolidated-001-sys-user"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by_dept
+                  type: BIGINT
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: nickname
+                  type: VARCHAR(50)
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: status
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+        - createIndex:
+            tableName: sys_user
+            indexName: idx_sys_user_username
+            columns:
+              - column:
+                  name: username
+
+  # ===== TABLE: sys_role =====
+  - changeSet:
+      id: "consolidated-002-sys-role"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_role
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by_dept
+                  type: BIGINT
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_code
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_readonly
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+        - createIndex:
+            tableName: sys_role
+            indexName: idx_sys_role_role_code
+            columns:
+              - column:
+                  name: role_code
+
+  # ===== TABLE: sys_user_role =====
+  - changeSet:
+      id: "consolidated-003-sys-user-role"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_user_role
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+        - createIndex:
+            tableName: sys_user_role
+            indexName: idx_sys_user_role_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: sys_user_role
+            indexName: idx_sys_user_role_role_id
+            columns:
+              - column:
+                  name: role_id
+
+  # ===== TABLE: sys_post =====
+  - changeSet:
+      id: "consolidated-004-sys-post"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_post
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_code
+                  type: VARCHAR(64)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: post_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sort_num
+                  type: INT
+              - column:
+                  name: status
+                  type: INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name: remark
+                  type: VARCHAR(255)
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by_dept
+                  type: BIGINT
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+
+  # ===== TABLE: sys_menu =====
+  - changeSet:
+      id: "consolidated-005-sys-menu"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_menu
+            remarks: "System Menu Table"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_sys_menu
+              - column:
+                  name: menu_name
+                  type: VARCHAR(50)
+                  remarks: "Menu Name"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  remarks: "Parent Menu ID"
+              - column:
+                  name: menu_type
+                  type: VARCHAR(1)
+                  remarks: "Menu Type (M: Directory, C: Menu, F: Button)"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: path
+                  type: VARCHAR(200)
+                  remarks: "Routing Path"
+              - column:
+                  name: component
+                  type: VARCHAR(255)
+                  remarks: "Component Path"
+              - column:
+                  name: perms
+                  type: VARCHAR(100)
+                  remarks: "Permission String"
+              - column:
+                  name: icon
+                  type: VARCHAR(100)
+                  remarks: "Menu Icon"
+              - column:
+                  name: order_num
+                  type: INT
+                  defaultValueNumeric: 0
+                  remarks: "Display Order"
+              - column:
+                  name: visible
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  remarks: "Is Visible"
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  remarks: "Creator ID"
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "Creation Time"
+              - column:
+                  name: update_by
+                  type: BIGINT
+                  remarks: "Updater ID"
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+                  remarks: "Update Time"
+              - column:
+                  name: del_flag
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  remarks: "Deletion Flag (0: Normal, 1: Deleted)"
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: status
+                  type: INT
+                  defaultValueNumeric: 0
+        - createIndex:
+            tableName: sys_menu
+            indexName: idx_sys_menu_parent_id
+            columns:
+              - column:
+                  name: parent_id
+
+  # ===== TABLE: sys_role_menu =====
+  - changeSet:
+      id: "consolidated-006-sys-role-menu"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_role_menu
+            remarks: "Role and Menu Association Table"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "Primary Key"
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: pk_sys_role_menu
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  remarks: "Role ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: menu_id
+                  type: BIGINT
+                  remarks: "Menu ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  remarks: "Creator ID"
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "Creation Time"
+              - column:
+                  name: update_by
+                  type: BIGINT
+                  remarks: "Updater ID"
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+                  remarks: "Update Time"
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: parent_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: sys_role_menu
+            indexName: idx_sys_role_menu_role_id_menu_id
+            unique: true
+            columns:
+              - column:
+                  name: role_id
+              - column:
+                  name: menu_id
+
+  # ===== TABLE: sys_department =====
+  - changeSet:
+      id: "consolidated-007-sys-department"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_department
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: parent_id
+                  type: BIGINT
+              - column:
+                  name: dept_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_code
+                  type: VARCHAR(50)
+              - column:
+                  name: abbreviation
+                  type: VARCHAR(50)
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: leader_id
+                  type: BIGINT
+              - column:
+                  name: sort_num
+                  type: INT
+              - column:
+                  name: status
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+
+  # ===== TABLE: sys_dict_type =====
+  - changeSet:
+      id: "consolidated-008-sys-dict-type"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_dict_type
+            remarks: "字典类型表"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "主键"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  remarks: "租户ID"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  remarks: "创建人"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by_dept
+                  type: BIGINT
+                  remarks: "创建人部门"
+              - column:
+                  name: update_by
+                  type: BIGINT
+                  remarks: "更新人"
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+                  remarks: "更新时间"
+              - column:
+                  name: del_flag
+                  type: INT
+                  remarks: "删除标志（0代表存在 1代表删除）"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  remarks: "版本号"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_name
+                  type: VARCHAR(100)
+                  remarks: "字典名称"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_type
+                  type: VARCHAR(100)
+                  remarks: "字典类型"
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: "uk_sys_dict_type"
+              - column:
+                  name: system_flag
+                  type: VARCHAR(1)
+                  remarks: "系统内置标志（Y是 N否）"
+                  defaultValue: "N"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: INT
+                  remarks: "状态（0正常 1停用）"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: remark
+                  type: VARCHAR(500)
+                  remarks: "备注"
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+
+  # ===== TABLE: sys_dict_data =====
+  - changeSet:
+      id: "consolidated-009-sys-dict-data"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_dict_data
+            remarks: "字典数据表"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "主键"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  remarks: "租户ID"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "创建时间"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  remarks: "创建人"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: BIGINT
+                  remarks: "父主键ID(字典类型ID)"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_sort
+                  type: INT
+                  remarks: "字典排序"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_label
+                  type: VARCHAR(100)
+                  remarks: "字典标签"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_value
+                  type: VARCHAR(100)
+                  remarks: "字典键值"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dict_type
+                  type: VARCHAR(100)
+                  remarks: "字典类型"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: VARCHAR(1)
+                  remarks: "是否默认（Y是 N否）"
+                  defaultValue: "N"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: list_class
+                  type: VARCHAR(100)
+                  remarks: "表格字典样式"
+              - column:
+                  name: status
+                  type: INT
+                  remarks: "状态（0正常 1停用）"
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: remark
+                  type: VARCHAR(500)
+                  remarks: "备注"
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+        - addUniqueConstraint:
+            tableName: sys_dict_data
+            columnNames: dict_type, dict_value
+            constraintName: uk_sys_dict_data_type_value
+        - createIndex:
+            tableName: sys_dict_data
+            indexName: idx_sys_dict_data_type
+            columns:
+              - column:
+                  name: dict_type
+
+  # ===== TABLE: sys_audit_log =====
+  - changeSet:
+      id: "consolidated-010-sys-audit-log"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_audit_log
+            remarks: "审计日志表"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "主键 ID"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: trace_id
+                  type: VARCHAR(64)
+                  remarks: "幂等性追踪 ID"
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: operation_name
+                  type: VARCHAR(255)
+                  remarks: "操作名称"
+              - column:
+                  name: entity_name
+                  type: VARCHAR(255)
+                  remarks: "受影响的实体名称"
+              - column:
+                  name: entity_id
+                  type: VARCHAR(64)
+                  remarks: "受影响的实体ID"
+              - column:
+                  name: old_value
+                  type: jsonb
+                  remarks: "变更前数据"
+              - column:
+                  name: new_value
+                  type: jsonb
+                  remarks: "变更后数据"
+              - column:
+                  name: request_uri
+                  type: VARCHAR(255)
+                  remarks: "请求 URI"
+              - column:
+                  name: request_method
+                  type: VARCHAR(20)
+                  remarks: "请求方法"
+              - column:
+                  name: request_params
+                  type: TEXT
+                  remarks: "请求参数"
+              - column:
+                  name: ip
+                  type: VARCHAR(64)
+                  remarks: "操作 IP"
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  remarks: "操作人 ID"
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "创建时间"
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  remarks: "租户 ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  remarks: "创建者 ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  remarks: "部门 ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  remarks: "角色 ID"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+                  remarks: "数据范围"
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: sys_audit_log
+            indexName: idx_sys_audit_log_user_id
+            columns:
+              - column:
+                  name: user_id
+        - createIndex:
+            tableName: sys_audit_log
+            indexName: idx_sys_audit_log_entity
+            columns:
+              - column:
+                  name: entity_name
+              - column:
+                  name: entity_id
+        - createIndex:
+            tableName: sys_audit_log
+            indexName: idx_sys_audit_log_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ===== TABLE: sys_exception_log =====
+  - changeSet:
+      id: "consolidated-011-sys-exception-log"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_exception_log
+            remarks: "异常日志表"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  remarks: "主键"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: service_name
+                  type: VARCHAR(100)
+                  remarks: "服务名称"
+              - column:
+                  name: exception_name
+                  type: VARCHAR(255)
+                  remarks: "异常类名"
+              - column:
+                  name: message
+                  type: TEXT
+                  remarks: "异常信息"
+              - column:
+                  name: stack_trace
+                  type: TEXT
+                  remarks: "堆栈跟踪"
+              - column:
+                  name: request_uri
+                  type: VARCHAR(255)
+                  remarks: "请求 URI"
+              - column:
+                  name: request_method
+                  type: VARCHAR(10)
+                  remarks: "请求方法"
+              - column:
+                  name: request_params
+                  type: TEXT
+                  remarks: "请求参数"
+              - column:
+                  name: ip
+                  type: VARCHAR(50)
+                  remarks: "IP 地址"
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  remarks: "用户 ID"
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  remarks: "创建时间"
+
+  # ===== TABLE: sys_mq_outbox =====
+  - changeSet:
+      id: "consolidated-012-sys-mq-outbox"
+      author: consolidated
+      changes:
+        - createTable:
+            tableName: sys_mq_outbox
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: event_type
+                  type: VARCHAR(100)
+              - column:
+                  name: exchange
+                  type: VARCHAR(100)
+              - column:
+                  name: last_error_message
+                  type: TEXT
+              - column:
+                  name: next_retry_time
+                  type: TIMESTAMP
+              - column:
+                  name: payload
+                  type: TEXT
+              - column:
+                  name: retry_count
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+              - column:
+                  name: routing_key
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+              - column:
+                  name: topic
+                  type: VARCHAR(100)
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+        - createIndex:
+            tableName: sys_mq_outbox
+            indexName: idx_sys_mq_outbox_status_retry
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: next_retry_time
+
+  # ===== DATA INITIALIZATION =====
+  - changeSet:
+      id: "consolidated-013-init-data"
+      author: consolidated
+      changes:
+        - insert:
+            tableName: sys_department
+            columns:
+              - column: {name: id, valueNumeric: 0}
+              - column: {name: tenant_id, valueNumeric: 0}
+              - column: {name: create_time, valueComputed: "CURRENT_TIMESTAMP"}
+              - column: {name: create_by, valueNumeric: 0}
+              - column: {name: dept_name, value: "虚拟部门"}
+              - column: {name: status, valueNumeric: 0}
+              - column: {name: del_flag, valueNumeric: 0}
+              - column: {name: version, valueNumeric: 0}
+        - insert:
+            tableName: sys_role
+            columns:
+              - column: {name: id, valueNumeric: 1}
+              - column: {name: tenant_id, valueNumeric: 0}
+              - column: {name: create_time, valueComputed: "CURRENT_TIMESTAMP"}
+              - column: {name: create_by, valueNumeric: 0}
+              - column: {name: role_name, value: "超级管理员"}
+              - column: {name: role_code, value: "admin"}
+              - column: {name: status, valueNumeric: 1}
+              - column: {name: is_readonly, valueBoolean: true}
+              - column: {name: del_flag, valueNumeric: 0}
+              - column: {name: version, valueNumeric: 0}
+        - insert:
+            tableName: sys_user
+            columns:
+              - column: {name: id, valueNumeric: 1}
+              - column: {name: tenant_id, valueNumeric: 0}
+              - column: {name: create_time, valueComputed: "CURRENT_TIMESTAMP"}
+              - column: {name: create_by, valueNumeric: 0}
+              - column: {name: username, value: "admin"}
+              - column: {name: password, value: "$2a$10$bQ7TASPd8A6f5TT48u0xsOOVi9z/hcfNahJNPb.ADUzj4tVodh7IW"}
+              - column: {name: nickname, value: "管理员"}
+              - column: {name: status, valueNumeric: 0}
+              - column: {name: del_flag, valueNumeric: 0}
+              - column: {name: version, valueNumeric: 0}
+        - insert:
+            tableName: sys_user_role
+            columns:
+              - column: {name: id, valueNumeric: 1}
+              - column: {name: tenant_id, valueNumeric: 0}
+              - column: {name: create_time, valueComputed: "CURRENT_TIMESTAMP"}
+              - column: {name: create_by, valueNumeric: 0}
+              - column: {name: user_id, valueNumeric: 1}
+              - column: {name: role_id, valueNumeric: 1}
+              - column: {name: del_flag, valueNumeric: 0}
+              - column: {name: version, valueNumeric: 0}
