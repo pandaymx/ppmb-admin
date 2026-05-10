@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":ppmb-common:ppmb-common-security"))
 
     implementation(libs.spring.boot.starter.amqp)
+    implementation(libs.spring.boot.starter.data-jpa)
     implementation(libs.spring.retry)
 
     implementation(libs.jacksonDatabind)
