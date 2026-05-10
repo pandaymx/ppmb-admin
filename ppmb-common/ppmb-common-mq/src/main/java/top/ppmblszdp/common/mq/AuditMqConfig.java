@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.ppmblszdp.common.api.constant.MqConstants;
@@ -23,7 +24,9 @@ public class AuditMqConfig {
   }
 
   @Bean
-  public Binding auditBinding(Queue auditQueue, DirectExchange auditExchange) {
+  public Binding auditBinding(
+      @Qualifier("auditQueue") Queue auditQueue,
+      @Qualifier("auditExchange") DirectExchange auditExchange) {
     return BindingBuilder.bind(auditQueue)
         .to(auditExchange)
         .with(MqConstants.AUDIT_LOG_ROUTING_KEY);

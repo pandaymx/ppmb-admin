@@ -4,6 +4,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.ppmblszdp.common.api.constant.MqConstants;
@@ -23,7 +24,9 @@ public class ExceptionMqConfig {
   }
 
   @Bean
-  public Binding exceptionBinding(Queue exceptionQueue, DirectExchange exceptionExchange) {
+  public Binding exceptionBinding(
+      @Qualifier("exceptionQueue") Queue exceptionQueue,
+      @Qualifier("exceptionExchange") DirectExchange exceptionExchange) {
     return BindingBuilder.bind(exceptionQueue)
         .to(exceptionExchange)
         .with(MqConstants.EXCEPTION_ROUTING_KEY);
