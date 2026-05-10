@@ -2,6 +2,11 @@ server:
   port: 8081
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: false
   cloud:
     consul:
       host: localhost # WSL2 访问 Windows Docker 的 Consul

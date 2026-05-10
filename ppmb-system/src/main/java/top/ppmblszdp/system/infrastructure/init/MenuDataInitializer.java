@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,14 +36,15 @@ public class MenuDataInitializer {
   private final UserRepository userRepository;
   private final UserRoleRepository userRoleRepository;
   private final PasswordEncoder passwordEncoder;
+  private final ApplicationEventPublisher eventPublisher;
 
   @Value("${ppmb.admin.init.password:Ppmb@2026}")
   private String adminPassword;
 
   @Async
-  @EventListener(ApplicationReadyEvent.class)
+  @EventListener(LiquibaseInitializedEvent.class)
   @Transactional(rollbackFor = Exception.class)
-  public void initializeMenuData() {
+  public void initializeMenuData(LiquibaseInitializedEvent event) {
     if (menuRepository.findAll().isEmpty()) {
       log.info("Initializing default menu and role data...");
 
@@ -137,6 +138,8 @@ public class MenuDataInitializer {
       }
 
       log.info("Default menu data initialized.");
+        // publish event to signal menu/data initialization completed
+        eventPublisher.publishEvent(new top.ppmblszdp.common.mq.event.MenuInitializedEvent());
     }
   }
 

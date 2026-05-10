@@ -18,6 +18,9 @@ import top.ppmblszdp.common.mq.CommonMessage;
 import top.ppmblszdp.common.mq.domain.entity.MqMessageOutbox;
 import top.ppmblszdp.common.mq.domain.enums.OutboxStatus;
 import top.ppmblszdp.common.mq.repository.MqMessageOutboxRepository;
+import org.springframework.context.event.EventListener;
+import java.util.concurrent.atomic.AtomicBoolean;
+import top.ppmblszdp.common.mq.event.MenuInitializedEvent;
 
 @Slf4j
 @Component
@@ -32,9 +35,14 @@ public class OutboxRetryJob {
   private final ExecutorService outboxRetryExecutor;
   private final top.ppmblszdp.common.mq.config.OutboxProperties outboxProperties;
 
+  private final AtomicBoolean liquibaseReady = new AtomicBoolean(false);
+
   @Async("outboxRetryExecutor")
   @Scheduled(fixedDelayString = "${ppmb.mq.outbox.retry-delay:30000}")
   public void retryFailedMessages() {
+    if (!liquibaseReady.get()) {
+      return;
+    }
     LocalDateTime now = LocalDateTime.now();
     List<OutboxStatus> statuses = Arrays.asList(OutboxStatus.PENDING, OutboxStatus.FAILED);
 
@@ -71,6 +79,12 @@ public class OutboxRetryJob {
       Thread.currentThread().interrupt();
       log.error("Outbox retry interrupted", e);
     }
+  }
+
+  @EventListener
+  public void onMenuInitialized(MenuInitializedEvent event) {
+    log.info("Received MenuInitializedEvent, enabling OutboxRetryJob scheduling");
+    liquibaseReady.set(true);
   }
 
   private void processRetry(MqMessageOutbox outbox) {
