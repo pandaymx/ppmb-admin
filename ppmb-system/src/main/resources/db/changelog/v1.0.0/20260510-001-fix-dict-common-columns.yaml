@@ -31,3 +31,20 @@ databaseChangeLog:
               -- 修正类型不匹配 (char(1) -> varchar(1))
               ALTER TABLE sys_dict_type ALTER COLUMN system_flag TYPE VARCHAR(1);
               ALTER TABLE sys_dict_data ALTER COLUMN is_default TYPE VARCHAR(1);
+
+  - changeSet:
+      id: "20260510-004-fix-menu-post-column-types"
+      author: antigravity
+      comment: "修正 sys_menu 和 sys_post 字段类型不匹配 (smallint -> integer, char -> varchar)"
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              -- sys_menu del_flag (smallint -> integer)
+              ALTER TABLE sys_menu ALTER COLUMN del_flag TYPE INTEGER;
+              
+              -- sys_menu menu_type (char(1) -> varchar(1))
+              ALTER TABLE sys_menu ALTER COLUMN menu_type TYPE VARCHAR(1);
+              
+              -- sys_post status (tinyint/smallint -> integer)
+              ALTER TABLE sys_post ALTER COLUMN status TYPE INTEGER;
