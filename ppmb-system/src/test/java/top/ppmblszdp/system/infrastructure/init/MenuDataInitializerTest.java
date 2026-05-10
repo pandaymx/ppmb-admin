@@ -52,7 +52,7 @@ class MenuDataInitializerTest {
   void shouldNotInitializeWhenDataExists() {
     when(menuRepository.findAll()).thenReturn(List.of(new SysMenu()));
 
-    menuDataInitializer.run();
+    menuDataInitializer.initializeMenuData();
 
     verify(menuRepository, never()).save(any(SysMenu.class));
     verify(roleRepository, never()).save(any(Role.class));
@@ -82,7 +82,7 @@ class MenuDataInitializerTest {
     when(passwordEncoder.encode(anyString())).thenReturn("hashed");
 
     // Execute
-    menuDataInitializer.run();
+    menuDataInitializer.initializeMenuData();
 
     // Verify
     verify(menuRepository, times(5)).save(any(SysMenu.class)); // 1 system + 4 submenus
@@ -104,7 +104,7 @@ class MenuDataInitializerTest {
     when(menuRepository.save(any(SysMenu.class))).thenReturn(mockMenu);
 
     // Execute
-    menuDataInitializer.run();
+    menuDataInitializer.initializeMenuData();
 
     // Verify
     verify(menuRepository, times(5)).save(any(SysMenu.class));

@@ -5,7 +5,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +22,11 @@ import top.ppmblszdp.system.domain.model.role.repository.UserRoleRepository;
 import top.ppmblszdp.system.domain.model.user.entity.User;
 import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
 
-/** 菜单与基础权限数据初始化器. */
+/** 菜单与基础权限数据初始化器（异步执行，不阻塞启动）. */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MenuDataInitializer implements CommandLineRunner {
+public class MenuDataInitializer {
 
   private static final String ADMIN_USERNAME = "admin";
 
@@ -38,9 +40,10 @@ public class MenuDataInitializer implements CommandLineRunner {
   @Value("${ppmb.admin.init.password:Ppmb@2026}")
   private String adminPassword;
 
-  @Override
+  @Async
+  @EventListener(ApplicationReadyEvent.class)
   @Transactional(rollbackFor = Exception.class)
-  public void run(String... args) {
+  public void initializeMenuData() {
     if (menuRepository.findAll().isEmpty()) {
       log.info("Initializing default menu and role data...");
 
