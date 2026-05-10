@@ -1,5 +1,6 @@
 package top.ppmblszdp.common.mq.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,5 +27,15 @@ public class AsyncConfig {
     executor.setThreadNamePrefix("audit-async-");
     executor.initialize();
     return new DelegatingSecurityContextAsyncTaskExecutor(executor);
+  }
+
+  /**
+   * 提供 ObjectMapper Bean，用于消息序列化和反序列化.
+   *
+   * @return ObjectMapper 实例
+   */
+  @Bean
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
   }
 }
