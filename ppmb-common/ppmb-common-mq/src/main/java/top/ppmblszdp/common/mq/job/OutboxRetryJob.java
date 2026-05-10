@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import top.ppmblszdp.common.mq.CommonMessage;
@@ -27,15 +30,18 @@ public class OutboxRetryJob {
   private final RabbitTemplate rabbitTemplate;
   private final ObjectMapper objectMapper;
   private final ExecutorService outboxRetryExecutor;
+  private final top.ppmblszdp.common.mq.config.OutboxProperties outboxProperties;
 
+  @Async("outboxRetryExecutor")
   @Scheduled(fixedDelayString = "${ppmb.mq.outbox.retry-delay:30000}")
   public void retryFailedMessages() {
     LocalDateTime now = LocalDateTime.now();
     List<OutboxStatus> statuses = Arrays.asList(OutboxStatus.PENDING, OutboxStatus.FAILED);
 
+    // 可配置的每批处理数量，降低并发压力
     List<MqMessageOutbox> messagesToRetry =
         outboxRepository.findPendingOrFailedMessagesForRetry(
-            statuses, now, MAX_RETRIES, PageRequest.of(0, 100));
+            statuses, now, MAX_RETRIES, PageRequest.of(0, outboxProperties.getBatchSize()));
 
     if (messagesToRetry.isEmpty()) {
       return;
@@ -43,8 +49,27 @@ public class OutboxRetryJob {
 
     log.info("Found {} outbox messages to retry.", messagesToRetry.size());
 
+    CountDownLatch latch = new CountDownLatch(messagesToRetry.size());
     for (MqMessageOutbox outbox : messagesToRetry) {
-      outboxRetryExecutor.submit(() -> processRetry(outbox));
+      outboxRetryExecutor.submit(
+          () -> {
+            try {
+              processRetry(outbox);
+            } finally {
+              latch.countDown();
+            }
+          });
+    }
+
+    try {
+      // 等待所有任务完成，最多等待 25 秒（避免与下一次调度冲突）
+      boolean completed = latch.await(25, TimeUnit.SECONDS);
+      if (!completed) {
+        log.warn("Outbox retry batch timed out, some messages may not have been processed.");
+      }
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      log.error("Outbox retry interrupted", e);
     }
   }
 
