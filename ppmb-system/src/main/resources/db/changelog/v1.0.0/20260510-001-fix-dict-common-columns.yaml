@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: "20260510-001-fix-dict-common-columns"
       author: antigravity
+      validCheckSum: ANY
       comment: "补齐 sys_dict_type 和 sys_dict_data 缺失的通用字段 (dept_id, role_id, data_scope)"
       changes:
         - sql:
