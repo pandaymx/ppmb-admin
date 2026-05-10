@@ -24,7 +24,11 @@ import top.ppmblszdp.gateway.config.GatewayRateLimitProperties;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "ppmb.gateway.rate-limit", name = "enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(
+    prefix = "ppmb.gateway.rate-limit",
+    name = "enabled",
+    havingValue = "true",
+    matchIfMissing = true)
 public class RateLimitFilter extends OncePerRequestFilter implements Ordered {
 
   private final RedisRateLimiter redisRateLimiter;
@@ -87,8 +91,7 @@ public class RateLimitFilter extends OncePerRequestFilter implements Ordered {
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
     ProblemDetail problemDetail =
-        ProblemDetail.forStatusAndDetail(
-            HttpStatus.TOO_MANY_REQUESTS, "请求过于频繁，请稍后再试。");
+        ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS, "请求过于频繁，请稍后再试。");
     problemDetail.setType(URI.create("https://api.ppmb.com/errors/too-many-requests"));
     problemDetail.setTitle("Too Many Requests");
 

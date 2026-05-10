@@ -8,18 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "ppmb.gateway.rate-limit")
 public class GatewayRateLimitProperties {
-    /**
-     * Whether gateway rate limiting is enabled.
-     */
-    private boolean enabled = true;
+  /** Whether gateway rate limiting is enabled. */
+  private boolean enabled = true;
 
-    /**
-     * The time period in seconds.
-     */
-    private int period = 1;
+  /** The time period in seconds. */
+  private int period = 1;
 
-    /**
-     * The maximum number of requests allowed in the period.
-     */
-    private int count = 100;
+  /** The maximum number of requests allowed in the period. */
+  private int count = 100;
 }

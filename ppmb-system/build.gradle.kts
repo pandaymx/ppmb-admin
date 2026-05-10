@@ -52,7 +52,7 @@ tasks.withType<Test>().configureEach {
     jvmArgs(
         "--enable-preview",
         "-XX:+EnableDynamicAgentLoading",
-        "-Djdk.instrument.traceUsage=false"
+        "-Djdk.instrument.traceUsage=false",
     )
     systemProperty("java.awt.headless", "true")
     useJUnitPlatform()

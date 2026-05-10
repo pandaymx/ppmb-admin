@@ -12,8 +12,8 @@ import top.ppmblszdp.common.web.audit.AuditEntityListener;
 import top.ppmblszdp.common.web.audit.HibernateEventRegistry;
 
 /**
- * Common JPA/Hibernate configuration.
- * Only activated when JPA is present and configured in the application context.
+ * Common JPA/Hibernate configuration. Only activated when JPA is present and configured in the
+ * application context.
  */
 @AutoConfiguration
 @ConditionalOnClass({EntityManager.class, EntityManagerFactory.class})

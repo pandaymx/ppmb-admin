@@ -15,7 +15,6 @@ import org.hibernate.event.spi.PostUpdateEvent;
 import org.hibernate.event.spi.PostUpdateEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.stereotype.Component;
 import top.ppmblszdp.common.api.annotation.Auditable;
 import top.ppmblszdp.common.api.dto.AuditLogMessage;
 import top.ppmblszdp.common.api.event.AuditLogEvent;

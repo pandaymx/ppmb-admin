@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.hibernate.Session;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.stereotype.Component;
 import top.ppmblszdp.common.tenant.GlobalTable;
 import top.ppmblszdp.common.tenant.TenantContextHolder;
 
