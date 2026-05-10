@@ -30,6 +30,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/v1.0.0/20260505-003-create-sys-audit-log.xml
   - include:
-      file: db/changelog/v1.0.0/20260509-001-add-tenant-id-to-audit-log.yaml
+      file: db/changelog/v1.0.0/20260509-001-add-tenant-id-to-audit-log.xml
   - include:
       file: db/changelog/fragments/mq-outbox.yaml
