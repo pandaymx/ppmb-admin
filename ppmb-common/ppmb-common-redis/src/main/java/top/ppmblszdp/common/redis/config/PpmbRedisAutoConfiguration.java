@@ -33,8 +33,7 @@ public class PpmbRedisAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(name = "redisObjectMapper")
-  public ObjectMapper redisObjectMapper(
-      @org.springframework.beans.factory.annotation.Qualifier("objectMapper") ObjectMapper objectMapper) {
+  public ObjectMapper redisObjectMapper() {
     PolymorphicTypeValidator ptv =
         BasicPolymorphicTypeValidator.builder()
             .allowIfBaseType("top.ppmblszdp.")
@@ -43,6 +42,7 @@ public class PpmbRedisAutoConfiguration {
             .allowIfBaseType(Object.class)
             .build();
     return JsonMapper.builder()
+        .findAndAddModules()
         .activateDefaultTyping(
             ptv, tools.jackson.databind.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
         .build();
