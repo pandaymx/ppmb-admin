@@ -37,13 +37,13 @@ dependencies {
 
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     archiveFileName.set("app.jar")
-    mainClass.set("top.ppmblszdp.system.SystemApplication")
+    mainClass.set("top.ppmblszdp.SystemApplication")
 }
 
 graalvmNative {
     binaries {
         named("main") {
-            mainClass.set("top.ppmblszdp.system.SystemApplication")
+            mainClass.set("top.ppmblszdp.SystemApplication")
         }
     }
 }
