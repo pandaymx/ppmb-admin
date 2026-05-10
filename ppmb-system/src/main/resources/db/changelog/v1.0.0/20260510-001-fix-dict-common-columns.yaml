@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: "20260510-001-fix-dict-common-columns"
+      author: antigravity
+      comment: "补齐 sys_dict_type 和 sys_dict_data 缺失的通用字段 (dept_id, role_id, data_scope)"
+      changes:
+        - sql:
+            dbms: postgresql
+            sql: |
+              -- sys_dict_type
+              ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS dept_id BIGINT DEFAULT 0;
+              ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS role_id BIGINT DEFAULT 0;
+              ALTER TABLE sys_dict_type ADD COLUMN IF NOT EXISTS data_scope INT DEFAULT 0;
+              
+              -- sys_dict_data
+              ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS dept_id BIGINT DEFAULT 0;
+              ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS role_id BIGINT DEFAULT 0;
+              ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS data_scope INT DEFAULT 0;
+              ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS update_by BIGINT;
+              ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS update_time TIMESTAMP;
