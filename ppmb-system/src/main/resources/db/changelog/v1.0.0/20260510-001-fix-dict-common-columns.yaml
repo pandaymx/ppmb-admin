@@ -18,3 +18,7 @@ databaseChangeLog:
               ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS data_scope INT DEFAULT 0;
               ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS update_by BIGINT;
               ALTER TABLE sys_dict_data ADD COLUMN IF NOT EXISTS update_time TIMESTAMP;
+              
+              -- 修正类型不匹配 (char(1) -> varchar(1))
+              ALTER TABLE sys_dict_type ALTER COLUMN system_flag TYPE VARCHAR(1);
+              ALTER TABLE sys_dict_data ALTER COLUMN is_default TYPE VARCHAR(1);
