@@ -15,7 +15,6 @@ import top.ppmblszdp.common.tenant.TenantContextHolder;
  * Repositories.
  */
 @Aspect
-@Component
 public class TenantFilterAspect {
 
   private final EntityManager entityManager;

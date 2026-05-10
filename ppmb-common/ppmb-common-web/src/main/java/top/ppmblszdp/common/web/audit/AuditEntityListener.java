@@ -21,7 +21,6 @@ import top.ppmblszdp.common.api.dto.AuditLogMessage;
 import top.ppmblszdp.common.api.event.AuditLogEvent;
 import top.ppmblszdp.common.security.util.SecurityUtils;
 
-@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AuditEntityListener
