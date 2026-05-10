@@ -22,6 +22,10 @@ databaseChangeLog:
       file: db/changelog/2024/02-create-sys-dict-data.yaml
 
   - include:
+      file: db/changelog/v1.0.0/20260510-001-fix-sys-user-common-columns.yaml
+  - include:
+      file: db/changelog/v1.0.0/20260510-002-create-sys-role-dept.yaml
+  - include:
       file: db/changelog/v1.0.0/20260505-001-fix-sys-menu-common-columns.yaml
   - include:
       file: db/changelog/v1.0.0/20260505-001-fix-sys-dict-data-common-columns.yaml

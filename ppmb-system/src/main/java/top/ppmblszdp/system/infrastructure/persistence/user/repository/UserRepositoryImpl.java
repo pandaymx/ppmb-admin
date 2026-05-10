@@ -2,6 +2,9 @@ package top.ppmblszdp.system.infrastructure.persistence.user.repository;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import top.ppmblszdp.system.domain.model.user.entity.User;
 import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
@@ -10,25 +13,30 @@ import top.ppmblszdp.system.domain.model.user.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
-  private final UserJpaRepository userJpaRepository;
+  private final UserJpaRepository jpaRepository;
 
   @Override
   public User save(User user) {
-    return userJpaRepository.save(user);
+    return jpaRepository.save(user);
   }
 
   @Override
   public Optional<User> findById(Long id) {
-    return userJpaRepository.findById(id);
+    return jpaRepository.findById(id);
   }
 
   @Override
   public Optional<User> findByUsername(String username) {
-    return userJpaRepository.findByUsername(username);
+    return jpaRepository.findByUsername(username);
   }
 
   @Override
   public void deleteById(Long id) {
-    userJpaRepository.deleteById(id);
+    jpaRepository.deleteById(id);
+  }
+
+  @Override
+  public Page<User> findAll(Specification<User> spec, Pageable pageable) {
+    return jpaRepository.findAll(spec, pageable);
   }
 }

@@ -22,35 +22,27 @@ class UserRoleRepositoryImplTest {
   void testSaveAll() {
     List<UserRole> roles = List.of(UserRole.create(1L, 2L));
     when(jpaRepository.saveAll(roles)).thenReturn(roles);
-    List<UserRole> saved = repository.saveAll(roles);
-    assertEquals(1, saved.size());
+    repository.saveAll(roles);
+    verify(jpaRepository, times(1)).saveAll(roles);
   }
 
   @Test
   void testFindByUserId() {
     List<UserRole> roles = List.of(UserRole.create(1L, 2L));
-    when(jpaRepository.findByUserId(1L)).thenReturn(roles);
+    when(jpaRepository.findByTargetUserId(1L)).thenReturn(roles);
     List<UserRole> found = repository.findByUserId(1L);
-    assertEquals(1, found.size());
-  }
-
-  @Test
-  void testFindByUserIds() {
-    List<UserRole> roles = List.of(UserRole.create(1L, 2L));
-    when(jpaRepository.findByUserIdIn(List.of(1L))).thenReturn(roles);
-    List<UserRole> found = repository.findByUserIds(List.of(1L));
     assertEquals(1, found.size());
   }
 
   @Test
   void testDeleteByUserId() {
     repository.deleteByUserId(1L);
-    verify(jpaRepository, times(1)).deleteByUserId(1L);
+    verify(jpaRepository, times(1)).deleteByTargetUserId(1L);
   }
 
   @Test
   void testCountByRoleId() {
-    when(jpaRepository.countByRoleId(1L)).thenReturn(5L);
+    when(jpaRepository.countByTargetRoleId(1L)).thenReturn(5L);
     long count = repository.countByRoleId(1L);
     assertEquals(5L, count);
   }

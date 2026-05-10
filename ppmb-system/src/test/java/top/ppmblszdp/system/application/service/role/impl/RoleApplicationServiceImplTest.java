@@ -32,6 +32,7 @@ class RoleApplicationServiceImplTest {
 
   @Mock private RoleRepository roleRepository;
   @Mock private UserRoleRepository userRoleRepository;
+  @Mock private top.ppmblszdp.system.domain.model.role.repository.RoleDeptRepository roleDeptRepository;
   @Mock private RoleAssembler roleAssembler;
   @Mock private RoleMenuApplicationService roleMenuApplicationService;
 
@@ -158,6 +159,7 @@ class RoleApplicationServiceImplTest {
     service.deleteRole(1L);
 
     verify(roleRepository, times(1)).deleteById(1L);
+    verify(roleDeptRepository, times(1)).deleteByRoleId(1L);
   }
 
   @Test

@@ -48,4 +48,12 @@ public interface RoleRepository {
    * @return 角色列表
    */
   List<Role> findAll();
+
+  /**
+   * 根据角色ID列表查询角色.
+   *
+   * @param ids 角色ID列表
+   * @return 角色列表
+   */
+  List<Role> findByIdIn(List<Long> ids);
 }

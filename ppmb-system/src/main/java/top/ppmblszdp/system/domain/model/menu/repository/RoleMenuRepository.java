@@ -4,11 +4,13 @@ import java.util.List;
 import top.ppmblszdp.system.domain.model.menu.entity.SysRoleMenu;
 
 public interface RoleMenuRepository {
-  <S extends SysRoleMenu> List<S> saveAll(Iterable<S> roleMenus);
+  List<SysRoleMenu> findByRoleId(Long roleId);
+
+  List<SysRoleMenu> findByRoleIds(List<Long> roleIds);
 
   void deleteByRoleId(Long roleId);
 
-  List<SysRoleMenu> findByRoleId(Long roleId);
+  void saveAll(List<SysRoleMenu> roleMenus);
 
-  List<SysRoleMenu> findByRoleIdIn(List<Long> roleIds);
+  List<Long> findRoleIdsByMenuPerm(String permission);
 }

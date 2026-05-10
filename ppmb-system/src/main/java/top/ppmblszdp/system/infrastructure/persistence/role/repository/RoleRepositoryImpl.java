@@ -7,15 +7,16 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import top.ppmblszdp.common.api.PageQuery;
 import top.ppmblszdp.common.api.PageResult;
 import top.ppmblszdp.system.domain.model.role.entity.Role;
 import top.ppmblszdp.system.domain.model.role.repository.RoleRepository;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class RoleRepositoryImpl implements RoleRepository {
 
@@ -38,11 +39,14 @@ public class RoleRepositoryImpl implements RoleRepository {
 
   @Override
   public PageResult<Role> findPage(String name, Integer status, PageQuery pageQuery) {
+    Pageable pageable =
+        PageRequest.of(
+            pageQuery.pageNum() - 1, pageQuery.pageSize(), Sort.by(Sort.Direction.DESC, "id"));
+
     Specification<Role> spec =
         (root, query, cb) -> {
           List<Predicate> predicates = new ArrayList<>();
-          predicates.add(cb.equal(root.get("delFlag"), 0)); // Not deleted
-          if (name != null && !name.isBlank()) {
+          if (name != null && !name.trim().isEmpty()) {
             predicates.add(cb.like(root.get("roleName"), "%" + name + "%"));
           }
           if (status != null) {
@@ -51,26 +55,21 @@ public class RoleRepositoryImpl implements RoleRepository {
           return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-    PageRequest pageRequest =
-        PageRequest.of(
-            pageQuery.pageNum() - 1,
-            pageQuery.pageSize(),
-            Sort.by(Sort.Direction.DESC, "createTime"));
-    Page<Role> page = roleJpaRepository.findAll(spec, pageRequest);
-
+    Page<Role> page = roleJpaRepository.findAll(spec, pageable);
     return PageResult.of(
         page.getTotalElements(), page.getContent(), pageQuery.pageNum(), pageQuery.pageSize());
   }
 
   @Override
   public List<Role> findAll() {
-    Specification<Role> spec =
-        (root, query, cb) -> {
-          List<Predicate> predicates = new ArrayList<>();
-          predicates.add(cb.equal(root.get("delFlag"), 0)); // Not deleted
-          predicates.add(cb.equal(root.get("status"), 1)); // Only enabled roles
-          return cb.and(predicates.toArray(new Predicate[0]));
-        };
-    return roleJpaRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createTime"));
+    return roleJpaRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+  }
+
+  @Override
+  public List<Role> findByIdIn(List<Long> ids) {
+    if (ids == null || ids.isEmpty()) {
+       return List.of();
+    }
+    return roleJpaRepository.findAllById(ids);
   }
 }

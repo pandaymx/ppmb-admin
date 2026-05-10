@@ -1,0 +1,122 @@
+databaseChangeLog:
+  - changeSet:
+      id: "20260510-002-role-data-scope"
+      author: jules
+      comment: "角色表增加数据权限范围字段"
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: sys_role
+        - not:
+            - columnExists:
+                tableName: sys_role
+                columnName: data_scope
+      changes:
+        - addColumn:
+            tableName: sys_role
+            columns:
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+                  remarks: "数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人）"
+
+  - changeSet:
+      id: "20260510-002-sys-role-dept"
+      author: jules
+      comment: "创建角色部门关联表（自定义数据权限使用）"
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: sys_role_dept
+      changes:
+        - createTable:
+            tableName: sys_role_dept
+            remarks: "角色与部门关联表"
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: create_by
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: dept_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data_scope
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: update_by
+                  type: BIGINT
+              - column:
+                  name: update_time
+                  type: TIMESTAMP
+              - column:
+                  name: del_flag
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INT
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              # Note: For SysRoleDept, the logic uses the real target dept_id below
+              - column:
+                  name: target_role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                  remarks: "角色ID"
+              - column:
+                  name: target_dept_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                  remarks: "部门ID"
+        - createIndex:
+            tableName: sys_role_dept
+            indexName: idx_sys_role_dept_role_id
+            columns:
+              - column:
+                  name: target_role_id
+        - createIndex:
+            tableName: sys_role_dept
+            indexName: idx_sys_role_dept_dept_id
+            columns:
+              - column:
+                  name: target_dept_id

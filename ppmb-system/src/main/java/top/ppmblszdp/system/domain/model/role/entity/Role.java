@@ -36,6 +36,13 @@ public class Role extends BaseMainEntity {
   @Column(name = "is_readonly", nullable = false)
   private Boolean isReadonly;
 
+  // 使用父类 BaseEntity 中的 dataScope，不需要重新定义字段，只需要提供 setter
+  public void setDataScopeValue(Integer dataScope) {
+    if (dataScope != null) {
+      super.setDataScope(dataScope);
+    }
+  }
+
   /**
    * 创建角色.
    *
@@ -53,6 +60,7 @@ public class Role extends BaseMainEntity {
     role.setDescription(description);
     role.setStatus(1); // 默认启用
     role.setIsReadonly(false); // 默认不是内置只读角色
+    role.setDataScope(1); // 默认全部数据权限
     return role;
   }
 

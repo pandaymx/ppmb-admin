@@ -19,6 +19,7 @@ import top.ppmblszdp.system.interfaces.web.role.dto.CreateRoleCommand;
 import top.ppmblszdp.system.interfaces.web.role.dto.RoleDto;
 import top.ppmblszdp.system.interfaces.web.role.dto.RolePageQuery;
 import top.ppmblszdp.system.interfaces.web.role.dto.UpdateRoleCommand;
+import top.ppmblszdp.system.interfaces.web.role.dto.UpdateRoleDataScopeCommand;
 
 @RestController
 @RequestMapping("/roles")
@@ -52,5 +53,17 @@ public class RoleController {
   @GetMapping("/options")
   public Result<List<RoleDto>> getRoleOptions() {
     return Result.success(roleApplicationService.getRoleOptions());
+  }
+
+  @PutMapping("/{id}/data-scope")
+  public Result<Void> updateRoleDataScope(
+      @PathVariable Long id, @Valid @RequestBody UpdateRoleDataScopeCommand command) {
+    roleApplicationService.updateRoleDataScope(id, command);
+    return Result.success();
+  }
+
+  @GetMapping("/{id}/depts")
+  public Result<List<Long>> getRoleDeptIds(@PathVariable Long id) {
+    return Result.success(roleApplicationService.getRoleDeptIds(id));
   }
 }

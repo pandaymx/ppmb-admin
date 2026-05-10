@@ -2,38 +2,43 @@ package top.ppmblszdp.system.infrastructure.persistence.role.repository;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import top.ppmblszdp.system.domain.model.role.entity.UserRole;
 import top.ppmblszdp.system.domain.model.role.repository.UserRoleRepository;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class UserRoleRepositoryImpl implements UserRoleRepository {
 
-  private final UserRoleJpaRepository userRoleJpaRepository;
+  private final UserRoleJpaRepository jpaRepository;
 
   @Override
-  public List<UserRole> saveAll(List<UserRole> userRoles) {
-    return userRoleJpaRepository.saveAll(userRoles);
-  }
-
-  @Override
-  public List<UserRole> findByUserId(Long userId) {
-    return userRoleJpaRepository.findByUserId(userId);
-  }
-
-  @Override
-  public List<UserRole> findByUserIds(List<Long> userIds) {
-    return userRoleJpaRepository.findByUserIdIn(userIds);
+  public void saveAll(List<UserRole> userRoles) {
+    jpaRepository.saveAll(userRoles);
   }
 
   @Override
   public void deleteByUserId(Long userId) {
-    userRoleJpaRepository.deleteByUserId(userId);
+    jpaRepository.deleteByTargetUserId(userId);
+  }
+
+  @Override
+  public void deleteByRoleId(Long roleId) {
+    jpaRepository.deleteByTargetRoleId(roleId);
+  }
+
+  @Override
+  public List<UserRole> findByUserId(Long userId) {
+    return jpaRepository.findByTargetUserId(userId);
   }
 
   @Override
   public long countByRoleId(Long roleId) {
-    return userRoleJpaRepository.countByRoleId(roleId);
+    return jpaRepository.countByTargetRoleId(roleId);
+  }
+
+  @Override
+  public List<Long> findRoleIdsByUserId(Long userId) {
+    return jpaRepository.findTargetRoleIdByTargetUserId(userId);
   }
 }

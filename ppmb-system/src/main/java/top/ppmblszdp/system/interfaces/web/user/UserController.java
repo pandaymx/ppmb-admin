@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.ppmblszdp.common.api.PageQuery;
+import top.ppmblszdp.common.api.PageResult;
+import top.ppmblszdp.common.api.Result;
 import top.ppmblszdp.common.security.util.SecurityUtils;
 import top.ppmblszdp.system.application.service.menu.MenuApplicationService;
 import top.ppmblszdp.system.application.service.role.UserRoleApplicationService;
@@ -20,6 +23,7 @@ import top.ppmblszdp.system.application.service.user.UserApplicationService;
 import top.ppmblszdp.system.interfaces.web.role.dto.BatchUserRoleCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.CreateUserCommand;
 import top.ppmblszdp.system.interfaces.web.user.dto.UserDto;
+import top.ppmblszdp.system.interfaces.web.user.dto.UserPageQuery;
 
 @Tag(name = "用户管理")
 @RestController
@@ -30,6 +34,12 @@ public class UserController {
   private final UserApplicationService userApplicationService;
   private final UserRoleApplicationService userRoleApplicationService;
   private final MenuApplicationService menuApplicationService;
+
+  @Operation(summary = "分页获取用户列表")
+  @GetMapping
+  public Result<PageResult<UserDto>> pageUsers(UserPageQuery query, PageQuery pageQuery) {
+    return Result.success(userApplicationService.pageUsers(query, pageQuery));
+  }
 
   @Operation(summary = "创建用户")
   @PostMapping

@@ -99,25 +99,10 @@ class RoleRepositoryImplTest {
   @SuppressWarnings("unchecked")
   void testFindAll() {
     Role role = Role.create("Admin", "ROLE_ADMIN", "Desc");
-    ArgumentCaptor<Specification<Role>> specCaptor = ArgumentCaptor.forClass(Specification.class);
-    when(jpaRepository.findAll(
-            specCaptor.capture(), any(org.springframework.data.domain.Sort.class)))
+    when(jpaRepository.findAll(any(org.springframework.data.domain.Sort.class)))
         .thenReturn(List.of(role));
 
     List<Role> list = repository.findAll();
     assertEquals(1, list.size());
-
-    // Trigger Specification logic for coverage
-    final Specification<Role> spec = specCaptor.getValue();
-    final Root<Role> root = mock(Root.class);
-    final Path<Object> path = mock(Path.class);
-    when(root.get(anyString())).thenReturn(path);
-
-    final CriteriaBuilder cb = mock(CriteriaBuilder.class);
-    when(cb.equal(any(), any())).thenReturn(mock(Predicate.class));
-    when(cb.and(any(Predicate[].class))).thenReturn(mock(Predicate.class));
-
-    final CriteriaQuery<?> query = mock(CriteriaQuery.class);
-    spec.toPredicate(root, query, cb);
   }
 }

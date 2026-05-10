@@ -9,6 +9,8 @@ dependencies {
 
     api(libs.spring.boot.starter.security)
     api(libs.spring.boot.starter.web)
+    api("org.aspectj:aspectjweaver:1.9.21.1")
+    api("org.springframework:spring-aop")
 
     implementation(libs.jacksonDatabind)
     implementation(libs.jjwt.api)

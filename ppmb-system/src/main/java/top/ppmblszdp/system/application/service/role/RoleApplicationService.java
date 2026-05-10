@@ -7,6 +7,7 @@ import top.ppmblszdp.system.interfaces.web.role.dto.CreateRoleCommand;
 import top.ppmblszdp.system.interfaces.web.role.dto.RoleDto;
 import top.ppmblszdp.system.interfaces.web.role.dto.RolePageQuery;
 import top.ppmblszdp.system.interfaces.web.role.dto.UpdateRoleCommand;
+import top.ppmblszdp.system.interfaces.web.role.dto.UpdateRoleDataScopeCommand;
 
 public interface RoleApplicationService {
   RoleDto createRole(CreateRoleCommand command);
@@ -18,4 +19,8 @@ public interface RoleApplicationService {
   PageResult<RoleDto> getRolePage(RolePageQuery query, PageQuery pageQuery);
 
   List<RoleDto> getRoleOptions();
+
+  void updateRoleDataScope(Long id, UpdateRoleDataScopeCommand command);
+
+  List<Long> getRoleDeptIds(Long id);
 }
