@@ -28,6 +28,7 @@ spring:
               filters:
                 - StripPrefix=2
                 - CircuitBreaker=systemCircuitBreaker,forward:/fallback
+                - DynamicRateLimit=100,1
             - id: auth-service-route
               uri: lb://ppmb-auth
               predicates:
@@ -35,6 +36,7 @@ spring:
               filters:
                 - StripPrefix=1
                 - CircuitBreaker=authCircuitBreaker,forward:/fallback
+                - DynamicRateLimit=200,1
             - id: user-service-route
               uri: lb://ppmb-system
               predicates:
@@ -42,6 +44,7 @@ spring:
               filters:
                 - StripPrefix=2
                 - CircuitBreaker=systemCircuitBreaker,forward:/fallback
+                - DynamicRateLimit=100,1
             - id: ai-service-route
               uri: lb://ppmb-ai
               predicates:
@@ -49,6 +52,7 @@ spring:
               filters:
                 - StripPrefix=1
                 - CircuitBreaker=systemCircuitBreaker,forward:/fallback
+                - DynamicRateLimit=50,1
           cors:
             configurations:
               '[/**]':
