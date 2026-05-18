@@ -27,6 +27,7 @@ spring:
                 - Path=/api/system/**
               filters:
                 - StripPrefix=2
+                - RateLimit=100, 1
                 - CircuitBreaker=systemCircuitBreaker,forward:/fallback
             - id: auth-service-route
               uri: lb://ppmb-auth
